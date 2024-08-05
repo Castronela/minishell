@@ -1,9 +1,33 @@
-# include "minishell.h"
+#include "minishell.h"
 
-int main(int ac, char **av)
+int main()
 {
-	(void) av;
-	(void) ac;
-	ft_putstr_fd("Hello World!\n", 1);
-	return 0;
+    t_shell_data shell;
+
+    shell.cmdline = "cmd1 \"  arg1  \" <file1 <>><<| cmd2 \'arg\' >file2";
+    shell.tokenlst = tokenlst_memalloc();
+    if (shell.tokenlst == NULL)
+        return (1);
+    if (tokenizer(&shell))
+        return (1);
+    print_lst(shell.tokenlst);
+}
+
+/*
+TEST: print out tokens from linked list
+*/
+void     print_lst(t_lsttoken **head)
+{
+    t_lsttoken *node_current;
+
+    node_current = *head;
+    while (node_current != NULL)
+    {
+        printf(BG_BLUE "%s" BG_BLACK, node_current->token);
+        if (node_current->next != NULL)
+            printf("   ");
+        node_current = node_current->next;
+    }
+    if (*head != NULL)
+        printf("\n");
 }
