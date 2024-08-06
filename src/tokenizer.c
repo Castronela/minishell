@@ -38,7 +38,11 @@ int     tokenizer(t_shell_data *shell)
             token = get_next_token(shell->cmdline, &i_cmdline);
             if (token == NULL)
                 return (1);
-            tokenlst_addtoken(shell->tokenlst, token);
+            if (tokenlst_addtoken(shell->tokenlst, token))
+            {
+                free(token);
+                return (1);
+            }
         }
     }
     return (0);
