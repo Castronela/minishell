@@ -7,7 +7,7 @@ GNUFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline
 RM			= rm -rf
 
 # Source and object files
-SRC			= main.c tokenizer.c memory_0.c util_0.c
+SRC			= main.c tokenizer.c memory_0.c util_0.c heredoc_0.c test_fn.c
 OBJ			:= $(SRC:.c=.o)
 
 # Directories

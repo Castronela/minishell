@@ -31,6 +31,9 @@ typedef struct s_shell_data
 {
 	t_lsttoken			**tokenlst;
 	char				*cmdline;
+	char				open_quote;
+	bool				hd_status;
+	char				*hd_delimiter;
 }						t_shell_data;
 
 /* Function Prototypes */
@@ -38,27 +41,28 @@ typedef struct s_shell_data
 int						main(void);
 
 /*--- Tokenizer ---*/
-
 int						tokenizer(t_shell_data *shell);
-char					*get_next_token(const char *cmdline,
+char					*get_next_token(t_shell_data *shell,
 							ssize_t *i_cmdline);
 
-/*--- Token linked list*/
-
+/*--- Token linked list ---*/
 t_lsttoken				**tokenlst_memalloc(void);
 int						tokenlst_addtoken(t_lsttoken **head, char *token);
 void					tokenlst_memfreelist(t_lsttoken **head);
 
-/*--- Utils ---*/
+/*--- Heredoc ---*/
+bool					is_heredoc(t_shell_data *shell);
+void					rm_qt(char *token);
 
-bool					is_whitespace(const char c);
-bool					is_operator(const char c);
-bool					is_quote(const char c);
+/*--- Utils ---*/
+bool					is_ws(const char c);
+bool					is_op(const char c);
+bool					is_qt(const char c);
 
 /*--- Testing ---*/
-
 void					print_lst(t_lsttoken **head);
-int						tokenizer_tester(void);
+int						test_heredoc(void);
+int						test_tokenizer(void);
 
 /* End Function Prototypes */
 
