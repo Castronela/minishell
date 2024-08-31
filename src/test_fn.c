@@ -4,7 +4,7 @@
 
 void test_syntax_checker(void)
 {
-	t_shell_data	shell;
+	t_shell	shell;
 	shell.tokenlst = tokenlst_memalloc();
 	shell.cmdline = "cmd1 \"  arg1  \" <file1> | cmd2>\'arg\' >file2";
 
@@ -24,7 +24,7 @@ void test_syntax_checker(void)
 
 int	test_heredoc(void)
 {
-	t_shell_data	shell;
+	t_shell	shell;
 
 	shell.hd_status = false;
 	shell.hd_delimiter = NULL;
@@ -66,7 +66,7 @@ int	test_heredoc(void)
 
 int	test_tokenizer(void)
 {
-	t_shell_data	shell;
+	t_shell	shell;
 
 	shell.cmdline = "cmd1 \"  arg1  \" <file1 <>><<| cmd2\'arg\' >file2";
 	shell.tokenlst = tokenlst_memalloc();

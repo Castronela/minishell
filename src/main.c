@@ -1,13 +1,11 @@
 
 # include "minishell.h"
 
-int	main(int ac, char **av)
+int	main(void)
 {
     char        *input;
     // t_inputs history;
     
-    (void) av;
-    (void) ac;
     ft_putstr_fd("Welcome to Minishell!\n", 1);
     
     while (!(ft_strncmp(input, "exit", 4)))

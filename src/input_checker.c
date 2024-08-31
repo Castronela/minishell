@@ -89,7 +89,7 @@ Checks syntax of command line
 Returns 1 on failure, should not exit program
 Caution: run fn before heredoc check!
 */
-int	check_syntax(t_shell_data *shell)
+int	check_syntax(t_shell *shell)
 {
 	t_lsttoken *node_current;
 	t_lsttoken *node_prev;

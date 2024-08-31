@@ -6,7 +6,7 @@ Returns 'true' if heredoc instance is open, sets hd_status to true,
 Returns 'false' if NO heredoc instance or if heredoc instance 
     is closed by delimiter
 */
-bool	is_heredoc(t_shell_data *shell)
+bool	is_heredoc(t_shell *shell)
 {
 	t_lsttoken	*node_current;
 

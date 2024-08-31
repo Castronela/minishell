@@ -4,7 +4,7 @@
 Returns allocated string of closest token starting from index i_cmdline
 Caution: cmdline != NULL
 */
-char	*get_next_token(t_shell_data *shell, ssize_t *i_cmdline)
+char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
 {
 	ssize_t	i_start;
 	char	first_char;
@@ -37,7 +37,7 @@ char	*get_next_token(t_shell_data *shell, ssize_t *i_cmdline)
 Assigns tokens from cmdline to tokenlst nodes
 Caution: cmdline != NULL
 */
-int	tokenizer(t_shell_data *shell)
+int	tokenizer(t_shell *shell)
 {
 	ssize_t	i_cmdline;
 	char	*token;
