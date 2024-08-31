@@ -2,6 +2,29 @@
 
 // TEST FUNCTIONS
 
+void test_var_repl(void)
+{
+	t_shell_data	shell;
+
+	shell.cmdline = "echo $USER $SHELL";
+	shell.hd_status = false;
+	shell.hd_delimiter = NULL;
+	shell.tokenlst = tokenlst_memalloc();
+	if (shell.tokenlst == NULL)
+		return ;
+	if (tokenizer(&shell))
+	{
+		tokenlst_memfreelist(shell.tokenlst);
+		return ;
+	}
+	if (check_syntax(&shell))
+		return ;
+	if (!repl_all_var(&shell))
+		print_lst(shell.tokenlst);
+	tokenlst_memfreelist(shell.tokenlst);
+	free(shell.tokenlst);
+}
+
 void test_syntax_checker(void)
 {
 	t_shell_data	shell;

@@ -6,8 +6,8 @@ Returns false and prints error on failure
 */
 bool	is_quoteclosed(t_lsttoken *node_current)
 {
-	char quote;
-	int i;
+	char	quote;
+	int		i;
 
 	quote = 0;
 	i = -1;
@@ -53,7 +53,6 @@ bool	is_op_invalid(const char *op)
 	return (true);
 }
 
-
 /*
 Checks if operator or argument after operator is invalid
 Returns 1 on failure
@@ -69,8 +68,8 @@ int	check_op(t_lsttoken *node_current, t_lsttoken *node_prev)
 			printf("%s `|\'\n", ERR_STX_OP);
 			return (1);
 		}
-		else if (*node_current->token != '|' && node_current->next 
-		&& is_op(*node_current->next->token))
+		else if (*node_current->token != '|' && node_current->next
+			&& is_op(*node_current->next->token))
 		{
 			printf("%s `%s\'\n", ERR_STX_OP, node_current->next->token);
 			return (1);
@@ -91,8 +90,8 @@ Caution: run fn before heredoc check!
 */
 int	check_syntax(t_shell_data *shell)
 {
-	t_lsttoken *node_current;
-	t_lsttoken *node_prev;
+	t_lsttoken	*node_current;
+	t_lsttoken	*node_prev;
 
 	if (shell->hd_status == true)
 		return (0);

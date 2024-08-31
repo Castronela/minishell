@@ -57,14 +57,22 @@ char					*get_next_token(t_shell_data *shell,
 /*--- Syntax Checker ---*/
 
 bool					is_quoteclosed(t_lsttoken *node_current);
-bool				    is_op_invalid(const char *op);
-int						check_op(t_lsttoken *node_current, t_lsttoken *node_prev);
+bool					is_op_invalid(const char *op);
+int						check_op(t_lsttoken *node_current,
+							t_lsttoken *node_prev);
 int						check_syntax(t_shell_data *shell);
 
 /*--- Heredoc ---*/
 
 bool					is_heredoc(t_shell_data *shell);
 void					rm_qt(char *token);
+
+/*--- Replace variables ---*/
+
+int						repl_all_var(t_shell_data *shell);
+int						repl_node_var(t_lsttoken *node);
+char					*repl_var(char *token, char *variable, int *index);
+char					*get_var(const char *token, int i);
 
 /*--- Utils ---*/
 
@@ -77,7 +85,8 @@ bool					is_qt(const char c);
 void					print_lst(t_lsttoken **head);
 int						test_heredoc(void);
 int						test_tokenizer(void);
-void 					test_syntax_checker(void);
+void					test_syntax_checker(void);
+void					test_var_repl(void);
 
 /* End Function Prototypes */
 
