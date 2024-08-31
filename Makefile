@@ -1,12 +1,13 @@
 # Compiler and flags
 CC			= gcc -g
 CFLAGS		= -Wall -Wextra -Werror -I$(DIR_INC)
+GNUFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline
 
 # Commands
 RM			= rm -rf
 
 # Source and object files
-SRC			= main.c 
+SRC			= main.c tokenizer.c memory_0.c util_0.c heredoc_0.c input_checker.c test_fn.c
 OBJ			:= $(SRC:.c=.o)
 
 # Directories
@@ -28,13 +29,12 @@ all: $(NAME)
 
 $(NAME): $(addprefix $(DIR_OBJ)/, $(OBJ))
 	make -C $(DIR_LIBFT)
-	$(CC) $(CFLAGS) $^ $(FLAG_LIBFT) -o $(DIR_BIN)/$@
+	$(CC) $(CFLAGS) $^ $(FLAG_LIBFT) $(GNUFLAGS) -o $(DIR_BIN)/$@
 
 $(DIR_OBJ)/%.o: $(DIR_SRC)/%.c 
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(GNUFLAGS) -c $< -o $@
 
 clean:
-	make clean -C $(DIR_LIBFT)
 	$(RM) $(addprefix $(DIR_OBJ)/, $(OBJ))
 
 fclean: clean
