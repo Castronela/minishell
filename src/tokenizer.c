@@ -8,13 +8,14 @@ char	*get_next_token(t_shell_data *shell, ssize_t *i_cmdline)
 {
 	ssize_t	i_start;
 	char	first_char;
+	char	open_quote;
 
-	shell->open_quote = 0;
+	open_quote = 0;
 	i_start = *i_cmdline;
 	first_char = shell->cmdline[*i_cmdline];
 	while (shell->cmdline[*i_cmdline])
 	{
-		if (shell->open_quote == 0 && shell->hd_status == false)
+		if (open_quote == 0 && shell->hd_status == false)
 		{
 			if (is_op(shell->cmdline[*i_cmdline]) && !is_op(first_char))
 				break ;
@@ -23,10 +24,10 @@ char	*get_next_token(t_shell_data *shell, ssize_t *i_cmdline)
 			if (is_ws(shell->cmdline[*i_cmdline]))
 				break ;
 			if (is_qt(shell->cmdline[*i_cmdline]))
-				shell->open_quote = shell->cmdline[*i_cmdline];
+				open_quote = shell->cmdline[*i_cmdline];
 		}
-		else if (shell->open_quote == shell->cmdline[*i_cmdline])
-			shell->open_quote = 0;
+		else if (open_quote == shell->cmdline[*i_cmdline])
+			open_quote = 0;
 		(*i_cmdline)++;
 	}
 	return (ft_substr(shell->cmdline, i_start, (*i_cmdline - i_start)));

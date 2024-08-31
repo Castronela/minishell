@@ -2,6 +2,26 @@
 
 // TEST FUNCTIONS
 
+void test_syntax_checker(void)
+{
+	t_shell_data	shell;
+	shell.tokenlst = tokenlst_memalloc();
+	shell.cmdline = "cmd1 \"  arg1  \" <file1> | cmd2>\'arg\' >file2";
+
+	if (shell.tokenlst == NULL)
+		return ;
+	if (tokenizer(&shell))
+	{
+		tokenlst_memfreelist(shell.tokenlst);
+		free(shell.tokenlst);
+		return ;
+	}
+	if (!check_syntax(&shell))
+    	print_lst(shell.tokenlst);
+	tokenlst_memfreelist(shell.tokenlst);
+	free(shell.tokenlst);
+}
+
 int	test_heredoc(void)
 {
 	t_shell_data	shell;

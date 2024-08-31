@@ -19,6 +19,9 @@
 # define BG_CYAN "\033[46m"
 # define BG_WHITE "\033[47m"
 
+# define ERR_STX_QT "minishell: syntax error: unclosed quotes"
+# define ERR_STX_OP "minishell: syntax error near unexpected token"
+
 /*--- Type Definitions ---*/
 
 typedef struct e_lsttoken
@@ -31,7 +34,6 @@ typedef struct s_shell_data
 {
 	t_lsttoken			**tokenlst;
 	char				*cmdline;
-	char				open_quote;
 	bool				hd_status;
 	char				*hd_delimiter;
 }						t_shell_data;
@@ -40,29 +42,42 @@ typedef struct s_shell_data
 
 int						main(void);
 
-/*--- Tokenizer ---*/
-int						tokenizer(t_shell_data *shell);
-char					*get_next_token(t_shell_data *shell,
-							ssize_t *i_cmdline);
-
 /*--- Token linked list ---*/
+
 t_lsttoken				**tokenlst_memalloc(void);
 int						tokenlst_addtoken(t_lsttoken **head, char *token);
 void					tokenlst_memfreelist(t_lsttoken **head);
 
+/*--- Tokenizer ---*/
+
+int						tokenizer(t_shell_data *shell);
+char					*get_next_token(t_shell_data *shell,
+							ssize_t *i_cmdline);
+
+/*--- Syntax Checker ---*/
+
+bool					is_quoteclosed(t_lsttoken *node_current);
+bool				    is_op_invalid(const char *op);
+int						check_op(t_lsttoken *node_current, t_lsttoken *node_prev);
+int						check_syntax(t_shell_data *shell);
+
 /*--- Heredoc ---*/
+
 bool					is_heredoc(t_shell_data *shell);
 void					rm_qt(char *token);
 
 /*--- Utils ---*/
+
 bool					is_ws(const char c);
 bool					is_op(const char c);
 bool					is_qt(const char c);
 
 /*--- Testing ---*/
+
 void					print_lst(t_lsttoken **head);
 int						test_heredoc(void);
 int						test_tokenizer(void);
+void 					test_syntax_checker(void);
 
 /* End Function Prototypes */
 
