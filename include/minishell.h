@@ -35,7 +35,6 @@ typedef struct s_inputs
 /*
 Structural changes:
 - t_shell_data is now just t_shell
-- tlsttoken now also has a prev pointer
 */
 
 /*--- Type Definitions ---*/
@@ -43,53 +42,52 @@ Structural changes:
 typedef struct e_lsttoken
 {
 	char				*token;
-	struct e_lsttoken	*prev;
 	struct e_lsttoken	*next;
 }	t_lsttoken;
 
-typedef struct s_cmd
+typedef struct s_lst_cmd
 {
-	char			*cmd;
-	char			**args;
-	int				fd_in;
-	int				fd_out;
-	int				file_in;
-	int				file_out;
-	struct s_cmd	*prev;
-	struct s_cmd	*next;
-}	t_cmd;
+	char				*bin;
+	char				**args;
+	char				*bin_path;
+	int					fd_in;
+	int					fd_out;
+	char				*file_in;	// Name of infile if < is present, else NULL
+	char				*file_out;	// Name of outfile if > is present, else NULL
+	struct s_lst_cmd	*prev;
+	struct s_lst_cmd	*next;
+}	t_lst_cmd;
 
-typedef struct s_pipes_redirs
+typedef struct s_cmds
 {
-	int	*pipe_fds;
-	int	*redir_fds;
-	int	*redir_flags;
-	int	*redir_files;
-	int	*redir_files_flags;
-	int	*redir_files_fds;
-}	t_pipes_redirs;
-
-typedef struct s_cmds_lst
-{
-	char			*input;
-	char			*token;
-	int				total_cmds;
-	t_pipes_redirs	*pr;
-	t_cmd			*cmd;
-}	t_cmds_lst;
+	char		*input;
+	char		**tokens;
+	char		**redirs;
+	int			*redir_indices;
+	t_lst_cmd	*cmd;
+}	t_cmds;
 
 typedef struct s_shell
 {
-	char		**envp;
+	char		**env;
+	char		**env_orig_bak;
+	char		*curr_dir;
+	char		**env_paths;
+	int			shlvl;
+
+	char		*curr_input;
 	t_lsttoken	**tokenlst;
-	t_cmds_lst	*cmds_lst;
-	char		*cmdline;
-	bool		hd_status;
-	char		*hd_delimiter;
+	int			total_cmds;
+	int			**pipes;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
+	t_cmds		*cmds_lst;
+
+	char		*cmdline;		// to be clarified: is this the line read using readline?
+	bool		hd_status;		// to be clarified: what is this for?
+	char		*hd_delimiter;	// to be clarified: what is this for?
 }	t_shell;
 
 /* Function Prototypes */
-int			main(void);
+int			main(int ac, char **av, char **envp);
 
 /*--- Token linked list ---*/
 t_lsttoken	**tokenlst_memalloc(void);
