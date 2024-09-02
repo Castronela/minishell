@@ -1,46 +1,107 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
+#    Updated: 2024/09/03 01:46:02 by pamatya          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 # Compiler and flags
-CC			= gcc -g
-CFLAGS		= -Wall -Wextra -Werror -I$(DIR_INC)
-GNUFLAGS	= -L/usr/local/lib -I/usr/local/include -lreadline
+CC			=	cc
+CFLAGS		=	-Wall -Wextra -Werror
+# CFLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
 
 # Commands
-RM			= rm -rf
-
-# Source and object files
-SRC			= main.c tokenizer.c memory_0.c util_0.c heredoc_0.c input_checker.c test_fn.c
-OBJ			:= $(SRC:.c=.o)
+RM			=	rm -f
 
 # Directories
-DIR_BIN		= bin
-DIR_INC		= include
-DIR_LIB		= lib
-DIR_OBJ		= obj
-DIR_SRC		= src
+# DIR_BIN		=	.
+DIR_BIN		=	bin
+DIR_INC		=	include
+DIR_LIB		=	lib
+DIR_OBJ		=	obj
+DIR_SRC		=	src
+DIR_SRC2	=	src_exe
 
-# Library Libft
-DIR_LIBFT	= $(DIR_LIB)/Libft
-FLAG_LIBFT	= -L$(DIR_LIBFT) -lft
+# Libraries and paths
+LIBFT		=	libft.a
+# LIBS		=	-lft -lreadline
+# LIBS		=	$(LIBFT) -lft -lreadline
+LIBS		=	-lft -lreadline
+LIB_PATHS	=	-L$(DIR_LIB) -L/usr/local/lib
 
-# output file
-NAME		= minishell
+# Header paths
+# HEAD_PATHS		=	-I ./$(DIR_INC) -I ./$(DIR_LIB)/includes
+HEAD_PATHS		=	-I$(DIR_INC) -I$(DIR_LIB)/includes -I/usr/local/include
+
+# Source and object files
+SRCS		=	$(DIR_SRC)/main.c
+# SRCS		=	$(DIR_SRC)/main.c \
+# 				$(DIR_SRC2)/main.c
+OBJS		=	$(SRCS:.c=.o)
+
+# Target Binary
+NAME		=	minishell
+BINARY		=	$(DIR_BIN)/$(NAME)
 
 
+# ----------------- Rules ----------------- #
 all: $(NAME)
 
-$(NAME): $(addprefix $(DIR_OBJ)/, $(OBJ))
-	make -C $(DIR_LIBFT)
-	$(CC) $(CFLAGS) $^ $(FLAG_LIBFT) $(GNUFLAGS) -o $(DIR_BIN)/$@
+# $(NAME): $(addprefix $(DIR_OBJ)/, $(OBJ)) $(LIBFT)
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(BINARY)
 
-$(DIR_OBJ)/%.o: $(DIR_SRC)/%.c 
-	$(CC) $(CFLAGS) $(GNUFLAGS) -c $< -o $@
+# $(DIR_OBJ)/%.o: %.c
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(LIBFT):
+	@$(MAKE) -sC $(DIR_LIB) all
 
 clean:
-	$(RM) $(addprefix $(DIR_OBJ)/, $(OBJ))
+	@$(RM) $(OBJS)
+	@$(MAKE) -sC $(DIR_LIB) clean
 
 fclean: clean
-	make fclean -C $(DIR_LIBFT)
-	$(RM) $(DIR_BIN)/$(NAME)
+	@$(RM) $(BINARY)
+	@$(RM) $(DIR_LIB)/libft.a
+	@$(MAKE) -sC $(DIR_LIB) fclean
 
-re: fclean all 
+re: fclean
+	@$(MAKE) all
+
+bug: $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) -g -fsanitize=address $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(DIR_BIN)/bug
+
+run: re
+	@./$(DIR_BIN)/$(NAME)
+
+val: re
+	@valgrind --leak-check=full ./$(DIR_BIN)/$(NAME) 
+# @valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(DIR_BIN)/$(NAME)
+# @valgrind --leak-check=full --show-leak-kinds=all ./$(DIR_BIN)/$(NAME)
+# @valgrind --leak-check=full --show-leak-kinds=all --gen-suppressions=all ./$(DIR_BIN)/$(NAME) 2>val_sup.txt
+# @valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_suppressions.supp ./your_program
+
+# valgpt: re
+# 	@valgrind --leak-check=full --gen-suppressions=all --suppressions=<(
+# 	cat <<EOF
+# 	{
+# 	readline_leak
+# 	Memcheck:Leak
+# 	match-leak-kinds: reachable
+# 	fun:malloc
+# 	fun:xmalloc
+# 	fun:rl_malloc
+# 	fun:_rl_init_line_state
+# 	fun:readline
+# 	}
+# 	EOF
+# 	) ./$(DIR_BIN)/$(NAME)
 
 .PHONY: all clean fclean re

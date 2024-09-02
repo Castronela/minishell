@@ -1,24 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
+/*   Updated: 2024/09/03 01:48:25 by pamatya          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "../lib/Libft/include/libft.h"
+// # include "../lib/Libft/include/libft.h"
+# include "../lib/includes/libft.h"
 # include <errno.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-
-typedef struct s_inputs
-{
-    char            *input;
-    struct s_inputs *prev;
-    struct s_inputs *next;
-}   t_inputs;
-
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define BG_BLACK "\033[40m"
 # define BG_RED "\033[41m"
@@ -35,9 +40,16 @@ typedef struct s_inputs
 /*
 Structural changes:
 - t_shell_data is now just t_shell
+...
 */
 
-/*--- Type Definitions ---*/
+/*  -------------- Type Definitions -------------- */
+typedef struct s_inputs
+{
+    char            *input;
+    struct s_inputs *prev;
+    struct s_inputs *next;
+}   t_inputs;
 
 typedef struct e_lsttoken
 {
@@ -74,6 +86,9 @@ typedef struct s_shell
 	char		*curr_dir;
 	char		**env_paths;
 	int			shlvl;
+	char		*prompt;
+	char		*error_msg;
+	int			exit_code;
 
 	char		*curr_input;
 	t_lsttoken	**tokenlst;
@@ -88,6 +103,7 @@ typedef struct s_shell
 
 /* Function Prototypes */
 int			main(int ac, char **av, char **envp);
+// int			main(int ac, char **av);
 
 /*--- Token linked list ---*/
 t_lsttoken	**tokenlst_memalloc(void);
