@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 22:26:38 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 02:04:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/03 04:23:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 // int		main(int ac, char **av);
 int		main(int ac, char **av, char **envp);
 void	arg_error(char **av);
-void 	init_shell(t_shell *shl, char **envp);
+void	clearout(t_shell *shl);
 
 // int main(int ac, char **av)
 int main(int ac, char **av, char **envp)
@@ -39,7 +39,12 @@ int main(int ac, char **av, char **envp)
 		add_history(input);
 		free(input);
 	}
-	rl_clear_history();
+	ft_print_lst(shl.env);
+	write(1, "\n", 1);
+	write(1, "\n", 1);
+	ft_print_lst(shl.env_orig_bak);
+	
+	clearout(&shl);
 	return (0);
 }
 
@@ -49,7 +54,9 @@ void	arg_error(char **av)
 	exit(127);
 }
 
-void init_shell(t_shell *shl, char **envp)
+void	clearout(t_shell *shl)
 {
-	
+	ft_lst_free(&shl->env);
+	ft_lst_free(&shl->env_orig_bak);
+	rl_clear_history();
 }

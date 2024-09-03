@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 02:29:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/03 03:45:02 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,8 @@ typedef struct s_cmds
 
 typedef struct s_shell
 {
-	char		**env;
-	char		**env_orig_bak;
+	t_lst_str	*env;
+	t_lst_str	*env_orig_bak;
 	char		*curr_dir;
 	char		**env_paths;
 	int			shlvl;
@@ -113,15 +113,21 @@ typedef struct s_shell
 	char		*hd_delimiter;	// to be clarified: what is this for?
 }	t_shell;
 
-/* Function Prototypes */
+
+/*  -------------- Function Prototypes -------------- */
+
+// src/main.c
 int			main(int ac, char **av, char **envp);
 // int			main(int ac, char **av);
 
-/* src_exe/... */
 
-/* built_ins.c */
+/* ----------------------- src_exe/... ------------------------ */
+// src_exe/built_ins.c
 
-
+// src_exe/init_shell.c
+void 	init_shell(t_shell *shl, char **envp);
+void	copy_envp(t_shell *shl, char **envp);
+void	ft_print_lst(t_lst_str *root);
 
 /* lst_str_fns.c */
 t_lst_str	*ft_lst_new(char *str);
