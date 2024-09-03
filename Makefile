@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/03 01:46:02 by pamatya          ###   ########.fr        #
+#    Updated: 2024/09/03 02:25:40 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,9 +39,9 @@ LIB_PATHS	=	-L$(DIR_LIB) -L/usr/local/lib
 HEAD_PATHS		=	-I$(DIR_INC) -I$(DIR_LIB)/includes -I/usr/local/include
 
 # Source and object files
-SRCS		=	$(DIR_SRC)/main.c
-# SRCS		=	$(DIR_SRC)/main.c \
-# 				$(DIR_SRC2)/main.c
+# SRCS		=	$(DIR_SRC)/main.c
+SRCS		=	$(DIR_SRC)/main.c \
+				$(DIR_SRC2)/lst_str_fns.c
 OBJS		=	$(SRCS:.c=.o)
 
 # Target Binary
@@ -81,7 +81,7 @@ bug: $(OBJS) $(LIBFT)
 run: re
 	@./$(DIR_BIN)/$(NAME)
 
-val: re
+val:
 	@valgrind --leak-check=full ./$(DIR_BIN)/$(NAME) 
 # @valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(DIR_BIN)/$(NAME)
 # @valgrind --leak-check=full --show-leak-kinds=all ./$(DIR_BIN)/$(NAME)

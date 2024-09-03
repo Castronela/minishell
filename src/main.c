@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 22:26:38 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 01:49:21 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/03 02:04:25 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 // int		main(int ac, char **av);
 int		main(int ac, char **av, char **envp);
 void	arg_error(char **av);
+void 	init_shell(t_shell *shl, char **envp);
 
 // int main(int ac, char **av)
 int main(int ac, char **av, char **envp)
@@ -25,15 +26,12 @@ int main(int ac, char **av, char **envp)
 	if (ac != 1)
 		arg_error(av);
 	init_shell(&shl, envp);
-	ft_putstr_fd("Welcome to Minishell!\n", 1);
-	using_history();
 	while (1)
 	{
-		// input = readline("Mini-Schale$");
 		input = readline("Mini-Schale $ ");
 		if (!input)
-			continue;
-		else if (!(ft_strncmp(input, "exit", 4)))
+			break ;
+		if (!(ft_strncmp(input, "exit", 4)))
 		{
 			free(input);
 			break ;
@@ -51,7 +49,7 @@ void	arg_error(char **av)
 	exit(127);
 }
 
-void init_shell()
+void init_shell(t_shell *shl, char **envp)
 {
 	
 }

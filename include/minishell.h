@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 01:48:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/03 02:29:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,29 @@ Structural changes:
 */
 
 /*  -------------- Type Definitions -------------- */
+
+/*
+Previously existing type definitions:
+
 typedef struct s_inputs
 {
     char            *input;
-    struct s_inputs *prev;
     struct s_inputs *next;
 }   t_inputs;
+
+*/
 
 typedef struct e_lsttoken
 {
 	char				*token;
 	struct e_lsttoken	*next;
 }	t_lsttoken;
+
+typedef struct s_lst_str
+{
+    char            *str;
+    struct s_lst_str *next;
+}   t_lst_str;
 
 typedef struct s_lst_cmd
 {
@@ -91,7 +102,8 @@ typedef struct s_shell
 	int			exit_code;
 
 	char		*curr_input;
-	t_lsttoken	**tokenlst;
+	// t_lsttoken	**tokenlst;
+	t_lst_str	**tokenlst;
 	int			total_cmds;
 	int			**pipes;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
 	t_cmds		*cmds_lst;
@@ -104,6 +116,32 @@ typedef struct s_shell
 /* Function Prototypes */
 int			main(int ac, char **av, char **envp);
 // int			main(int ac, char **av);
+
+/* src_exe/... */
+
+/* built_ins.c */
+
+
+
+/* lst_str_fns.c */
+t_lst_str	*ft_lst_new(char *str);
+t_lst_str	*ft_lst_last(t_lst_str *list);
+void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
+int			ft_lst_size(t_lst_str *root);
+void		ft_lst_free(t_lst_str **root);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*--- Token linked list ---*/
 t_lsttoken	**tokenlst_memalloc(void);
