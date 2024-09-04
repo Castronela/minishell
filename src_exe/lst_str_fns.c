@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 02:38:21 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/04 02:43:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void	ft_lst_free(t_lst_str **root)
 	{
 		free_node = del_node;
 		del_node = del_node->next;
+		free(free_node->str);
 		free(free_node);
 	}
 	*root = NULL;

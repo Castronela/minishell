@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/03 03:45:02 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/04 04:13:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,15 @@ typedef struct e_lsttoken
 
 typedef struct s_lst_str
 {
-    char            *str;
-    struct s_lst_str *next;
+    char				*str;
+    struct s_lst_str	*next;
 }   t_lst_str;
 
 typedef struct s_lst_cmd
 {
-	char				*bin;
-	char				**args;
 	char				*bin_path;
+	char				*bin;
+	t_lst_str			*args;
 	int					fd_in;
 	int					fd_out;
 	char				*file_in;	// Name of infile if < is present, else NULL
@@ -84,8 +84,8 @@ typedef struct s_lst_cmd
 typedef struct s_cmds
 {
 	char		*input;
-	char		**tokens;
-	char		**redirs;
+	t_lst_str	*tokens;
+	t_lst_str	*redirs;
 	int			*redir_indices;
 	t_lst_cmd	*cmd;
 }	t_cmds;
@@ -93,19 +93,20 @@ typedef struct s_cmds
 typedef struct s_shell
 {
 	t_lst_str	*env;
-	t_lst_str	*env_orig_bak;
-	char		*curr_dir;
-	char		**env_paths;
+	t_lst_str	*env_bak;
+	t_lst_str	*env_paths;
 	int			shlvl;
+	char		*cur_wd;
+	char		*env_prev_bin_path;
 	char		*prompt;
-	char		*error_msg;
+	// char		*error_msg;
 	int			exit_code;
 
 	char		*curr_input;
-	// t_lsttoken	**tokenlst;
-	t_lst_str	**tokenlst;
+	// t_lsttoken	**tokenlst;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
+	t_lst_str	*tokenlst;
 	int			total_cmds;
-	int			**pipes;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
+	int			**pipes;
 	t_cmds		*cmds_lst;
 
 	char		*cmdline;		// to be clarified: is this the line read using readline?
@@ -114,20 +115,25 @@ typedef struct s_shell
 }	t_shell;
 
 
-/*  -------------- Function Prototypes -------------- */
+/*  ==================================================== Function Prototypes ==================================================== */
 
 // src/main.c
 int			main(int ac, char **av, char **envp);
 // int			main(int ac, char **av);
 
 
-/* ----------------------- src_exe/... ------------------------ */
+/* -------------------------------------------------------- src_exe/... -------------------------------------------------------- */
 // src_exe/built_ins.c
 
 // src_exe/init_shell.c
-void 	init_shell(t_shell *shl, char **envp);
-void	copy_envp(t_shell *shl, char **envp);
-void	ft_print_lst(t_lst_str *root);
+void 		init_shell(t_shell *shl, char **envp);
+void		copy_env(t_shell *shl, char **envp);
+void		copy_env_paths(t_shell *shl, char **envp);
+// void		update_shlvl(t_shell *shl);
+// void		update_cwd(t_shell *shl);
+
+void		exit_early(t_shell *shl, char **split2free, char *msg);
+void		ft_print_lst(t_lst_str *root);
 
 /* lst_str_fns.c */
 t_lst_str	*ft_lst_new(char *str);
@@ -135,12 +141,6 @@ t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
-
-
-
-
-
-
 
 
 

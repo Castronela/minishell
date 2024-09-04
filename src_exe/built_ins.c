@@ -49,3 +49,16 @@ void	exec_built_in(t_shell *shell)
 	if (ft_strncmp(cmd, "exit", 5) == 0)
 		exec_echo(shell);
 }
+
+void	exec_echo(t_shell *shell)
+{
+	// redirections
+	
+	
+	// echo with option -n
+	
+
+	// echo with no options
+
+
+}
