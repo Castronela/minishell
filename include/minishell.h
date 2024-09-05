@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/04 04:13:13 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/05 04:47:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,21 +97,19 @@ typedef struct s_shell
 	t_lst_str	*env_paths;
 	int			shlvl;
 	char		*cur_wd;
-	char		*env_prev_bin_path;
+	char		*prev_bin_path;
 	char		*prompt;
-	// char		*error_msg;
 	int			exit_code;
 
-	char		*curr_input;
+	char		*cmdline;
+	bool		hd_status;		// to be clarified: what is this for?
+	char		*hd_delimiter;	// to be clarified: what is this for?
+
 	// t_lsttoken	**tokenlst;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
 	t_lst_str	*tokenlst;
 	int			total_cmds;
 	int			**pipes;
 	t_cmds		*cmds_lst;
-
-	char		*cmdline;		// to be clarified: is this the line read using readline?
-	bool		hd_status;		// to be clarified: what is this for?
-	char		*hd_delimiter;	// to be clarified: what is this for?
 }	t_shell;
 
 
@@ -129,11 +127,13 @@ int			main(int ac, char **av, char **envp);
 void 		init_shell(t_shell *shl, char **envp);
 void		copy_env(t_shell *shl, char **envp);
 void		copy_env_paths(t_shell *shl, char **envp);
-// void		update_shlvl(t_shell *shl);
-// void		update_cwd(t_shell *shl);
+void		update_shlvl(t_shell *shl);
+void		set_prompt(t_shell *shl, char *prefix, char *separator);
+char		*assemble_prompt(char *prefix, char *cwd, char *separator);
 
-void		exit_early(t_shell *shl, char **split2free, char *msg);
+void		exit_early(t_shell *shl, char **split, char *msg);
 void		ft_print_lst(t_lst_str *root);
+
 
 /* lst_str_fns.c */
 t_lst_str	*ft_lst_new(char *str);
