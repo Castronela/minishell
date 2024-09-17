@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/04 22:47:51 by pamatya          ###   ########.fr        #
+#    Updated: 2024/09/06 02:28:58 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ HEAD_PATHS		=	-I$(DIR_INC) -I$(DIR_LIB)/includes -I/usr/local/include
 # Source and object files
 # SRCS		=	$(DIR_SRC)/main.c
 SRCS		=	$(DIR_SRC)/main.c \
-				$(DIR_SRC2)/init_shell.c $(DIR_SRC2)/lst_str_fns.c
+				$(DIR_SRC2)/init_shell.c $(DIR_SRC2)/lst_str_fns.c $(DIR_SRC2)/built_ins.c
 OBJS		=	$(SRCS:.c=.o)
 
 # Target Binary

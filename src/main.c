@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 22:26:38 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/05 04:41:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/17 20:43:55 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,22 +38,30 @@ int main(int ac, char **av, char **envp)
 		add_history(shl.cmdline);
 		free(shl.cmdline);
 	}
+	
 	ft_print_lst(shl.env);
 	write(1, "\n", 1);
 	write(1, "\n", 1);
-	ft_print_lst(shl.env_bak);
-	write(1, "\n", 1);
-	write(1, "\n", 1);
+	// ft_print_lst(shl.env_bak);
+	// write(1, "\n", 1);
+	// write(1, "\n", 1);
+	
 	ft_print_lst(shl.env_paths);
 	write(1, "\n", 1);
 	write(1, "\n", 1);
+	
 	ft_printf("cwd: %s\n", shl.cur_wd);
 	write(1, "\n", 1);
 	write(1, "\n", 1);
+	
 	ft_printf("shlvl: %d\n", shl.shlvl);
 	write(1, "\n", 1);
 	write(1, "\n", 1);
 	
+	// shl.cmds->cmds_lst->args = ft_lst_new("Hello World");
+	// exec_echo(shl.cmds->cmds_lst);
+	// ft_lst_free(&shl.cmds->cmds_lst->args);
+
 	clearout(&shl);
 	ft_printf("Finished\n");
 	return (0);

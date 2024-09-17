@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/05 04:47:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/17 20:38:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,27 +68,27 @@ typedef struct s_lst_str
     struct s_lst_str	*next;
 }   t_lst_str;
 
-typedef struct s_lst_cmd
+typedef struct s_cmds
 {
+	int					cmd_index;
 	char				*bin_path;
 	char				*bin;
-	t_lst_str			*args;
+	t_lst_str				*args;
 	int					fd_in;
 	int					fd_out;
 	char				*file_in;	// Name of infile if < is present, else NULL
 	char				*file_out;	// Name of outfile if > is present, else NULL
-	struct s_lst_cmd	*prev;
-	struct s_lst_cmd	*next;
-}	t_lst_cmd;
-
-typedef struct s_cmds
-{
-	char		*input;
-	t_lst_str	*tokens;
-	t_lst_str	*redirs;
-	int			*redir_indices;
-	t_lst_cmd	*cmd;
+	struct s_cmds		*next;
 }	t_cmds;
+
+typedef struct s_lst_cmds
+{
+	char				*input;
+	t_lst_str			*tokens;
+	t_lst_str			*redirs;
+	int					*redir_indices;	// not sure yet if this is needed
+	t_cmds				*cmds_lst;
+}	t_lst_cmds;
 
 typedef struct s_shell
 {
@@ -109,19 +109,23 @@ typedef struct s_shell
 	t_lst_str	*tokenlst;
 	int			total_cmds;
 	int			**pipes;
-	t_cmds		*cmds_lst;
+	t_lst_cmds	*cmds;
 }	t_shell;
 
 
-/*  ==================================================== Function Prototypes ==================================================== */
+/*  ========================== Function Prototypes ========================== */
 
 // src/main.c
 int			main(int ac, char **av, char **envp);
 // int			main(int ac, char **av);
 
 
-/* -------------------------------------------------------- src_exe/... -------------------------------------------------------- */
+/* ------------------------------ src_exe/... ------------------------------ */
 // src_exe/built_ins.c
+int		is_built_in(char *cmd);
+void	exec_built_in(t_shell *shl);
+void	exec_echo(t_cmds *cmd);
+
 
 // src_exe/init_shell.c
 void 		init_shell(t_shell *shl, char **envp);

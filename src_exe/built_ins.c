@@ -1,6 +1,10 @@
 
 #include "../include/minishell.h"
 
+int		is_built_in(char *cmd);
+void	exec_built_in(t_shell *shl);
+void	exec_echo(t_cmds *cmd);
+
 /*
 Your shell must implement the following builtins:
 ◦ echo with option -n
@@ -32,33 +36,45 @@ int	is_built_in(char *cmd)
 	return (0);
 }
 
-void	exec_built_in(t_shell *shell)
+void	exec_built_in(t_shell *shl)
 {
-	if (ft_strncmp(cmd, "echo", 5) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "pwd", 4) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "export", 7) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "unset", 6) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "env", 4) == 0)
-		exec_echo(shell);
-	if (ft_strncmp(cmd, "exit", 5) == 0)
-		exec_echo(shell);
+	if (ft_strncmp(shl->cmds->cmds_lst->bin, "echo", 5) == 0)
+		exec_echo(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "cd", 3) == 0)
+	// 	exec_cd(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "pwd", 4) == 0)
+	// 	exec_pwd(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "export", 7) == 0)
+	// 	exec_export(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "unset", 6) == 0)
+	// 	exec_unset(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "env", 4) == 0)
+	// 	exec_env(shl->cmds->cmds_lst);
+	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "exit", 5) == 0)
+	// 	exec_exit(shl->cmds->cmds_lst);
 }
 
-void	exec_echo(t_shell *shell)
+void	exec_echo(t_cmds *cmd)
 {
-	// redirections
-	
-	
-	// echo with option -n
-	
+	char	*str;
 
-	// echo with no options
-
-
+	str = cmd->args->str;
+	if (ft_strncmp(str, "-n", 2) == 0)
+	{
+		// echo with -n option
+		// str = cmd->args->next->str;
+		str = cmd->args->str;
+		ft_putstr_fd(str, STDOUT_FILENO);
+	}
+	else
+	{
+		// echo with no options
+		ft_putstr_fd(str, STDOUT_FILENO);
+		write(STDOUT_FILENO, "\n", 1);
+	}
 }
+
+// void	exec_cd(t_cmds *cmd)
+// {
+	
+// }

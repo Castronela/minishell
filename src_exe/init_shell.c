@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/05 04:55:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/17 20:18:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
-	set_prompt(shl, "Mini-Schale: ", " $> ");
-	
+	set_prompt(shl, "Your wish My command: ", " $> ");
+
 
 }
                                                                                                                                                                                                                                                                        
@@ -151,7 +151,6 @@ char	*assemble_prompt(char *prefix, char *cwd, char *separator)
 	free(tmp[0]);
 	return (tmp[1]);
 }
-
 
 void	exit_early(t_shell *shl, char **split, char *msg)
 {
