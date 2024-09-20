@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/17 20:38:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:04:20 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,6 @@ Structural changes:
 
 /*  -------------- Type Definitions -------------- */
 
-/*
-Previously existing type definitions:
-
-typedef struct s_inputs
-{
-    char            *input;
-    struct s_inputs *next;
-}   t_inputs;
-
-*/
-
-typedef struct e_lsttoken
-{
-	char				*token;
-	struct e_lsttoken	*next;
-}	t_lsttoken;
-
 typedef struct s_lst_str
 {
     char				*str;
@@ -70,15 +53,15 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	int					cmd_index;
-	char				*bin_path;
-	char				*bin;
-	t_lst_str				*args;
-	int					fd_in;
-	int					fd_out;
-	char				*file_in;	// Name of infile if < is present, else NULL
-	char				*file_out;	// Name of outfile if > is present, else NULL
-	struct s_cmds		*next;
+	// int				cmd_index;	// Don't know if we require this, yet
+	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
+	char			*bin;			// Maybe this is not necessary
+	char			**args;			// Double char pointer to the whole command call including command its flags and its args
+	int				fd_in;			// Defaults to STDINFILENO
+	int				fd_out;			// Defaults to STDOUTFILENO
+	char			*file_in;		// Name of infile if < is present, else NULL
+	char			*file_out;		// Name of outfile if > is present, else NULL
+	struct s_cmds	*next;
 }	t_cmds;
 
 typedef struct s_lst_cmds

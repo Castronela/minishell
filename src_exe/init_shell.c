@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/17 20:18:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/18 18:14:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,15 @@ char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 void	exit_early(t_shell *shl, char **split, char *msg);
 void	ft_print_lst(t_lst_str *root);
 
+/*
+Initializes the elements of the shell struct "t_shell"
+  - Copies the environment variables to the shell struct
+  - Copies the PATH variable to the shell struct
+  - Updates the SHLVL variable
+  - Sets the current working directory
+  - Sets the prompt
+  - Frees all malloc's and exits the program if any of the above steps fail
+*/
 void	init_shell(t_shell *shl, char **envp)
 {
 	shl->env = NULL;
@@ -40,7 +49,14 @@ void	init_shell(t_shell *shl, char **envp)
 
 
 }
-                                                                                                                                                                                                                                                                       
+
+/*
+Copies the environment variables to the shell struct
+  - Copies the environment variables into shl->env and shl->env_bak as lists
+  - Frees allocations and exits the program if malloc fails
+  - Lists are created using ft_lst_new and ft_lst_addback
+  - Memories and errors are handled by exit_early function in case of failure
+*/
 void	copy_env(t_shell *shl, char **envp)
 {
 	int 		i;
@@ -60,6 +76,15 @@ void	copy_env(t_shell *shl, char **envp)
 	}
 }
 
+/*
+Copies env path variable into shell struct
+  - Splits the PATH variable using ft_split into a char**
+  - Copies the PATH variable into shl->env_paths as a list
+  - Frees allocations and exits the program if malloc fails
+  - List is created using ft_lst_new and ft_lst_addback
+  - Memories and errors are handled by exit_early function in case of failure
+  - Allocations by ft_split are freed using ft_free2d
+*/
 void	copy_env_paths(t_shell *shl, char **envp)
 {
 	int			i;
@@ -89,6 +114,14 @@ void	copy_env_paths(t_shell *shl, char **envp)
 	ft_free2d(paths);
 }
 
+/*
+Updates the SHLVL environment variable
+  - Finds the SHLVL variable in the environment list using ft_strncmp
+  - Assignes shl->shlvl as int by converting using ft_atoi
+  - Updates the SHLVL variable in the shl->env and shl->env_bak lists by 1 as char*
+  - Frees the new value of SHLVL
+  - Frees the new
+*/
 void	update_shlvl(t_shell *shl)
 {
 	t_lst_str	*new_node[2];

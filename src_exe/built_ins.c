@@ -64,17 +64,17 @@ void	exec_echo(t_cmds *cmd)
 		// echo with -n option
 		// str = cmd->args->next->str;
 		str = cmd->args->str;
-		ft_putstr_fd(str, STDOUT_FILENO);
+		ft_putstr_fd(str, cmd->fd_out);
 	}
 	else
 	{
 		// echo with no options
-		ft_putstr_fd(str, STDOUT_FILENO);
-		write(STDOUT_FILENO, "\n", 1);
+		ft_putstr_fd(str, cmd->fd_out);
+		write(cmd->fd_out, "\n", 1);
 	}
 }
 
-// void	exec_cd(t_cmds *cmd)
-// {
+void	exec_cd(t_cmds *cmd)
+{
 	
-// }
+}
