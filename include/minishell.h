@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/20 17:07:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:18:03 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,7 @@
 # define BG_CYAN "\033[46m"
 # define BG_WHITE "\033[47m"
 
-# define ERR_STX_QT "minishell: syntax error: unclosed quotes"
-# define ERR_STX_OP "minishell: syntax error near unexpected token"
+
 
 /*
 Structural changes:
@@ -44,6 +43,15 @@ Structural changes:
 */
 
 /*  -------------- Type Definitions -------------- */
+
+//Standard error message definitions here...
+/* -------------------------------- STD_ERR -------------------------------- */
+# define ERR_STX_QT "minishell: syntax error: unclosed quotes"
+# define ERR_STX_OP "minishell: syntax error near unexpected token"
+# define ERR_MALLOC "minishell: malloc failed"
+
+
+/* -------------------------------- STD_ERR -------------------------------- */
 
 typedef struct s_lst_str
 {
