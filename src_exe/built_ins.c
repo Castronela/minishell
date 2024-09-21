@@ -58,12 +58,12 @@ void	exec_echo(t_cmds *cmd)
 {
 	char	*str;
 
-	str = cmd->args->str;
-	if (ft_strncmp(str, "-n", 2) == 0)
+	str = *cmd->args;
+	if (ft_strncmp(str, "-n ", 3) == 0)
 	{
 		// echo with -n option
 		// str = cmd->args->next->str;
-		str = cmd->args->str;
+		str = *(cmd->args + 1);
 		ft_putstr_fd(str, cmd->fd_out);
 	}
 	else
