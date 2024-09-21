@@ -5,25 +5,68 @@ Returns true if c is whitespace
 */
 bool	is_ws(const char c)
 {
-	if (c >= 9 && c <= 13)
-		return (true);
-	else if (c == 32 || c == 9)
-		return (true);
+	const char white_space[] = {WHITE_SPACE};
+	ssize_t i;
+
+	i = -1;
+	while (white_space[++i])
+	{
+		if (c == white_space[i])
+			return (true);
+	}
 	return (false);
 }
 
 /*
-Returns true if c is operator
+Returns true if str starts with valid CONTROL operator 
+and sets size of operator
 */
-bool	is_op(const char c)
+bool	is_op_ctrl_char(const char *str, ssize_t *size)
 {
-	if (c == '<')
-		return (true);
-	else if (c == '>')
-		return (true);
-	else if (c == '|')
-		return (true);
-	return (false);
+	const char *valid_char[] = {OPERATOR_CONTROL};
+	bool is_op;
+	ssize_t len;
+	ssize_t i;
+
+	i = -1;
+	is_op = false;
+	while (valid_char[++i])
+	{
+		len = ft_strlen(valid_char[i]);
+		if (!strncmp(valid_char[i], str, len))
+		{
+			if (size && len > *size)
+				*size = len;
+			is_op = true;
+		}
+	}
+	return (is_op);
+}
+
+/*
+Returns true if str starts with valid REDIRECTION operator
+and sets size of operator
+*/
+bool	is_op_redir_char(const char *str, ssize_t *size)
+{
+	const char *valid_char[] = {OPERATOR_REDIRECTION};
+	bool is_op;
+	ssize_t len;
+	ssize_t i;
+
+	i = -1;
+	is_op = false;
+	while (valid_char[++i])
+	{
+		len = ft_strlen(valid_char[i]);
+		if (!strncmp(valid_char[i], str, len))
+		{
+			if (size && len > *size)
+				*size = len;
+			is_op = true;
+		}
+	}
+	return (is_op);
 }
 
 /*
@@ -31,10 +74,15 @@ Returns true if c is single or double quote
 */
 bool	is_qt(const char c)
 {
-	if (c == '\"')
-		return (true);
-	else if (c == '\'')
-		return (true);
+	const char quote[] = {QUOTE};
+	ssize_t i;
+
+	i = -1;
+	while (quote[++i])
+	{
+		if (c == quote[i])
+			return (true);
+	}
 	return (false);
 }
 

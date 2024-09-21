@@ -10,33 +10,42 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-# define BG_BLACK "\033[40m"
-# define BG_RED "\033[41m"
-# define BG_GREEN "\033[42m"
-# define BG_YELLOW "\033[43m"
-# define BG_BLUE "\033[44m"
-# define BG_MAGENTA "\033[45m"
-# define BG_CYAN "\033[46m"
-# define BG_WHITE "\033[47m"
+# define BG_BLACK 				"\033[40m"
+# define BG_RED 				"\033[41m"
+# define BG_GREEN 				"\033[42m"
+# define BG_YELLOW 				"\033[43m"
+# define BG_BLUE 				"\033[44m"
+# define BG_MAGENTA 			"\033[45m"
+# define BG_CYAN 				"\033[46m"
+# define BG_WHITE 				"\033[47m"
 
-# define ERR_STX_QT "minishell: syntax error: unclosed quotes"
-# define ERR_STX_OP "minishell: syntax error near unexpected token"
+# define WHITE_SPACE 			' ', 0
+# define QUOTE 					'\'', '\"', 0
+# define OPERATOR_REDIRECTION 	"<", "<<", ">", ">>", NULL
+# define OPERATOR_CONTROL 		"|", NULL
+
+# define ERR_MALLOC 			"Error malloc"
+
+# define ERR_STX_UNEXP_TOKEN 	"minishell: syntax error near unexpected token"
+# define ERR_STX_OPEN_QT 		"minishell: syntax error: unclosed quotes"
+# define ERR_STX_INCOMPLETE_OP 	"minishell: input error: incomplete control operator"
 
 /*--- Type Definitions ---*/
 
-typedef struct e_lsttoken
+typedef struct s_lst_str
 {
-	char				*token;
-	struct e_lsttoken	*next;
-}						t_lsttoken;
+	char				*str;
+	struct s_lst_str	*next;
+}						t_lst_str;
 
-typedef struct s_shell_data
+typedef struct s_shell
 {
-	t_lsttoken			**tokenlst;
+	t_lst_str			*tokenlst;
 	char				*cmdline;
 	bool				hd_status;
 	char				*hd_delimiter;
-}						t_shell_data;
+	size_t				token_count;
+}						t_shell;
 
 /* Function Prototypes */
 
@@ -44,49 +53,52 @@ int						main(void);
 
 /*--- Token linked list ---*/
 
-t_lsttoken				**tokenlst_memalloc(void);
-int						tokenlst_addtoken(t_lsttoken **head, char *token);
-void					tokenlst_memfreelist(t_lsttoken **head);
+t_lst_str				*ft_lst_new(char *str);
+t_lst_str				*ft_lst_last(t_lst_str *list);
+void					ft_lst_addback(t_lst_str **root, t_lst_str *new);
+int						ft_lst_size(t_lst_str *root);
+void					ft_lst_free(t_lst_str **root);
 
 /*--- Tokenizer ---*/
 
-int						tokenizer(t_shell_data *shell);
-char					*get_next_token(t_shell_data *shell,
+int						tokenizer(t_shell *shell);
+char					*get_next_token(t_shell *shell, ssize_t *i_cmdline);
+int						add_token_to_lst(t_lst_str **root, char *token);
+bool					op_in_token(const char *str, int start,
 							ssize_t *i_cmdline);
 
 /*--- Syntax Checker ---*/
 
-bool					is_quoteclosed(t_lsttoken *node_current);
-bool					is_op_invalid(const char *op);
-int						check_op(t_lsttoken *node_current,
-							t_lsttoken *node_prev);
-int						check_syntax(t_shell_data *shell);
+bool					is_quoteclosed(t_lst_str *node_current);
+int						check_op(t_lst_str *node_current, t_lst_str *node_prev);
+int						check_syntax(t_shell *shell);
 
 /*--- Heredoc ---*/
 
-bool					is_heredoc(t_shell_data *shell);
+bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 
-/*--- Replace variables ---*/
+/*--- Variable Expansion ---*/
 
-int						repl_all_var(t_shell_data *shell);
-int						repl_node_var(t_lsttoken *node);
-char					*repl_var(char *token, char *variable, int *index);
-char					*get_var(const char *token, int i);
+int						variable_expansion(t_shell *shell);
+int						subst_vars(t_lst_str *node);
+char					*subst_var_value(char *token, char *variable, ssize_t *var_index);
+char					*get_var(const char *token, ssize_t i);
 
 /*--- Utils ---*/
 
 bool					is_ws(const char c);
-bool					is_op(const char c);
 bool					is_qt(const char c);
+bool					is_op_ctrl_char(const char *str, ssize_t *size);
+bool					is_op_redir_char(const char *str, ssize_t *size);
 
 /*--- Testing ---*/
 
-void					print_lst(t_lsttoken **head);
+void					print_lst(t_lst_str **head);
 int						test_heredoc(void);
 int						test_tokenizer(void);
 void					test_syntax_checker(void);
-void					test_var_repl(void);
+void					test_variable_expansion(void);
 
 /* End Function Prototypes */
 

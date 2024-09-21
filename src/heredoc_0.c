@@ -6,18 +6,18 @@ Returns 'true' if heredoc instance is open, sets hd_status to true,
 Returns 'false' if NO heredoc instance or if heredoc instance 
     is closed by delimiter
 */
-bool	is_heredoc(t_shell_data *shell)
+bool	is_heredoc(t_shell *shell)
 {
-	t_lsttoken	*node_current;
+	t_lst_str	*node_current;
 
-	node_current = *shell->tokenlst;
+	node_current = shell->tokenlst;
 	while (shell->hd_status == false && node_current != NULL)
 	{
-		if (!ft_strncmp(node_current->token, "<<", 3))
+		if (!ft_strncmp(node_current->str, "<<", 3))
 		{
 			shell->hd_status = true;
-			rm_qt(node_current->next->token);
-			shell->hd_delimiter = node_current->next->token;
+			rm_qt(node_current->next->str);
+			shell->hd_delimiter = node_current->next->str;
 			return (true);
 		}
 		node_current = node_current->next;
@@ -26,7 +26,7 @@ bool	is_heredoc(t_shell_data *shell)
 	{
 		while (node_current->next != NULL)
 			node_current = node_current->next;
-		if (!ft_strncmp(node_current->token, shell->hd_delimiter,
+		if (!ft_strncmp(node_current->str, shell->hd_delimiter,
 				ft_strlen(shell->hd_delimiter) + 1))
 			return (false);
 		return (true);

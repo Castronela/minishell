@@ -1,47 +1,45 @@
 #include "minishell.h"
 
 /*
-Replaces variable, from token, with its value, from environ
-Returns NULL on failure
+Substitutes variable, from token, with its value retrieved from environ
+On failure: prints error, frees token, returns NULL 
 */
-char	*repl_var(char *token, char *variable, int *index)
+char	*subst_var_value(char *token, char *variable, ssize_t *var_index)
 {
 	char	*str[2];
 	int		len[3];
 
-	if (*variable == 0)
-		return (token);
 	len[0] = ft_strlen(token);
 	len[1] = ft_strlen(variable);
-	len[2] = 0;
 	str[0] = getenv(variable);
+	len[2] = 0;
 	if (str[0] != NULL)
 		len[2] = ft_strlen(str[0]);
 	str[1] = malloc(len[0] - len[1] + len[2]);
 	if (str[1] == NULL)
-		perror("Error malloc");
+		perror(ERR_MALLOC);
 	else
 	{
-		ft_strlcpy(str[1], token, (*index) + 1);
+		ft_strlcpy(str[1], token, (*var_index) + 1);
 		if (str[0] != NULL)
-			ft_strlcpy(&str[1][*index], str[0], len[2] + 1);
-		ft_strlcpy(&str[1][(*index) + len[2]], &token[(*index) + len[1] + 1],
-			len[0] - (*index) - len[1]);
-		(*index) += len[2] - 1;
+			ft_strlcpy(&str[1][*var_index], str[0], len[2] + 1);
+		ft_strlcpy(&str[1][(*var_index) + len[2]], &token[(*var_index) + len[1] + 1],
+			len[0] - (*var_index) - len[1]);
+		(*var_index) += len[2] - 1;
 	}
 	free(token);
 	return (str[1]);
 }
 
 /*
-Returns variable name from token
-Returns NULL on failure
+Retrieves first variable from token
+On failure: prints error, returns NULL
 */
-char	*get_var(const char *token, int i)
+char	*get_var(const char *token, ssize_t i)
 {
-	char	*var;
-	int		start;
-	int		len;
+	char		*var;
+	ssize_t		start;
+	ssize_t		len;
 
 	i++;
 	start = i;
@@ -53,40 +51,38 @@ char	*get_var(const char *token, int i)
 	}
 	var = malloc(len + 1);
 	if (var == NULL)
-	{
-		perror("Error malloc");
-		return (NULL);
-	}
-	ft_strlcpy(var, &token[start], len + 1);
+		perror(ERR_MALLOC);
+	else
+		ft_strlcpy(var, &token[start], len + 1);
 	return (var);
 }
 
 /*
-Replaces variables, from node, with their values
-Returns 1 on failure
+Substitutes all variables, from node, with their values
+On failure: returns 1
 */
-int	repl_node_var(t_lsttoken *node)
+int	subst_vars(t_lst_str *node)
 {
 	char	*var;
 	char	quote;
-	int		i;
+	ssize_t		i;
 
 	quote = 0;
 	i = -1;
-	while (node->token[++i])
+	while (node->str[++i])
 	{
-		if (quote == 0 && is_qt(node->token[i]))
-			quote = node->token[i];
-		else if (quote == node->token[i])
+		if (quote == 0 && is_qt(node->str[i]))
+			quote = node->str[i];
+		else if (quote == node->str[i])
 			quote = 0;
-		if (node->token[i] == '$' && (quote == 0 || quote == '\"'))
+		if (node->str[i] == '$' && (quote == 0 || quote == '\"'))
 		{
-			var = get_var(node->token, i);
+			var = get_var(node->str, i);
 			if (var == NULL)
 				return (1);
-			node->token = repl_var(node->token, var, &i);
+			node->str = subst_var_value(node->str, var, &i);
 			free(var);
-			if (node->token == NULL)
+			if (node->str == NULL)
 				return (1);
 		}
 	}
@@ -94,17 +90,18 @@ int	repl_node_var(t_lsttoken *node)
 }
 
 /*
-Replaces variables, from all tokens, with their values
-Returns 1 on failure
+(Main) Substitutes variables with their respective values
+On failure: returns 1 (to free: tokenlst)
+Caution: run before removing quotes!
 */
-int	repl_all_var(t_shell_data *shell)
+int	variable_expansion(t_shell *shell)
 {
-	t_lsttoken	*node_current;
+	t_lst_str	*node_current;
 
-	node_current = *shell->tokenlst;
+	node_current = shell->tokenlst;
 	while (node_current)
 	{
-		if (repl_node_var(node_current))
+		if (subst_vars(node_current))
 			return (1);
 		node_current = node_current->next;
 	}
