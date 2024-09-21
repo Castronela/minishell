@@ -76,5 +76,19 @@ void	exec_echo(t_cmds *cmd)
 
 void	exec_cd(t_cmds *cmd)
 {
+	if (*(cmd->args + 1) == '.')
+		return ;
+	else if (ft_strncmp(*(cmd->args + 1), "..", 2) == 0)
+		cwd_up();
 	
+}
+
+int	path_isvalid(char *path)
+{
+	int			i;
+	struct stat	bufr;
+	
+	i = stat(path, &bufr);
+	
+	return (i);
 }
