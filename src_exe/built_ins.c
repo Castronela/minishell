@@ -3,7 +3,8 @@
 
 int		is_built_in(char *cmd);
 void	exec_built_in(t_shell *shl);
-void	exec_echo(t_cmds *cmd);
+void	exec_echo(t_shell *shl);
+void	exec_cd(t_shell *shl);
 
 /*
 Your shell must implement the following builtins:
@@ -21,17 +22,17 @@ int	is_built_in(char *cmd)
 {
 	if (ft_strncmp(cmd, "echo", 5) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "cd", 3) == 0)
+	else if (ft_strncmp(cmd, "cd", 3) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "pwd", 4) == 0)
+	else if (ft_strncmp(cmd, "pwd", 4) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "export", 7) == 0)
+	else if (ft_strncmp(cmd, "export", 7) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "unset", 6) == 0)
+	else if (ft_strncmp(cmd, "unset", 6) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "env", 4) == 0)
+	else if (ft_strncmp(cmd, "env", 4) == 0)
 		return (1);
-	if (ft_strncmp(cmd, "exit", 5) == 0)
+	else if (ft_strncmp(cmd, "exit", 5) == 0)
 		return (1);
 	return (0);
 }
@@ -54,41 +55,73 @@ void	exec_built_in(t_shell *shl)
 	// 	exec_exit(shl->cmds->cmds_lst);
 }
 
-void	exec_echo(t_cmds *cmd)
+/*
+Built-in echo function
+  - Need to check if this is complete/sufficient...
+  - if the command contains "-n ", then it writes to fd_out without a newline
+  - if command contains no -n option, then it writes to fd_out followed by a newline
+*/
+void	exec_echo(t_shell *shl)
 {
-	char	*str;
+	char	**str;
 
-	str = *cmd->args;
-	if (ft_strncmp(str, "-n ", 3) == 0)
+	str = shl->cmds->cmds_lst->args;
+	if (ft_strncmp(*str, "-n ", 3) == 0)
 	{
 		// echo with -n option
-		// str = cmd->args->next->str;
-		str = *(cmd->args + 1);
-		ft_putstr_fd(str, cmd->fd_out);
+		ft_putstr_fd(*str + 1, shl->cmds->cmds_lst->fd_out);
 	}
 	else
 	{
 		// echo with no options
-		ft_putstr_fd(str, cmd->fd_out);
-		write(cmd->fd_out, "\n", 1);
+		ft_putstr_fd(*str, shl->cmds->cmds_lst->fd_out);
+		write(shl->cmds->cmds_lst->fd_out, "\n", 1);
 	}
 }
 
-void	exec_cd(t_cmds *cmd)
+/*
+Built-in cd function
+  - Checks first if the path provided is just ".", in which case it does nothing
+  - If the path is only "..", then cwd_up() is called which updates the cwd system variable to one step above
+  - If the path contains anything else, it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
+*/
+void	exec_cd(t_shell *shl)
 {
-	if (*(cmd->args + 1) == '.')
+	char	**str;
+
+	str = shl->cmds->cmds_lst->args;
+	if (ft_strncmp(*(str + 1), ".\0", 2) == 0)
 		return ;
-	else if (ft_strncmp(*(cmd->args + 1), "..", 2) == 0)
+	else if (ft_strncmp(*(str + 1), "..\0", 3) == 0)
 		cwd_up();
-	
+	else if (path_is_dir(*(str + 1)))
+		update_cwd((cmd->args + 1));
 }
 
-int	path_isvalid(char *path)
+/*
+Function to check whether the given path is a valid path or not
+  - Returns 1 if it is a valid path
+  - Returns 0 if the path is invalid, or if the path results in a file
+*/
+int	path_is_dir(char *path)
 {
 	int			i;
 	struct stat	bufr;
 	
 	i = stat(path, &bufr);
-	
-	return (i);
+	if (i < 0)
+		return (0);
+	else if (i == 0)
+	{
+		if (S_ISREG(bufr.st_mode))
+			return (0);
+		else if (S_ISDIR(bufr.st_mode))
+			return (1);
+	}
+	return (0);
+}
+
+void cwd_up(void)
+{
+
 }
