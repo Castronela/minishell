@@ -7,19 +7,15 @@ Caution: cmdline != NULL
 char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
 {
 	ssize_t	i_start;
-	char	first_char;
 	char	open_quote;
 
 	open_quote = 0;
 	i_start = *i_cmdline;
-	first_char = shell->cmdline[*i_cmdline];
 	while (shell->cmdline[*i_cmdline])
 	{
-		if (open_quote == 0 && shell->hd_status == false)
+		if (open_quote == 0)
 		{
-			if (is_op(shell->cmdline[*i_cmdline]) && !is_op(first_char))
-				break ;
-			if (is_op(first_char) && first_char != shell->cmdline[*i_cmdline])
+			if (op_in_token(shell->cmdline, i_start, i_cmdline))
 				break ;
 			if (is_ws(shell->cmdline[*i_cmdline]))
 				break ;
@@ -34,7 +30,8 @@ char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
 }
 
 /*
-Assigns tokens from cmdline to tokenlst nodes
+(Main FN) Populates tokenlst: adds new nodes with tokens from cmdline
+On failure: returns 1 (to free: tokenlst)
 Caution: cmdline != NULL
 */
 int	tokenizer(t_shell *shell)
@@ -45,19 +42,56 @@ int	tokenizer(t_shell *shell)
 	i_cmdline = 0;
 	while (shell->cmdline[i_cmdline])
 	{
-		while (shell->hd_status == false && is_ws(shell->cmdline[i_cmdline]))
+		while (is_ws(shell->cmdline[i_cmdline]))
 			i_cmdline++;
 		if (shell->cmdline[i_cmdline])
 		{
 			token = get_next_token(shell, &i_cmdline);
 			if (token == NULL)
 				return (1);
-			if (tokenlst_addtoken(shell->tokenlst, token))
-			{
-				free(token);
+			if (add_token_to_lst(&shell->tokenlst, token))
 				return (1);
-			}
 		}
 	}
 	return (0);
+}
+
+/*
+Adds new node with with value 'token' at the end of list 'root'
+On failure: frees 'token' and returns 1
+*/
+int	add_token_to_lst(t_lst_str **root, char *token)
+{
+	t_lst_str *new;
+
+	new = ft_lst_new(token);
+	if (!new)
+	{
+		perror(ERR_MALLOC);
+		free(token);
+		token = NULL;
+		return (1);
+	}
+	ft_lst_addback(root, new);
+	return (0);
+}
+
+/*
+Return true if str starts with a valid operator
+OR if str at index i_cmdline has a valid operator
+*/
+bool	op_in_token(const char *str, int start, ssize_t *i_cmdline)
+{
+	ssize_t op_size;
+
+	op_size = 0;
+	if (is_op_redir_char(&str[start], &op_size) || is_op_ctrl_char(&str[start], &op_size)) 
+	{
+		*i_cmdline += op_size;
+		return(true);
+	}
+	if ((is_op_redir_char(&str[*i_cmdline], &op_size) || is_op_ctrl_char(&str[*i_cmdline], &op_size))
+	&& start != *i_cmdline)
+		return(true);
+	return(false);
 }

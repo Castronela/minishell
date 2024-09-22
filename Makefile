@@ -3,90 +3,84 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/06 02:28:58 by pamatya          ###   ########.fr        #
+#    Updated: 2024/09/22 18:37:57 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Compiler and flags
-CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror
-# CFLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
+# ----------------- Compiler Flags ----------------- #
 
-# Commands
-RM			=	rm -f
+CC			= 	gcc -g
+CFLAGS		= 	-Wall -Wextra -Werror
+DEPFLAGS	= 	-MMD
 
-# Directories
-# DIR_BIN		=	.
-DIR_BIN		=	bin
-DIR_INC		=	include
-DIR_LIB		=	lib
-DIR_OBJ		=	obj
-DIR_SRC		=	src
-DIR_SRC2	=	src_exe
+# ----------------- Commands ----------------- #
 
-# Libraries and paths
-LIBFT		=	libft.a
-# LIBS		=	-lft -lreadline
-# LIBS		=	$(LIBFT) -lft -lreadline
-LIBS		=	-lft -lreadline
-LIB_PATHS	=	-L$(DIR_LIB) -L/usr/local/lib
+RM			= 	rm -rf
 
-# Header paths
-# HEAD_PATHS		=	-I ./$(DIR_INC) -I ./$(DIR_LIB)/includes
-HEAD_PATHS		=	-I$(DIR_INC) -I$(DIR_LIB)/includes -I/usr/local/include
+# ----------------- Directories ----------------- #
 
-# Source and object files
-# SRCS		=	$(DIR_SRC)/main.c
-SRCS		=	$(DIR_SRC)/main.c \
-				$(DIR_SRC2)/init_shell.c $(DIR_SRC2)/lst_str_fns.c $(DIR_SRC2)/built_ins.c
-OBJS		=	$(SRCS:.c=.o)
+D_BIN		=	bin
+D_INC		=	include
+D_LIB		=	lib
+D_OBJ		=	obj
+D_SRC		=	src
+D_SRC2		=	src_exe
 
-# Target Binary
+# ----------------- Headers Flag ----------------- #
+
+HEAD_F		=	-I$(D_INC) -I$(LIBFT_H) -I$(READLINE_H)
+
+# ----------------- Source, Object and Dependency files ----------------- #
+
+SRC			= 	main.c tokenizer.c util_0.c heredoc_0.c init_shell.c \
+				input_checker.c var_repl.c test_fn.c lst_str_fns.c built_ins.c
+OBJ 		= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
+DEP			= 	$(OBJ:.o=.d)
+
+# ----------------- Target Binary ----------------- #
+
 NAME		=	minishell
-BINARY		=	$(DIR_BIN)/$(NAME)
+
+# ----------------- Libraries ----------------- #
+
+LIB_F		=	$(LIBFT_F) $(READLINE_F)
+
+# LIBFT
+LIBFT		=	libft.a
+LIBFT_L		=	$(D_LIB)															# library location
+LIBFT_H		=	$(D_LIB)/includes													# header location
+LIBFT_F		=	-L$(LIBFT_L) -l$(basename $(subst lib,,$(LIBFT)))					# library flag
+
+# Readline
+READLINE	=	libreadline.a
+READLINE_L	=	/usr/local/lib 
+READLINE_H	=	/usr/local/include
+READLINE_F	=	-L$(READLINE_L) -l$(basename $(subst lib,,$(READLINE)))
+
 
 
 # ----------------- Rules ----------------- #
+
 all: $(NAME)
 
-# $(NAME): $(addprefix $(DIR_OBJ)/, $(OBJ)) $(LIBFT)
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(BINARY)
+$(NAME): $(OBJ)
+	@make -sC $(D_LIB)
+	$(CC) $(CFLAGS) $(HEAD_F) $(LIB_F) $^ -o $(D_BIN)/$@
 
-# $(DIR_OBJ)/%.o: %.c
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(D_OBJ)/%.o: $(D_SRC)/%.c
+	@$(CC) $(CFLAGS) $(HEAD_F) $(DEPFLAGS) -c $< -o $@
 
-$(LIBFT):
-	@$(MAKE) -sC $(DIR_LIB) all
+-include $(DEP)
 
 clean:
-	@$(RM) $(OBJS)
-	@$(MAKE) -sC $(DIR_LIB) clean
+	@$(RM) $(OBJ) $(DEP)
 
 fclean: clean
-	@$(RM) $(BINARY)
-	@$(RM) $(DIR_LIB)/libft.a
-	@$(MAKE) -sC $(DIR_LIB) fclean
-
-re: fclean
-	@$(MAKE) all
-
-bug: $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(DIR_BIN)/bug
-
-run: re
-	@./$(DIR_BIN)/$(NAME)
-
-val:
-	@valgrind --leak-check=full ./$(DIR_BIN)/$(NAME) 
-# @valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(DIR_BIN)/$(NAME)
-# @valgrind --leak-check=full --show-leak-kinds=all ./$(DIR_BIN)/$(NAME)
-# @valgrind --leak-check=full --show-leak-kinds=all --gen-suppressions=all ./$(DIR_BIN)/$(NAME) 2>val_sup.txt
-# @valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_suppressions.supp ./your_program
+	@make fclean -sC $(D_LIB)
+	@$(RM) $(D_BIN)/$(NAME)
 
 # valgpt: re
 # 	@valgrind --leak-check=full --gen-suppressions=all --suppressions=<(

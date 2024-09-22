@@ -2,25 +2,25 @@
 
 /*
 Checks if token has unclosed quotes
-Returns false and prints error on failure
+On failure: prints error and returns false
 */
-bool	is_quoteclosed(t_lsttoken *node_current)
+bool	is_quoteclosed(t_lst_str *node_current)
 {
 	char quote;
 	int i;
 
 	quote = 0;
 	i = -1;
-	while (node_current->token[++i])
+	while (node_current->str[++i])
 	{
-		if (quote == 0 && is_qt(node_current->token[i]))
-			quote = node_current->token[i];
-		else if (quote == node_current->token[i])
+		if (quote == 0 && is_qt(node_current->str[i]))
+			quote = node_current->str[i];
+		else if (quote == node_current->str[i])
 			quote = 0;
 	}
 	if (quote != 0)
 	{
-		printf("%s\n", ERR_STX_QT);
+		printf("%s\n", ERR_STX_OPEN_QT);
 		return (false);
 	}
 	return (true);
@@ -28,76 +28,46 @@ bool	is_quoteclosed(t_lsttoken *node_current)
 
 /*
 Checks if operator repeats consecutively more often than expected
-Returns 1 and prints error on failure
+On failure: prints error and returns 1
 */
-bool	is_op_invalid(const char *op)
+int	check_op(t_lst_str *node_current, t_lst_str *node_prev)
 {
-	if (!ft_strncmp(op, "<<", 2) || !ft_strncmp(op, ">>", 2))
+	if (is_op_redir_char(node_current->str, NULL))
 	{
-		if (op[2] != 0)
+		if (!node_current->next)
 		{
-			printf("%s `%s\'\n", ERR_STX_OP, &op[2]);
-			return (false);
+			printf("%s `newline\'\n", ERR_STX_UNEXP_TOKEN);
+			return (1);
 		}
-		return (true);
+		else if (is_op_redir_char(node_current->next->str, NULL) 
+			|| is_op_ctrl_char(node_current->next->str, NULL))
+		{
+			printf("%s `%s\'\n", ERR_STX_UNEXP_TOKEN, node_current->next->str);
+			return (1);
+		}
 	}
-	else if (!ft_strncmp(op, "|", 1))
+	if (is_op_ctrl_char(node_current->str, NULL) && (!node_prev || !node_current->next))
 	{
-		if (op[1] != 0)
-		{
-			printf("%s `%s\'\n", ERR_STX_OP, &op[1]);
-			return (false);
-		}
-		return (true);
-	}
-	return (true);
-}
-
-
-/*
-Checks if operator or argument after operator is invalid
-Returns 1 on failure
-*/
-int	check_op(t_lsttoken *node_current, t_lsttoken *node_prev)
-{
-	if (is_op(*node_current->token))
-	{
-		if (is_op_invalid(node_current->token) == false)
-			return (1);
-		else if (*node_current->token == '|' && node_prev == NULL)
-		{
-			printf("%s `|\'\n", ERR_STX_OP);
-			return (1);
-		}
-		else if (*node_current->token != '|' && node_current->next 
-		&& is_op(*node_current->next->token))
-		{
-			printf("%s `%s\'\n", ERR_STX_OP, node_current->next->token);
-			return (1);
-		}
-		else if (node_current->next == NULL)
-		{
-			printf("%s `newline\'\n", ERR_STX_OP);
-			return (1);
-		}
+		printf("%s\n", ERR_STX_INCOMPLETE_OP);
+		return (1);
 	}
 	return (0);
 }
 
 /*
-Checks syntax of command line
-Returns 1 on failure, should not exit program
-Caution: run fn before heredoc check!
+(Main FN) Checks syntax of command line
+On failure: returns 1 (nothing to free)
+Caution: run fn before heredoc check! should not exit program!
 */
 int	check_syntax(t_shell *shell)
 {
-	t_lsttoken *node_current;
-	t_lsttoken *node_prev;
+	t_lst_str	*node_current;
+	t_lst_str	*node_prev;
 
 	if (shell->hd_status == true)
 		return (0);
 	node_prev = NULL;
-	node_current = *shell->tokenlst;
+	node_current = shell->tokenlst;
 	while (node_current)
 	{
 		if (check_op(node_current, node_prev))
