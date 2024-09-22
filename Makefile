@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/22 18:37:57 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/09/22 18:54:31 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,6 +81,8 @@ clean:
 fclean: clean
 	@make fclean -sC $(D_LIB)
 	@$(RM) $(D_BIN)/$(NAME)
+
+re: fclean all
 
 # valgpt: re
 # 	@valgrind --leak-check=full --gen-suppressions=all --suppressions=<(
