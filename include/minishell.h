@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/22 18:36:51 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:04:28 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@
 typedef struct s_lst_str
 {
 	char				*str;
+	struct s_lst_str	*prev;
 	struct s_lst_str	*next;
 }						t_lst_str;
 
