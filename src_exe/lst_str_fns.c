@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/23 14:52:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/23 15:55:25 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ of the old node
   - Connects the new node's next pointer to the next of the old node
   - connects the previous pointer of the old node's next pointer to the new node
 
-!! Needs to be checked.
+!! Needs to be checked if this function needs to receive double pointers
 */
 void	ft_replace_node(t_lst_str *old, t_lst_str *new)
 {
@@ -154,13 +154,13 @@ Function to delete a single node in the list of t_lst_str type:
   - Frees the allocation of its malloc'd element (str)
   - Frees the allocation of the node itself
   
-!! Needs to be checked.
+!! Needs to be checked if this function needs to receive double pointer
 */
-void	ft_del_node(t_lst_str **node)
+void	ft_del_node(t_lst_str *node)
 {
 	if (!node || !*node)
 		return ;
-	if (*node->str)
-		free(*node->str);
-	free(*node);
+	if (node->str)
+		free(node->str);
+	free(node);
 }
