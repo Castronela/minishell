@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/21 17:46:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:10:26 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ Structural changes:
 typedef struct s_lst_str
 {
     char				*str;
+    struct s_lst_str	*prev;
     struct s_lst_str	*next;
 }   t_lst_str;
 

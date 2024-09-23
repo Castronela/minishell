@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/18 18:14:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:46:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 void	exit_early(t_shell *shl, char **split, char *msg);
 void	ft_print_lst(t_lst_str *root);
+
+void	arg_error(char **av);
+void	clearout(t_shell *shl);
 
 /*
 Initializes the elements of the shell struct "t_shell"
@@ -121,6 +124,12 @@ Updates the SHLVL environment variable
   - Updates the SHLVL variable in the shl->env and shl->env_bak lists by 1 as char*
   - Frees the new value of SHLVL
   - Frees the new
+
+!! Correction required:
+  - This function will fail when the shlvl goes into two digits because, while
+	the shlvl is malloc'd correctly for any case including for two digits, the
+	env and env_bak elements of shl are only updated with assignment at a single
+	char address by dereferencing shlvl instead of replacing the allocation itself
 */
 void	update_shlvl(t_shell *shl)
 {
@@ -139,8 +148,8 @@ void	update_shlvl(t_shell *shl)
 			shlvl = ft_itoa(shl->shlvl);
 			if (!shlvl)
 				exit_early(shl, NULL, "itoa failed");
-			*(new_node[0]->str + 6) = *shlvl;
-			*(new_node[1]->str + 6) = *shlvl;
+			*(new_node[0]->str + 6) = *shlvl;										// Correction required
+			*(new_node[1]->str + 6) = *shlvl;										// Correction required
 			free(shlvl);
 			break ;
 		}
@@ -210,4 +219,24 @@ void	ft_print_lst(t_lst_str *root)
 		ft_printf("%s\n", root->str);
 		root = root->next;
 	}
+}
+
+void	arg_error(char **av)
+{
+	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
+	ft_putstr_fd("Minishell: ", 2);
+	ft_putstr_fd(av[1], 2);
+	ft_putstr_fd(": No such file or directory\n", 2);
+	exit(127);
+}
+
+void	clearout(t_shell *shl)
+{
+	ft_lst_free(&shl->env);
+	ft_lst_free(&shl->env_bak);
+	ft_lst_free(&shl->env_paths);
+	free(shl->cur_wd);
+	free(shl->prompt);
+	// free(shl->prev_bin_path);
+	rl_clear_history();
 }

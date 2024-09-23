@@ -6,6 +6,16 @@ void	exec_built_in(t_shell *shl);
 void	exec_echo(t_shell *shl);
 void	exec_cd(t_shell *shl);
 
+
+/*
+Notes:
+Expansion of provided paths need to be taken care of when the path contains "." 
+or ".." within in, whether at the start or somewhere middle or even end of a path.
+Bash takes care of these expansions, so these paths need to be checked every
+time and expanded or replaced with absolute paths. cwd_up() fn below may be used
+when ".." occurs in a path.
+*/
+
 /*
 Your shell must implement the following builtins:
 ◦ echo with option -n
@@ -93,9 +103,9 @@ void	exec_cd(t_shell *shl)
 	if (ft_strncmp(*(str + 1), ".\0", 2) == 0)
 		return ;
 	else if (ft_strncmp(*(str + 1), "..\0", 3) == 0)
-		cwd_up();
+		cwd_up(shl);
 	else if (path_is_dir(*(str + 1)))
-		update_cwd((cmd->args + 1));
+		update_cwd(shl);
 }
 
 /*
@@ -121,7 +131,24 @@ int	path_is_dir(char *path)
 	return (0);
 }
 
-void cwd_up(void)
+
+void cwd_up(t_shell *shl)
 {
+	t_lst_str	*node[2];
+	char		*nwd;
+
+	node[0] = shl->env;
+	node[1] = shl->env_bak;
+	nwd = shl->cur_wd;
+
+	while (node[0])
+	{
+		if (ft_strncmp(node[0]->str, "PWD=", 4) == 0)
+		{
+			
+		}
+		node[0] = node[0]->next;
+		node[1] = node[1]->next;
+	}
 
 }
