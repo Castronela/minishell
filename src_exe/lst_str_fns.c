@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/23 15:55:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/26 14:36:18 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
+void		ft_replace_node(t_lst_str *old, t_lst_str *new);
+void		ft_del_node(t_lst_str *node);
 
 /*
 Creates a new node of type t_lst_str
@@ -156,9 +158,11 @@ Function to delete a single node in the list of t_lst_str type:
   
 !! Needs to be checked if this function needs to receive double pointer
 */
+
 void	ft_del_node(t_lst_str *node)
 {
-	if (!node || !*node)
+	// if (!node || !*node)
+	if (!node)
 		return ;
 	if (node->str)
 		free(node->str);
