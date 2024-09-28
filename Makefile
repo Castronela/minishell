@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: castronela <castronela@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/22 18:54:31 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/09/28 21:24:12 by castronela       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,8 +56,11 @@ LIBFT_F		=	-L$(LIBFT_L) -l$(basename $(subst lib,,$(LIBFT)))					# library flag
 
 # Readline
 READLINE	=	libreadline.a
-READLINE_L	=	/usr/local/lib 
+READLINE_L	=	/usr/local/lib
 READLINE_H	=	/usr/local/include
+# RL for Linux
+#READLINE_L	=	/usr/lib
+#READLINE_H	=	/usr/include
 READLINE_F	=	-L$(READLINE_L) -l$(basename $(subst lib,,$(READLINE)))
 
 
@@ -68,7 +71,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -sC $(D_LIB)
-	$(CC) $(CFLAGS) $(HEAD_F) $(LIB_F) $^ -o $(D_BIN)/$@
+	$(CC) $(CFLAGS) $(HEAD_F) $^ $(LIB_F) -o $(D_BIN)/$@
 
 $(D_OBJ)/%.o: $(D_SRC)/%.c
 	@$(CC) $(CFLAGS) $(HEAD_F) $(DEPFLAGS) -c $< -o $@

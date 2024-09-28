@@ -42,8 +42,6 @@ int	test_heredoc(void)
 	shell.hd_delimiter = NULL;
 
 	shell.cmdline = "cat << EOF";
-	if (shell.tokenlst == NULL)
-		return (1);
 	if (tokenizer(&shell))
 	{
 		ft_lst_free(&shell.tokenlst);;

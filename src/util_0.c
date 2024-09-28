@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   util_0.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
+/*   Updated: 2024/09/28 20:46:16 by castronela       ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 /*
@@ -5,8 +17,8 @@ Returns true if c is whitespace
 */
 bool	is_ws(const char c)
 {
-	const char white_space[] = {WHITE_SPACE};
-	ssize_t i;
+	const char	white_space[] = {WHITE_SPACE};
+	ssize_t		i;
 
 	i = -1;
 	while (white_space[++i])
@@ -18,15 +30,15 @@ bool	is_ws(const char c)
 }
 
 /*
-Returns true if str starts with valid CONTROL operator 
+Returns true if str starts with valid CONTROL operator
 and sets size of operator
 */
-bool	is_op_ctrl_char(const char *str, ssize_t *size)
+bool	is_op_ctrl(const char *str, ssize_t *size)
 {
-	const char *valid_char[] = {OPERATOR_CONTROL};
-	bool is_op;
-	ssize_t len;
-	ssize_t i;
+	const char	*valid_char[] = {OPERATOR_CONTROL};
+	bool		is_op;
+	ssize_t		len;
+	ssize_t		i;
 
 	i = -1;
 	is_op = false;
@@ -47,12 +59,12 @@ bool	is_op_ctrl_char(const char *str, ssize_t *size)
 Returns true if str starts with valid REDIRECTION operator
 and sets size of operator
 */
-bool	is_op_redir_char(const char *str, ssize_t *size)
+bool	is_op_redir(const char *str, ssize_t *size)
 {
-	const char *valid_char[] = {OPERATOR_REDIRECTION};
-	bool is_op;
-	ssize_t len;
-	ssize_t i;
+	const char	*valid_char[] = {OPERATOR_REDIRECTION};
+	bool		is_op;
+	ssize_t		len;
+	ssize_t		i;
 
 	i = -1;
 	is_op = false;
@@ -74,8 +86,8 @@ Returns true if c is single or double quote
 */
 bool	is_qt(const char c)
 {
-	const char quote[] = {QUOTE};
-	ssize_t i;
+	const char	quote[] = {QUOTE};
+	ssize_t		i;
 
 	i = -1;
 	while (quote[++i])

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/23 15:04:28 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/09/28 21:25:15 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 # define MINISHELL_H
 
 //--------------------------------------------------------------------------------------//
-//                                                                                     
-	//
-//                                       Includes                                      
-	//
-//                                                                                     
-	//
+//                                                                                      //
+//                                       Includes                                       //
+//                                                                                      //
 //--------------------------------------------------------------------------------------//
+
 
 # include "../lib/includes/libft.h"
 # include <errno.h>
@@ -34,17 +32,14 @@
 # include <unistd.h>
 
 //--------------------------------------------------------------------------------------//
-//                                                                                     
-	//
-//                                     Definitions                                     
-	//
-//                                                                                     
-	//
+//                                                                                      //
+//                                     Definitions                                      //
+//                                                                                      //
 //--------------------------------------------------------------------------------------//
 
+
 //--------------------------------------------------------------------------------------//
-//                                        Colors                                       
-	//
+//                                        Colors                                        //
 //--------------------------------------------------------------------------------------//
 
 # define BG_BLACK "\033[40m"
@@ -57,9 +52,9 @@
 # define BG_WHITE "\033[47m"
 
 //--------------------------------------------------------------------------------------//
-//                                Recognized Characters                                
-	//
+//                                Recognized Characters                                 //
 //--------------------------------------------------------------------------------------//
+
 
 # define WHITE_SPACE ' ', 0
 # define QUOTE '\'', '\"', 0
@@ -67,9 +62,9 @@
 # define OPERATOR_CONTROL "|", NULL
 
 //--------------------------------------------------------------------------------------//
-//                                        Errors                                       
-	//
+//                                        Errors                                        //
 //--------------------------------------------------------------------------------------//
+
 
 // ---- Function Error -------------------------------------------------------------------
 
@@ -81,10 +76,11 @@
 # define ERR_STX_OPEN_QT "minishell: syntax error: unclosed quotes"
 # define ERR_STX_INCOMPLETE_OP "minishell: input error: incomplete control operator"
 
+
 //--------------------------------------------------------------------------------------//
-//                                      Data Types                                     
-	//
+//                                      Data Types                                      //
 //--------------------------------------------------------------------------------------//
+
 
 // ---- Linked List ----------------------------------------------------------------------
 
@@ -143,13 +139,11 @@ typedef struct s_shell
 }						t_shell;
 
 //--------------------------------------------------------------------------------------//
-//                                                                                     
-	//
-//                                 Function Prototypes                                 
-	//
-//                                                                                     
-	//
+//                                                                                      //
+//                                 Function Prototypes                                  //
+//                                                                                      //
 //--------------------------------------------------------------------------------------//
+
 
 int						main(void);
 
@@ -164,10 +158,6 @@ void					ft_lst_free(t_lst_str **root);
 // ---- Tokenizer ------------------------------------------------------------------------
 
 int						tokenizer(t_shell *shell);
-char					*get_next_token(t_shell *shell, ssize_t *i_cmdline);
-int						add_token_to_lst(t_lst_str **root, char *token);
-bool					op_in_token(const char *str, int start,
-							ssize_t *i_cmdline);
 
 // ---- src_exe/... ----------------------------------------------------------------------
 
@@ -178,8 +168,6 @@ void					exec_echo(t_cmds *cmd);
 
 // ---- Syntax Check ---------------------------------------------------------------------
 
-bool					is_quoteclosed(t_lst_str *node_current);
-int						check_op(t_lst_str *node_current, t_lst_str *node_prev);
 int						check_syntax(t_shell *shell);
 
 // ---- Shell Initialisation -------------------------------------------------------------
@@ -196,23 +184,19 @@ void					exit_early(t_shell *shl, char **split, char *msg);
 // ---- Variable Expansion ---------------------------------------------------------------
 
 int						variable_expansion(t_shell *shell);
-int						subst_vars(t_lst_str *node);
-char					*subst_var_value(char *token, char *variable,
-							ssize_t *var_index);
-char					*get_var(const char *token, ssize_t i);
 
 // ---- Utils ----------------------------------------------------------------------------
 
 bool					is_ws(const char c);
 bool					is_qt(const char c);
-bool					is_op_ctrl_char(const char *str, ssize_t *size);
-bool					is_op_redir_char(const char *str, ssize_t *size);
+bool					is_op_ctrl(const char *str, ssize_t *size);
+bool					is_op_redir(const char *str, ssize_t *size);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 
 // ---- TESTERS --------------------------------------------------------------------------
 
-void	print_lst(t_lst_str **head); // Prints content of linked list
+void					print_lst(t_lst_str **head); // Prints content of linked list
 int						test_heredoc(void);
 int						test_tokenizer(void);
 void					test_syntax_checker(void);

@@ -1,10 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   var_repl.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/28 20:46:33 by castronela        #+#    #+#             */
+/*   Updated: 2024/09/28 21:09:47 by castronela       ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
+static char	*subst_var_value(char *token, char *variable, ssize_t *var_index);
+static char	*get_var(const char *token, ssize_t i);
+static int	subst_vars(t_lst_str *node);
+
+/*
+(Main) Substitutes variables with their respective values
+On failure: returns 1 (to free: tokenlst)
+Caution: run before removing quotes!
+*/
+int	variable_expansion(t_shell *shell)
+{
+	t_lst_str	*node_current;
+
+	node_current = shell->tokenlst;
+	while (node_current)
+	{
+		if (subst_vars(node_current))
+			return (1);
+		node_current = node_current->next;
+	}
+	return (0);
+}
 
 /*
 Substitutes variable, from token, with its value retrieved from environ
-On failure: prints error, frees token, returns NULL 
+On failure: prints error, frees token, returns NULL
 */
-char	*subst_var_value(char *token, char *variable, ssize_t *var_index)
+static char	*subst_var_value(char *token, char *variable, ssize_t *var_index)
 {
 	char	*str[2];
 	int		len[3];
@@ -23,8 +58,8 @@ char	*subst_var_value(char *token, char *variable, ssize_t *var_index)
 		ft_strlcpy(str[1], token, (*var_index) + 1);
 		if (str[0] != NULL)
 			ft_strlcpy(&str[1][*var_index], str[0], len[2] + 1);
-		ft_strlcpy(&str[1][(*var_index) + len[2]], &token[(*var_index) + len[1] + 1],
-			len[0] - (*var_index) - len[1]);
+		ft_strlcpy(&str[1][(*var_index) + len[2]], &token[(*var_index) + len[1]
+			+ 1], len[0] - (*var_index) - len[1]);
 		(*var_index) += len[2] - 1;
 	}
 	free(token);
@@ -35,11 +70,11 @@ char	*subst_var_value(char *token, char *variable, ssize_t *var_index)
 Retrieves first variable from token
 On failure: prints error, returns NULL
 */
-char	*get_var(const char *token, ssize_t i)
+static char	*get_var(const char *token, ssize_t i)
 {
-	char		*var;
-	ssize_t		start;
-	ssize_t		len;
+	char	*var;
+	ssize_t	start;
+	ssize_t	len;
 
 	i++;
 	start = i;
@@ -61,11 +96,11 @@ char	*get_var(const char *token, ssize_t i)
 Substitutes all variables, from node, with their values
 On failure: returns 1
 */
-int	subst_vars(t_lst_str *node)
+static int	subst_vars(t_lst_str *node)
 {
 	char	*var;
 	char	quote;
-	ssize_t		i;
+	ssize_t	i;
 
 	quote = 0;
 	i = -1;
@@ -85,25 +120,6 @@ int	subst_vars(t_lst_str *node)
 			if (node->str == NULL)
 				return (1);
 		}
-	}
-	return (0);
-}
-
-/*
-(Main) Substitutes variables with their respective values
-On failure: returns 1 (to free: tokenlst)
-Caution: run before removing quotes!
-*/
-int	variable_expansion(t_shell *shell)
-{
-	t_lst_str	*node_current;
-
-	node_current = shell->tokenlst;
-	while (node_current)
-	{
-		if (subst_vars(node_current))
-			return (1);
-		node_current = node_current->next;
 	}
 	return (0);
 }

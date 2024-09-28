@@ -1,33 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
+/*   Updated: 2024/09/28 21:11:02 by castronela       ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-/*
-Returns allocated string of closest token starting from index i_cmdline
-Caution: cmdline != NULL
-*/
-char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
-{
-	ssize_t	i_start;
-	char	open_quote;
-
-	open_quote = 0;
-	i_start = *i_cmdline;
-	while (shell->cmdline[*i_cmdline])
-	{
-		if (open_quote == 0)
-		{
-			if (op_in_token(shell->cmdline, i_start, i_cmdline))
-				break ;
-			if (is_ws(shell->cmdline[*i_cmdline]))
-				break ;
-			if (is_qt(shell->cmdline[*i_cmdline]))
-				open_quote = shell->cmdline[*i_cmdline];
-		}
-		else if (open_quote == shell->cmdline[*i_cmdline])
-			open_quote = 0;
-		(*i_cmdline)++;
-	}
-	return (ft_substr(shell->cmdline, i_start, (*i_cmdline - i_start)));
-}
+static char	*get_next_token(t_shell *shell, ssize_t *i_cmdline);
+static int	add_token_to_lst(t_lst_str **root, char *token);
+static bool	op_in_token(const char *str, int start, ssize_t *i_cmdline);
 
 /*
 (Main FN) Populates tokenlst: adds new nodes with tokens from cmdline
@@ -57,12 +44,41 @@ int	tokenizer(t_shell *shell)
 }
 
 /*
+Returns allocated string of closest token starting from index i_cmdline
+Caution: cmdline != NULL
+*/
+static char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
+{
+	ssize_t	i_start;
+	char	open_quote;
+
+	open_quote = 0;
+	i_start = *i_cmdline;
+	while (shell->cmdline[*i_cmdline])
+	{
+		if (open_quote == 0)
+		{
+			if (op_in_token(shell->cmdline, i_start, i_cmdline))
+				break ;
+			if (is_ws(shell->cmdline[*i_cmdline]))
+				break ;
+			if (is_qt(shell->cmdline[*i_cmdline]))
+				open_quote = shell->cmdline[*i_cmdline];
+		}
+		else if (open_quote == shell->cmdline[*i_cmdline])
+			open_quote = 0;
+		(*i_cmdline)++;
+	}
+	return (ft_substr(shell->cmdline, i_start, (*i_cmdline - i_start)));
+}
+
+/*
 Adds new node with with value 'token' at the end of list 'root'
 On failure: frees 'token' and returns 1
 */
-int	add_token_to_lst(t_lst_str **root, char *token)
+static int	add_token_to_lst(t_lst_str **root, char *token)
 {
-	t_lst_str *new;
+	t_lst_str	*new;
 
 	new = ft_lst_new(token);
 	if (!new)
@@ -80,18 +96,18 @@ int	add_token_to_lst(t_lst_str **root, char *token)
 Return true if str starts with a valid operator
 OR if str at index i_cmdline has a valid operator
 */
-bool	op_in_token(const char *str, int start, ssize_t *i_cmdline)
+static bool	op_in_token(const char *str, int start, ssize_t *i_cmdline)
 {
-	ssize_t op_size;
+	ssize_t	op_size;
 
 	op_size = 0;
-	if (is_op_redir_char(&str[start], &op_size) || is_op_ctrl_char(&str[start], &op_size)) 
+	if (is_op_redir(&str[start], &op_size) || is_op_ctrl(&str[start], &op_size))
 	{
 		*i_cmdline += op_size;
-		return(true);
+		return (true);
 	}
-	if ((is_op_redir_char(&str[*i_cmdline], &op_size) || is_op_ctrl_char(&str[*i_cmdline], &op_size))
-	&& start != *i_cmdline)
-		return(true);
-	return(false);
+	if ((is_op_redir(&str[*i_cmdline], &op_size) || is_op_ctrl(&str[*i_cmdline],
+				&op_size)) && start != *i_cmdline)
+		return (true);
+	return (false);
 }
