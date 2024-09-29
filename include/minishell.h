@@ -6,7 +6,7 @@
 /*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/28 21:25:15 by castronela       ###   ########.fr       */
+/*   Updated: 2024/09/29 13:44:09 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,17 @@
 //                                Recognized Characters                                 //
 //--------------------------------------------------------------------------------------//
 
-
 # define WHITE_SPACE ' ', 0
 # define QUOTE '\'', '\"', 0
-# define OPERATOR_REDIRECTION "<", "<<", ">", ">>", NULL
+
+# define OPERATOR_REDIRECTION "<", ">", ">>", NULL
+# define RD (1 << 0)
+
+# define OPERATOR_HEREDOC "<<", NULL
+# define HD (1 << 1)
+
 # define OPERATOR_CONTROL "|", NULL
+# define CT (1 << 2)
 
 //--------------------------------------------------------------------------------------//
 //                                        Errors                                        //
@@ -80,7 +86,6 @@
 //--------------------------------------------------------------------------------------//
 //                                      Data Types                                      //
 //--------------------------------------------------------------------------------------//
-
 
 // ---- Linked List ----------------------------------------------------------------------
 
@@ -189,8 +194,7 @@ int						variable_expansion(t_shell *shell);
 
 bool					is_ws(const char c);
 bool					is_qt(const char c);
-bool					is_op_ctrl(const char *str, ssize_t *size);
-bool					is_op_redir(const char *str, ssize_t *size);
+bool					is_op(const char *str, const int type, ssize_t *size);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 
