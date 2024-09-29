@@ -6,13 +6,14 @@
 /*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 13:40:03 by castronela       ###   ########.fr       */
+/*   Updated: 2024/09/29 17:20:21 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	check_op(bool *is_op, const char *str, const char *valid_char[], ssize_t *size);
+static void	check_op(bool *is_op, const char *str, const char *valid_char[],
+				ssize_t *size);
 
 /*
 Returns true if c is whitespace
@@ -32,29 +33,30 @@ bool	is_ws(const char c)
 }
 
 /*
-Returns true if str starts with valid operator, depending on
-'type' flag set and sets length of operator 'len';
+Returns len of operator if str starts with valid operator,
+depending on 'type' flag set and sets length of operator 'len';
+If no matches found, returns 0;
 Flags:
 	RD - redirection,
 	HD - here document,
 	CT - control
 */
-bool	is_op(const char *str, const int type, ssize_t *oplen)
+int	is_op(const char *str, const int type)
 {
-	const char	*valid_rd[] = {OPERATOR_REDIRECTION};
-	const char	*valid_hd[] = {OPERATOR_HEREDOC};
-	const char	*valid_ct[] = {OPERATOR_CONTROL};
-	bool is_op;
+	const char	*valid_op[][10] = {{OPERATOR_REDIRECTION}, {OPERATOR_HEREDOC},
+	{OPERATOR_CONTROL}};
+	bool		is_op;
+	ssize_t		op_len;
 
-	*oplen = 0;
+	op_len = 0;
 	is_op = false;
 	if (type & RD)
-			check_op(&is_op, str, valid_rd, oplen);
+		check_op(&is_op, str, valid_op[0], &op_len);
 	if (type & HD)
-			check_op(&is_op, str, valid_hd, oplen);
+		check_op(&is_op, str, valid_op[1], &op_len);
 	if (type & CT)
-			check_op(&is_op, str, valid_ct, oplen);
-	return (is_op);
+		check_op(&is_op, str, valid_op[2], &op_len);
+	return (op_len);
 }
 
 /*
@@ -64,10 +66,11 @@ from the 'valid_char' array;
 On match, if original 'size' is smaller than len of matched string,
 then 'size' is assigned len of matched string;
 */
-static void	check_op(bool *is_op, const char *str, const char *valid_char[], ssize_t *oplen)
+static void	check_op(bool *is_op, const char *str, const char *valid_char[],
+		ssize_t *oplen)
 {
-	ssize_t		len;
-	ssize_t		i;
+	ssize_t	len;
+	ssize_t	i;
 
 	i = -1;
 	while (valid_char[++i])

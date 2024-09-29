@@ -6,7 +6,7 @@
 #    By: castronela <castronela@student.42.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/09/28 21:24:12 by castronela       ###   ########.fr        #
+#    Updated: 2024/09/29 17:06:06 by castronela       ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,8 @@ HEAD_F		=	-I$(D_INC) -I$(LIBFT_H) -I$(READLINE_H)
 # ----------------- Source, Object and Dependency files ----------------- #
 
 SRC			= 	main.c tokenizer.c util_0.c heredoc_0.c init_shell.c \
-				input_checker.c var_repl.c test_fn.c lst_str_fns.c built_ins.c
+				input_checker.c var_repl.c test_fn.c lst_str_fns.c built_ins.c \
+				redirection_check.c
 OBJ 		= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
 DEP			= 	$(OBJ:.o=.d)
 
@@ -58,20 +59,26 @@ LIBFT_F		=	-L$(LIBFT_L) -l$(basename $(subst lib,,$(LIBFT)))					# library flag
 READLINE	=	libreadline.a
 READLINE_L	=	/usr/local/lib
 READLINE_H	=	/usr/local/include
-# RL for Linux
-#READLINE_L	=	/usr/lib
-#READLINE_H	=	/usr/include
 READLINE_F	=	-L$(READLINE_L) -l$(basename $(subst lib,,$(READLINE)))
 
 
+# ----------------- Color Codes ----------------- #
+
+RESET 		= 	\033[0m
+RED 		= 	\033[31m
+GREEN 		= 	\033[32m
+YELLOW 		= 	\033[33m
+BLUE 		= 	\033[34m
 
 # ----------------- Rules ----------------- #
 
 all: $(NAME)
+	@echo "$(GREEN)Compilation finished$(RESET)"
 
 $(NAME): $(OBJ)
+	@echo "Compiling minishell..."
 	@make -sC $(D_LIB)
-	$(CC) $(CFLAGS) $(HEAD_F) $^ $(LIB_F) -o $(D_BIN)/$@
+	@$(CC) $(CFLAGS) $(HEAD_F) $^ $(LIB_F) -o $(D_BIN)/$@
 
 $(D_OBJ)/%.o: $(D_SRC)/%.c
 	@$(CC) $(CFLAGS) $(HEAD_F) $(DEPFLAGS) -c $< -o $@
@@ -80,10 +87,12 @@ $(D_OBJ)/%.o: $(D_SRC)/%.c
 
 clean:
 	@$(RM) $(OBJ) $(DEP)
+	@echo "$(YELLOW)Cleaned Objects & Dependencies$(RESET)"
 
-fclean: clean
+fclean:
+	@$(RM) $(OBJ) $(DEP) $(D_BIN)/$(NAME)
 	@make fclean -sC $(D_LIB)
-	@$(RM) $(D_BIN)/$(NAME)
+	@echo "$(YELLOW)Cleaned All$(RESET)"
 
 re: fclean all
 

@@ -6,7 +6,7 @@
 /*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/29 13:44:09 by castronela       ###   ########.fr       */
+/*   Updated: 2024/09/29 17:17:12 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # include <string.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 //--------------------------------------------------------------------------------------//
 //                                                                                      //
@@ -66,6 +67,12 @@
 
 # define OPERATOR_CONTROL "|", NULL
 # define CT (1 << 2)
+
+//--------------------------------------------------------------------------------------//
+//                              Default File Access Rights                              //
+//--------------------------------------------------------------------------------------//
+
+# define DEFAULT_ACCESS 0644
 
 //--------------------------------------------------------------------------------------//
 //                                        Errors                                        //
@@ -175,6 +182,10 @@ void					exec_echo(t_cmds *cmd);
 
 int						check_syntax(t_shell *shell);
 
+// ---- Redirection Check ----------------------------------------------------------------
+
+int 					redirection_check(t_lst_str *head);
+
 // ---- Shell Initialisation -------------------------------------------------------------
 
 void					init_shell(t_shell *shl, char **envp);
@@ -194,7 +205,7 @@ int						variable_expansion(t_shell *shell);
 
 bool					is_ws(const char c);
 bool					is_qt(const char c);
-bool					is_op(const char *str, const int type, ssize_t *size);
+int						is_op(const char *str, const int type);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 
@@ -205,5 +216,6 @@ int						test_heredoc(void);
 int						test_tokenizer(void);
 void					test_syntax_checker(void);
 void					test_variable_expansion(void);
+void 					test_redirection_check(void);
 
 #endif

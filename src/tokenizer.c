@@ -6,7 +6,7 @@
 /*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 13:39:04 by castronela       ###   ########.fr       */
+/*   Updated: 2024/09/29 14:22:39 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,12 +100,13 @@ static bool	op_in_token(const char *str, int start, ssize_t *i_cmdline)
 {
 	ssize_t	op_size;
 
-	if (is_op(&str[start], RD | HD | CT, &op_size))
+	op_size = is_op(&str[start], RD | HD | CT);
+	if (op_size)
 	{
 		*i_cmdline += op_size;
 		return (true);
 	}
-	if (is_op(&str[*i_cmdline], RD | HD | CT, &op_size) && start != *i_cmdline)
+	if (is_op(&str[*i_cmdline], RD | HD | CT) && start != *i_cmdline)
 		return (true);
 	return (false);
 }

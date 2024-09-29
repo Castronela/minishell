@@ -2,6 +2,38 @@
 
 // TEST FUNCTIONS
 
+// void test_path_expansion(void)
+// {
+// 	t_shell shell;
+// 	char *cd;
+	
+// 	cd = ft_strdup("..//");
+// 	shell.cur_wd = ft_strdup("/user/home/dir1/");
+
+// 	printf("cwd: %s\ncd: %s\n\n", shell.cur_wd, cd);
+// 	printf("destination: %s\n", path_expansion(&shell, cd));
+// }
+
+void test_redirection_check(void)
+{
+	t_shell shell;
+
+	shell.cmdline = "cat <../test.txt";
+	shell.tokenlst = NULL;
+	if (tokenizer(&shell))
+	{
+		ft_lst_free(&shell.tokenlst);
+		return ;
+	}
+	if (!redirection_check(*(&shell.tokenlst)))
+		printf("Access successful\n");
+	// if (access("yolo/file1", W_OK))
+	// 	printf("No\n");
+	// else
+	// 	printf("Yes\n");
+	ft_lst_free(&shell.tokenlst);
+}
+
 void test_variable_expansion(void)
 {
 	t_shell	shell;
@@ -21,7 +53,7 @@ void test_variable_expansion(void)
 void test_syntax_checker(void)
 {
 	t_shell	shell;
-	shell.cmdline = "cmd1 \"  arg1  \" 2n<<file1 | >cmd2>>\'arg\' >file2>";
+	shell.cmdline = "cmd1 \"  arg1  \" 2n<<file1 > | >cmd2>>\'arg\' >file2";
 	shell.tokenlst = NULL;
 	if (tokenizer(&shell))
 	{

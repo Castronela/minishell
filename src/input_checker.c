@@ -6,7 +6,7 @@
 /*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:21 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 13:39:22 by castronela       ###   ########.fr       */
+/*   Updated: 2024/09/29 14:23:25 by castronela       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,23 +70,21 @@ On failure: prints error and returns 1
 */
 static int	check_op(t_lst_str *node_current)
 {
-	ssize_t op_len;
-	
-	op_len = 0;
-	if (is_op(node_current->str, RD, &op_len))
+	if (is_op(node_current->str, RD))
 	{
 		if (!node_current->next)
 		{
 			printf("%s `newline\'\n", ERR_STX_UNEXP_TOKEN);
 			return (1);
 		}
-		else if (is_op(node_current->next->str, RD | CT | HD, &op_len))
+		else if (is_op(node_current->next->str, RD | CT | HD))
 		{
 			printf("%s `%s\'\n", ERR_STX_UNEXP_TOKEN, node_current->next->str);
 			return (1);
 		}
 	}
-	if (is_op(node_current->str, CT, &op_len) && (!node_current->prev || !node_current->next))
+	if (is_op(node_current->str, CT) && (!node_current->prev
+			|| !node_current->next))
 	{
 		printf("%s\n", ERR_STX_INCOMPLETE_OP);
 		return (1);
