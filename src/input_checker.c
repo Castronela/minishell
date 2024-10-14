@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:21 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:23:52 by david            ###   ########.fr       */
+/*   Updated: 2024/10/14 17:48:19 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ static bool	is_quoteclosed(t_lst_str *node_current)
 	i = -1;
 	while (node_current->str[++i])
 	{
-		if (quote == 0 && is_qt(node_current->str[i]))
+		if (quote == 0 && is_chars(&node_current->str[i], (const char *[]){QT,
+				NULL}))
 			quote = node_current->str[i];
 		else if (quote == node_current->str[i])
 			quote = 0;
@@ -77,14 +78,15 @@ static int	check_op(t_lst_str *node_current)
 			printf("%s `newline\'\n", ERR_STX_UNEXP_TOKEN);
 			return (1);
 		}
-		else if (is_chars(node_current->next->str, (const char *[]){RD, HD, CT, NULL}))
+		else if (is_chars(node_current->next->str, (const char *[]){RD, HD, CT,
+				NULL}))
 		{
 			printf("%s `%s\'\n", ERR_STX_UNEXP_TOKEN, node_current->next->str);
 			return (1);
 		}
 	}
-	if (is_chars(node_current->str, (const char *[]){CT, NULL}) && (!node_current->prev
-			|| !node_current->next))
+	if (is_chars(node_current->str, (const char *[]){CT, NULL})
+		&& (!node_current->prev || !node_current->next))
 	{
 		printf("%s\n", ERR_STX_INCOMPLETE_OP);
 		return (1);

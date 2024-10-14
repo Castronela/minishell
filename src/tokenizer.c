@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:27:32 by david            ###   ########.fr       */
+/*   Updated: 2024/10/14 17:47:03 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	tokenizer(t_shell *shell)
 	i_cmdline = 0;
 	while (shell->cmdline[i_cmdline])
 	{
-		while (is_ws(shell->cmdline[i_cmdline]))
+		while (shell->cmdline[i_cmdline] == SPACE)
 			i_cmdline++;
 		if (shell->cmdline[i_cmdline])
 		{
@@ -60,9 +60,10 @@ static char	*get_next_token(t_shell *shell, size_t *i_cmdline)
 		{
 			if (op_in_token(shell->cmdline, i_start, i_cmdline))
 				break ;
-			if (is_ws(shell->cmdline[*i_cmdline]))
+			if (shell->cmdline[*i_cmdline] == SPACE)
 				break ;
-			if (is_qt(shell->cmdline[*i_cmdline]))
+			if (is_chars(&shell->cmdline[*i_cmdline], (const char *[]){QT,
+					NULL}))
 				open_quote = shell->cmdline[*i_cmdline];
 		}
 		else if (open_quote == shell->cmdline[*i_cmdline])
@@ -106,7 +107,8 @@ static bool	op_in_token(const char *str, size_t start, size_t *i_cmdline)
 		*i_cmdline += op_size;
 		return (true);
 	}
-	if (is_chars(&str[*i_cmdline], (const char *[]){RD, HD, CT, NULL}) && start != *i_cmdline)
+	if (is_chars(&str[*i_cmdline], (const char *[]){RD, HD, CT, NULL})
+		&& start != *i_cmdline)
 		return (true);
 	return (false);
 }

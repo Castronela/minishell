@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/10/14 17:31:40 by david            ###   ########.fr       */
+/*   Updated: 2024/10/14 18:21:49 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@
 //                                Recognized Characters                                 //
 //--------------------------------------------------------------------------------------//
 
-# define WHITE_SPACE ' ', 0
-# define QUOTE '\'', '\"', 0
+# define SPACE ' '
+# define QT "\'", "\""
 
 // ---- Operators ------------------------------------------------------------------------
 
@@ -200,8 +200,6 @@ int						variable_expansion(t_shell *shell);
 
 // ---- Utils ----------------------------------------------------------------------------
 
-bool					is_ws(const char c);
-bool					is_qt(const char c);
 size_t					is_chars(const char *str, const char *valids[]);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
