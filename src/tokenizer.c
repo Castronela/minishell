@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 14:22:39 by castronela       ###   ########.fr       */
+/*   Updated: 2024/10/14 17:27:32 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*get_next_token(t_shell *shell, ssize_t *i_cmdline);
+static char	*get_next_token(t_shell *shell, size_t *i_cmdline);
 static int	add_token_to_lst(t_lst_str **root, char *token);
-static bool	op_in_token(const char *str, int start, ssize_t *i_cmdline);
+static bool	op_in_token(const char *str, size_t start, size_t *i_cmdline);
 
 /*
 (Main FN) Populates tokenlst: adds new nodes with tokens from cmdline
@@ -23,7 +23,7 @@ Caution: cmdline != NULL
 */
 int	tokenizer(t_shell *shell)
 {
-	ssize_t	i_cmdline;
+	size_t	i_cmdline;
 	char	*token;
 
 	i_cmdline = 0;
@@ -47,9 +47,9 @@ int	tokenizer(t_shell *shell)
 Returns allocated string of closest token starting from index i_cmdline
 Caution: cmdline != NULL
 */
-static char	*get_next_token(t_shell *shell, ssize_t *i_cmdline)
+static char	*get_next_token(t_shell *shell, size_t *i_cmdline)
 {
-	ssize_t	i_start;
+	size_t	i_start;
 	char	open_quote;
 
 	open_quote = 0;
@@ -96,17 +96,17 @@ static int	add_token_to_lst(t_lst_str **root, char *token)
 Return true if str starts with a valid operator
 OR if str at index i_cmdline has a valid operator
 */
-static bool	op_in_token(const char *str, int start, ssize_t *i_cmdline)
+static bool	op_in_token(const char *str, size_t start, size_t *i_cmdline)
 {
-	ssize_t	op_size;
+	size_t	op_size;
 
-	op_size = is_op(&str[start], RD | HD | CT);
+	op_size = is_chars(&str[start], (const char *[]){RD, HD, CT, NULL});
 	if (op_size)
 	{
 		*i_cmdline += op_size;
 		return (true);
 	}
-	if (is_op(&str[*i_cmdline], RD | HD | CT) && start != *i_cmdline)
+	if (is_chars(&str[*i_cmdline], (const char *[]){RD, HD, CT, NULL}) && start != *i_cmdline)
 		return (true);
 	return (false);
 }

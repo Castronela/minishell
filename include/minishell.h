@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/29 17:17:12 by castronela       ###   ########.fr       */
+/*   Updated: 2024/10/14 17:31:40 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,11 @@
 # define WHITE_SPACE ' ', 0
 # define QUOTE '\'', '\"', 0
 
-# define OPERATOR_REDIRECTION "<", ">", ">>", NULL
-# define RD (1 << 0)
+// ---- Operators ------------------------------------------------------------------------
 
-# define OPERATOR_HEREDOC "<<", NULL
-# define HD (1 << 1)
-
-# define OPERATOR_CONTROL "|", NULL
-# define CT (1 << 2)
+# define RD "<", ">", ">>"		// redirection
+# define HD "<<"				// heredoc
+# define CT "|"					// control
 
 //--------------------------------------------------------------------------------------//
 //                              Default File Access Rights                              //
@@ -205,7 +202,7 @@ int						variable_expansion(t_shell *shell);
 
 bool					is_ws(const char c);
 bool					is_qt(const char c);
-int						is_op(const char *str, const int type);
+size_t					is_chars(const char *str, const char *valids[]);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_repl.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:33 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/28 21:09:47 by castronela       ###   ########.fr       */
+/*   Updated: 2024/10/14 17:50:38 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ static int	subst_vars(t_lst_str *node)
 	i = -1;
 	while (node->str[++i])
 	{
-		if (quote == 0 && is_qt(node->str[i]))
+		if (quote == 0 && is_chars(&node->str[i], (const char *[]){QT, NULL}))
 			quote = node->str[i];
 		else if (quote == node->str[i])
 			quote = 0;

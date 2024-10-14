@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input_checker.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:21 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 14:23:25 by castronela       ###   ########.fr       */
+/*   Updated: 2024/10/14 17:23:52 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,20 @@ On failure: prints error and returns 1
 */
 static int	check_op(t_lst_str *node_current)
 {
-	if (is_op(node_current->str, RD))
+	if (is_chars(node_current->str, (const char *[]){RD, NULL}))
 	{
 		if (!node_current->next)
 		{
 			printf("%s `newline\'\n", ERR_STX_UNEXP_TOKEN);
 			return (1);
 		}
-		else if (is_op(node_current->next->str, RD | CT | HD))
+		else if (is_chars(node_current->next->str, (const char *[]){RD, HD, CT, NULL}))
 		{
 			printf("%s `%s\'\n", ERR_STX_UNEXP_TOKEN, node_current->next->str);
 			return (1);
 		}
 	}
-	if (is_op(node_current->str, CT) && (!node_current->prev
+	if (is_chars(node_current->str, (const char *[]){CT, NULL}) && (!node_current->prev
 			|| !node_current->next))
 	{
 		printf("%s\n", ERR_STX_INCOMPLETE_OP);

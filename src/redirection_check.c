@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_check.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: castronela <castronela@student.42.fr>      +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 11:48:27 by castronela        #+#    #+#             */
-/*   Updated: 2024/09/29 17:22:44 by castronela       ###   ########.fr       */
+/*   Updated: 2024/10/14 17:29:28 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ int	redirection_check(t_lst_str *head)
 	bad_access = 0;
 	while (head)
 	{
-		while (head && !is_op(head->str, CT))
+		while (head && !is_chars(head->str, (const char *[]){CT, NULL}))
 		{
-			if (is_op(head->str, RD))
+			if (is_chars(head->str, (const char *[]){RD, NULL}))
 			{
 				if (check_access(head->next))
 				{
@@ -87,7 +87,7 @@ static t_lst_str	*next_command_node(t_lst_str *node)
 {
 	while (node)
 	{
-		if (is_op(node->str, CT))
+		if (is_chars(node->str, (const char *[]){CT, NULL}))
 			return (node->next);
 		node = node->next;
 	}
