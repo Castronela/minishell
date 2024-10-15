@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:21 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:48:19 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 19:59:03 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	check_syntax(t_shell *shell)
 	{
 		if (check_op(node_current))
 			return (1);
-		if (is_quoteclosed(node_current) == false)
+		if (!node_current->next && is_quoteclosed(node_current) == false)
 			return (1);
 		node_current = node_current->next;
 	}
@@ -51,8 +51,8 @@ static bool	is_quoteclosed(t_lst_str *node_current)
 	i = -1;
 	while (node_current->str[++i])
 	{
-		if (quote == 0 && is_chars(&node_current->str[i], (const char *[]){QT,
-				NULL}))
+		if (quote == 0 && multicmp(&node_current->str[i], (const char *[]){QT,
+				NULL}, 0))
 			quote = node_current->str[i];
 		else if (quote == node_current->str[i])
 			quote = 0;
@@ -66,26 +66,28 @@ static bool	is_quoteclosed(t_lst_str *node_current)
 }
 
 /*
-Checks if operator repeats consecutively more often than expected
+Checks validity of syntax when token is redirection or control operator.
+When token is redirection: must be followed by non-NULL and non-operator token.
+When token is control: must have non-NULL tokens before and after.
 On failure: prints error and returns 1
 */
 static int	check_op(t_lst_str *node_current)
 {
-	if (is_chars(node_current->str, (const char *[]){RD, NULL}))
+	if (multicmp(node_current->str, (const char *[]){RD, HD, NULL}, 1))
 	{
 		if (!node_current->next)
 		{
 			printf("%s `newline\'\n", ERR_STX_UNEXP_TOKEN);
 			return (1);
 		}
-		else if (is_chars(node_current->next->str, (const char *[]){RD, HD, CT,
-				NULL}))
+		else if (multicmp(node_current->next->str, (const char *[]){RD, HD, CT,
+				NULL}, 1))
 		{
 			printf("%s `%s\'\n", ERR_STX_UNEXP_TOKEN, node_current->next->str);
 			return (1);
 		}
 	}
-	if (is_chars(node_current->str, (const char *[]){CT, NULL})
+	else if (multicmp(node_current->str, (const char *[]){CT, NULL}, 1)
 		&& (!node_current->prev || !node_current->next))
 	{
 		printf("%s\n", ERR_STX_INCOMPLETE_OP);

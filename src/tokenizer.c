@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:47:03 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 19:57:57 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ static char	*get_next_token(t_shell *shell, size_t *i_cmdline)
 				break ;
 			if (shell->cmdline[*i_cmdline] == SPACE)
 				break ;
-			if (is_chars(&shell->cmdline[*i_cmdline], (const char *[]){QT,
-					NULL}))
+			if (multicmp(&shell->cmdline[*i_cmdline], (const char *[]){QT,
+					NULL}, 0))
 				open_quote = shell->cmdline[*i_cmdline];
 		}
 		else if (open_quote == shell->cmdline[*i_cmdline])
@@ -101,13 +101,13 @@ static bool	op_in_token(const char *str, size_t start, size_t *i_cmdline)
 {
 	size_t	op_size;
 
-	op_size = is_chars(&str[start], (const char *[]){RD, HD, CT, NULL});
+	op_size = multicmp(&str[start], (const char *[]){RD, HD, CT, NULL}, 0);
 	if (op_size)
 	{
 		*i_cmdline += op_size;
 		return (true);
 	}
-	if (is_chars(&str[*i_cmdline], (const char *[]){RD, HD, CT, NULL})
+	if (multicmp(&str[*i_cmdline], (const char *[]){RD, HD, CT, NULL}, 0)
 		&& start != *i_cmdline)
 		return (true);
 	return (false);

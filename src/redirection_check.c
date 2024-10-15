@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 11:48:27 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:29:28 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 20:00:36 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,9 @@ int	redirection_check(t_lst_str *head)
 	bad_access = 0;
 	while (head)
 	{
-		while (head && !is_chars(head->str, (const char *[]){CT, NULL}))
+		while (head && !multicmp(head->str, (const char *[]){CT, NULL}, 1))
 		{
-			if (is_chars(head->str, (const char *[]){RD, NULL}))
+			if (multicmp(head->str, (const char *[]){RD, NULL}, 1))
 			{
 				if (check_access(head->next))
 				{
@@ -87,7 +87,7 @@ static t_lst_str	*next_command_node(t_lst_str *node)
 {
 	while (node)
 	{
-		if (is_chars(node->str, (const char *[]){CT, NULL}))
+		if (multicmp(node->str, (const char *[]){CT, NULL}, 1))
 			return (node->next);
 		node = node->next;
 	}

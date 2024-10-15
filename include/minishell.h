@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/10/14 18:21:49 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 19:52:19 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ int						variable_expansion(t_shell *shell);
 
 // ---- Utils ----------------------------------------------------------------------------
 
-size_t					is_chars(const char *str, const char *valids[]);
+size_t					multicmp(const char *str, const char *valids[], bool fullmatch);
 bool					is_heredoc(t_shell *shell);
 void					rm_qt(char *token);
 

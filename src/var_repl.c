@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:33 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/14 17:50:38 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 20:01:06 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,8 @@ static int	subst_vars(t_lst_str *node)
 	i = -1;
 	while (node->str[++i])
 	{
-		if (quote == 0 && is_chars(&node->str[i], (const char *[]){QT, NULL}))
+		if (quote == 0 && multicmp(&node->str[i], (const char *[]){QT, NULL},
+			0))
 			quote = node->str[i];
 		else if (quote == node->str[i])
 			quote = 0;
