@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/10/15 19:57:57 by david            ###   ########.fr       */
+/*   Updated: 2024/10/15 20:51:44 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,10 @@ static int	add_token_to_lst(t_lst_str **root, char *token)
 	t_lst_str	*new;
 
 	new = ft_lst_new(token);
+	free(token);
 	if (!new)
 	{
 		perror(ERR_MALLOC);
-		free(token);
-		token = NULL;
 		return (1);
 	}
 	ft_lst_addback(root, new);
