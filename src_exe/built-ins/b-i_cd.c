@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:56:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	exe_cd(t_shell *shl)
 {
 	char	**str;
 
-	str = shl->cmds->cmds_lst->args;
+	str = shl->cmds_lst->args;
 	if (ft_strncmp(*(str + 1), ".\0", 2) == 0)
 		return ;
 	else if (ft_strncmp(*(str + 1), "..\0", 3) == 0)

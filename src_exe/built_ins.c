@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:56:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,18 +61,18 @@ int	is_built_in(char *cmd)
 
 void	exe_built_in(t_shell *shl)
 {
-	if (ft_strncmp(shl->cmds->cmds_lst->bin, "echo", 5) == 0)
-		exe_echo(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "cd", 3) == 0)
-	// 	exe_cd(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "pwd", 4) == 0)
-	// 	exe_pwd(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "export", 7) == 0)
-	// 	exe_export(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "unset", 6) == 0)
-	// 	exe_unset(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "env", 4) == 0)
-	// 	exe_env(shl->cmds->cmds_lst);
-	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "exit", 5) == 0)
-	// 	exe_exit(shl->cmds->cmds_lst);
+	if (ft_strncmp(shl->cmds_lst->bin, "echo", 5) == 0)
+		exe_echo(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 3) == 0)
+	// 	exe_cd(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "pwd", 4) == 0)
+	// 	exe_pwd(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "export", 7) == 0)
+	// 	exe_export(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "unset", 6) == 0)
+	// 	exe_unset(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "env", 4) == 0)
+	// 	exe_env(shl->cmds_lst);
+	// if (ft_strncmp(shl->cmds_lst->bin, "exit", 5) == 0)
+	// 	exe_exit(shl->cmds_lst);
 }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 17:56:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,19 @@ Built-in echo function
 void	exe_echo(t_shell *shl)
 {
 	char	**str;
+	int		nl;
 
-	str = shl->cmds->cmds_lst->args;
+	nl = 0;
+	str = shl->cmds_lst->args;
+	
+	// if -n option is present, set nl to 1
 	if (ft_strncmp(*str, "-n ", 3) == 0)
-	{
-		// echo with -n option
-		ft_putstr_fd(*str + 1, shl->cmds->cmds_lst->fd_out);
-	}
-	else
-	{
-		// echo with no options
-		ft_putstr_fd(*str, shl->cmds->cmds_lst->fd_out);
-		write(shl->cmds->cmds_lst->fd_out, "\n", 1);
-	}
+		nl = 1;
+		
+	ft_putstr_fd(*str, shl->cmds_lst->fd_out);
+	
+	// if nl is 1, write a newline to fd_out
+	if (nl == 1)
+		write(1, "\n", 1);
+	
 }
