@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 17:56:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 19:19:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ int	is_built_in(char *cmd)
 
 void	exe_built_in(t_shell *shl)
 {
-	if (ft_strncmp(shl->cmds_lst->bin, "echo", 5) == 0)
+	size_t	bin_point;
+
+	bin_point = ft_strlen(shl->cmds_lst->bin_path) - 5;
+	if (ft_strncmp(shl->cmds_lst->bin_path + bin_point, "echo", 5) == 0)
 		exe_echo(shl->cmds_lst);
 	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 3) == 0)
 	// 	exe_cd(shl->cmds_lst);
