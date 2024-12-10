@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/23 14:46:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 19:04:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->env_bak = NULL;
 	shl->env_paths = NULL;
 	shl->cur_wd = NULL;
-	shl->prev_bin_path = NULL;
+	shl->last_bin_arg = NULL;
 	shl->prompt = NULL;
 	copy_env(shl, envp);
 	copy_env_paths(shl, envp);
@@ -237,6 +237,6 @@ void	clearout(t_shell *shl)
 	ft_lst_free(&shl->env_paths);
 	free(shl->cur_wd);
 	free(shl->prompt);
-	// free(shl->prev_bin_path);
+	// free(shl->last_bin_arg);
 	rl_clear_history();
 }

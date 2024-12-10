@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 19:04:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ typedef struct s_shell
 	t_lst_str	*env_paths;
 	int			shlvl;
 	char		*cur_wd;
-	char		*prev_bin_path;
+	char		*last_bin_arg;
 	char		*prompt;
 	int			exit_code;
 
