@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/23 14:10:26 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 15:19:49 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,23 +65,25 @@ typedef struct s_cmds
 {
 	// int				cmd_index;	// Don't know if we require this, yet
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
-	char			*bin;			// Maybe this is not necessary
+	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
+	char			*hd_str;		// If << is present, this will contain the heredoc string, else NULL
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
+	int				apend;			// If >> is present, this will be set to 1, else 0
 	char			*file_in;		// Name of infile if < is present, else NULL
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	struct s_cmds	*next;
 }	t_cmds;
 
-typedef struct s_lst_cmds
-{
-	char				*input;
-	t_lst_str			*tokens;
-	t_lst_str			*redirs;
-	int					*redir_indices;	// not sure yet if this is needed
-	t_cmds				*cmds_lst;
-}	t_lst_cmds;
+// typedef struct s_lst_cmds
+// {
+// 	char				*input;
+// 	t_lst_str			*tokens;
+// 	t_lst_str			*redirs;
+// 	int					*redir_indices;	// not sure yet if this is needed
+// 	t_cmds				*cmds_lst;
+// }	t_lst_cmds;
 
 typedef struct s_shell
 {
@@ -95,16 +97,15 @@ typedef struct s_shell
 	int			exit_code;
 
 	char		*cmdline;
-	bool		hd_status;		// to be clarified: what is this for?
-	char		*hd_delimiter;	// to be clarified: what is this for?
 
-	// t_lsttoken	**tokenlst;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
-	t_lst_str	*tokenlst;
-	int			total_cmds;
-	int			**pipes;
-	t_lst_cmds	*cmds;
+	t_cmds		*cmds_lst;
+
+	// t_lsttoken	       **tokenlst;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
+	// t_lst_str	*tokenlst;
+	// int			total_cmds;
+	// int			**pipes;
+	// t_lst_cmds	*cmds;
 }	t_shell;
-
 
 /*  ========================== Function Prototypes ========================== */
 
