@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/04 13:40:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 #include "../include/minishell.h"
 
 int		is_built_in(char *cmd);
-void	exec_built_in(t_shell *shl);
-void	exec_echo(t_shell *shl);
-void	exec_cd(t_shell *shl);
+void	exe_built_in(t_shell *shl);
+void	exe_echo(t_shell *shl);
+void	exe_cd(t_shell *shl);
 
 
 /*
@@ -59,20 +59,20 @@ int	is_built_in(char *cmd)
 	return (0);
 }
 
-void	exec_built_in(t_shell *shl)
+void	exe_built_in(t_shell *shl)
 {
 	if (ft_strncmp(shl->cmds->cmds_lst->bin, "echo", 5) == 0)
-		exec_echo(shl->cmds->cmds_lst);
+		exe_echo(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "cd", 3) == 0)
-	// 	exec_cd(shl->cmds->cmds_lst);
+	// 	exe_cd(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "pwd", 4) == 0)
-	// 	exec_pwd(shl->cmds->cmds_lst);
+	// 	exe_pwd(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "export", 7) == 0)
-	// 	exec_export(shl->cmds->cmds_lst);
+	// 	exe_export(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "unset", 6) == 0)
-	// 	exec_unset(shl->cmds->cmds_lst);
+	// 	exe_unset(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "env", 4) == 0)
-	// 	exec_env(shl->cmds->cmds_lst);
+	// 	exe_env(shl->cmds->cmds_lst);
 	// if (ft_strncmp(shl->cmds->cmds_lst->bin, "exit", 5) == 0)
-	// 	exec_exit(shl->cmds->cmds_lst);
+	// 	exe_exit(shl->cmds->cmds_lst);
 }

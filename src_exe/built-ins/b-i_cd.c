@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/11/25 12:53:33 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Built-in cd function
   - If the path is only "..", then cwd_up() is called which updates the cwd system variable to one step above
   - If the path contains anything else, it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
 */
-void	exec_cd(t_shell *shl)
+void	exe_cd(t_shell *shl)
 {
 	char	**str;
 

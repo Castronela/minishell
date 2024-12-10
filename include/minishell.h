@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 15:19:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/10 16:28:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ int			main(int ac, char **av, char **envp);
 /* ------------------------------ src_exe/... ------------------------------ */
 // src_exe/built_ins.c
 int		is_built_in(char *cmd);
-void	exec_built_in(t_shell *shl);
-void	exec_echo(t_cmds *cmd);
+void	exe_built_in(t_shell *shl);
+void	exe_echo(t_cmds *cmd);
 
 
 // src_exe/init_shell.c
