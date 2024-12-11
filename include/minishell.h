@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/11 15:33:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/11 15:55:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,7 @@
 # define BG_WHITE "\033[47m"
 
 
-
-/*
-Structural changes:
-- t_shell_data is now just t_shell
-...
-*/
-
-/*  -------------- Type Definitions -------------- */
+/*  --------------------------- Type Definitions --------------------------- */
 
 //Standard error message definitions here...
 /* -------------------------------- STD_ERR -------------------------------- */
@@ -63,7 +56,7 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	int				cmd_index;	// Don't know if we require this, yet
+	int				cmd_index;		// Don't know if we require this, yet
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
@@ -126,22 +119,22 @@ void		ft_lst_free(t_lst_str **root);
 
 
 
-/* ------------------------------ src_parse/... ------------------------------ */
-/*--- Tokenizer ---*/
+/* ----------------------------- src_parse/... ----------------------------- */
+/* --- Tokenizer --- */
 
 
-/*--- Syntax Checker ---*/
+/* --- Syntax Checker --- */
 
 
-/*--- Heredoc ---*/
+/* --- Heredoc --- */
 
 
-/*--- Utils ---*/
+/* --- Utils --- */
 
 
-/*--- Testing ---*/
+/* ----------------------------- Test functions ----------------------------- */
 
 
-/* End Function Prototypes */
+/* ======================== End Function Prototypes ======================== */
 
 #endif
