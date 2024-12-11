@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 19:04:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/11 15:33:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	// int				cmd_index;	// Don't know if we require this, yet
+	int				cmd_index;	// Don't know if we require this, yet
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
@@ -76,35 +76,19 @@ typedef struct s_cmds
 	struct s_cmds	*next;
 }	t_cmds;
 
-// typedef struct s_lst_cmds
-// {
-// 	char				*input;
-// 	t_lst_str			*tokens;
-// 	t_lst_str			*redirs;
-// 	int					*redir_indices;	// not sure yet if this is needed
-// 	t_cmds				*cmds_lst;
-// }	t_lst_cmds;
-
 typedef struct s_shell
 {
-	t_lst_str	*env;
-	t_lst_str	*env_bak;
-	t_lst_str	*env_paths;
-	int			shlvl;
-	char		*cur_wd;
-	char		*last_bin_arg;
-	char		*prompt;
-	int			exit_code;
+	t_lst_str	*env;				// Stores env variables from the calling shell
+	t_lst_str	*env_bak;			// Stores a backup of the env variables from the calling shell
+	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
+	int			shlvl;				// Stores the current shell level
+	char		*cur_wd;			// Stores the current working directory
+	char		*last_bin_arg;		// Stores the last argument of the binary that was last executed
+	char		*prompt;			// Stores the prompt string for the minishell
 
-	char		*cmdline;
-
-	t_cmds		*cmds_lst;
-
-	// t_lsttoken	       **tokenlst;		// if it is a list, do we need a double pointer here? Is it not easier to make this a **char since it can be easily split using ft_split?
-	// t_lst_str	*tokenlst;
-	// int			total_cmds;
-	// int			**pipes;
-	// t_lst_cmds	*cmds;
+	char		*cmdline;			// Stores the command line input from the user
+	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
+	int			exit_code;			// Stores the exit code from the last executed command
 }	t_shell;
 
 /*  ========================== Function Prototypes ========================== */
@@ -142,40 +126,21 @@ void		ft_lst_free(t_lst_str **root);
 
 
 
-
-
-
-
-
-/*--- Token linked list ---*/
-t_lsttoken	**tokenlst_memalloc(void);
-int			tokenlst_addtoken(t_lsttoken **head, char *token);
-void		tokenlst_memfreelist(t_lsttoken **head);
-
+/* ------------------------------ src_parse/... ------------------------------ */
 /*--- Tokenizer ---*/
-int			tokenizer(t_shell *shell);
-char		*get_next_token(t_shell *shell, ssize_t *i_cmdline);
+
 
 /*--- Syntax Checker ---*/
-bool		is_quoteclosed(t_lsttoken *node_current);
-bool		is_op_invalid(const char *op);
-int			check_op(t_lsttoken *node_current, t_lsttoken *node_prev);
-int			check_syntax(t_shell *shell);
+
 
 /*--- Heredoc ---*/
-bool		is_heredoc(t_shell *shell);
-void		rm_qt(char *token);
+
 
 /*--- Utils ---*/
-bool		is_ws(const char c);
-bool		is_op(const char c);
-bool		is_qt(const char c);
+
 
 /*--- Testing ---*/
-void		print_lst(t_lsttoken **head);
-int			test_heredoc(void);
-int			test_tokenizer(void);
-void 		test_syntax_checker(void);
+
 
 /* End Function Prototypes */
 

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 19:19:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/11 15:35:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ int		is_built_in(char *cmd);
 void	exe_built_in(t_shell *shl);
 void	exe_echo(t_shell *shl);
 void	exe_cd(t_shell *shl);
-
 
 /*
 Notes:
