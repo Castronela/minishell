@@ -1,8 +1,0 @@
-The purpose of this file is to leave crucial info about the recent changes made to the test branch. Feel free to write a message here under your name for the other to see.
-============================================================================================================================================================================
-
-Pranuj:	I have deleted all of your files for now  from my branch, and replaced the test branch with my branch with all recent changes and updates so far.
-		I have changed the folder name from src to src_parse, with the thought that may be its a good idea to keep our works in separate folders and also
-		from the perspective of what each one is doing. It will be more convinient for us to find each other's files this way.
-		The makefile has not been cleaned up yet.
-
