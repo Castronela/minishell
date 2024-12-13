@@ -1,16 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   b-i_cd.c                                           :+:      :+:    :+:   */
+/*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 17:56:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/13 18:40:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	exe_cd(t_shell *shl);
+void	cwd_up(t_shell *shl);
+int		path_is_dir(char *path);
+char	*expand_path(char *path, char *cwd);
 
 /*
 Built-in cd function
@@ -20,12 +25,14 @@ Built-in cd function
 */
 void	exe_cd(t_shell *shl)
 {
-	char	**str;
+	char	*str;
+	char	*exp_path;
 
-	str = shl->cmds_lst->args;
-	if (ft_strncmp(*(str + 1), ".\0", 2) == 0)
+	str = *(shl->cmds_lst->args + 1);
+	exp_path = expand_path(str, shl->cur_wd);
+	if (compare_strings(*(str + 1), ".", 1))
 		return ;
-	else if (ft_strncmp(*(str + 1), "..\0", 3) == 0)
+	else if (compare_strings(*(str + 1), "..", 1))
 		cwd_up(shl);
 	else if (path_is_dir(*(str + 1)))
 		update_cwd(shl);
@@ -74,3 +81,16 @@ void cwd_up(t_shell *shl)
 	}
 
 }
+
+// char	*expand_path(char *path, char *cwd)
+// {
+// 	char	*exp_path;
+// 	int		dir_len;
+
+// 	dir_len = ft_strlen(cwd);
+// 	if (compare_strings(path, "../", 0))
+// 	{
+// 		while ()
+// 	}
+		
+// }
