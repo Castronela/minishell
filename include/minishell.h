@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/12 16:45:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/13 16:26:01 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,55 @@
 # define BG_WHITE "\033[47m"
 
 
-/*  --------------------------- Type Definitions --------------------------- */
 
-//Standard error message definitions here...
-/* -------------------------------- STD_ERR -------------------------------- */
-# define ERR_STX_QT "minishell: syntax error: unclosed quotes"
-# define ERR_STX_OP "minishell: syntax error near unexpected token"
-# define ERR_MALLOC "minishell: malloc failed"
+//--------------------------------------------------------------------------------------//
+//                              Recognized Meta Characters                              //
+//--------------------------------------------------------------------------------------//
+
+# define NEWLINE '\n'
+# define SPACE ' '
+# define SQ '\''
+# define DQ '\"'
+
+// ---- Redirection Operators ------------------------------------------------------------
+
+# define RD_IN "<"				// input redirection
+# define RD_OUT ">"				// output redirection
+# define RD_OUT_A ">>"			// append output redirection
+# define RD_HD "<<"				// heredoc redirection
+
+# define REDIRECTION_OPERATORS RD_IN, RD_OUT, RD_OUT_A, RD_HD
+
+// ---- Control Operators ----------------------------------------------------------------
+
+# define CT_PIPE "|"			// pipe control
+
+# define CONTROL_OPERATORS CT_PIPE
 
 
-/* -------------------------------- STD_ERR -------------------------------- */
+
+
+//--------------------------------------------------------------------------------------//
+//                                    Error Messages                                    //
+//--------------------------------------------------------------------------------------//
+
+// ---- Function Error Message -----------------------------------------------------------
+
+# define ERRMSG_MALLOC "Error malloc"
+
+// ---- Syntax Error Message -------------------------------------------------------------
+
+# define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
+# define ERRMSG_OPEN_QUOTE "minishell: syntax error: unclosed quotes"
+# define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
+
+
+
+
+//--------------------------------------------------------------------------------------//
+//                                   Type Definitions                                   //
+//--------------------------------------------------------------------------------------//
+
 
 typedef struct s_lst_str
 {
@@ -66,6 +105,7 @@ typedef struct s_cmds
 	int				apend;			// If >> is present, this will be set to 1, else 0
 	char			*file_in;		// Name of infile if < is present, else NULL
 	char			*file_out;		// Name of outfile if > is present, else NULL
+	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
 	struct s_cmds	*next;
 }	t_cmds;
 
@@ -80,11 +120,20 @@ typedef struct s_shell
 	char		*prompt;			// Stores the prompt string for the minishell
 
 	char		*cmdline;			// Stores the command line input from the user
+	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
 	int			exit_code;			// Stores the exit code from the last executed command
 }	t_shell;
 
-/*  ========================== Function Prototypes ========================== */
+
+
+
+
+
+//--------------------------------------------------------------------------------------//
+//                                 Function Prototypes                                  //
+//--------------------------------------------------------------------------------------//
+
 
 // src/main.c
 int			main(int ac, char **av, char **envp);
@@ -120,20 +169,43 @@ void		ft_lst_free(t_lst_str **root);
 
 
 /* ----------------------------- src_parse/... ----------------------------- */
+
+void		parser(t_shell *shell);
+
 /* --- Tokenizer --- */
 
+char		*get_next_token(t_shell *shell, size_t *index_cmd);
 
 /* --- Syntax Checker --- */
 
+bool		is_valid_quotation(t_shell *shell);
+bool		is_valid_control(t_shell *shell);
+bool		is_redir_target_valid(char *redir_target);
 
 /* --- Heredoc --- */
 
 
+/* --- Cmds list functions --- */
+
+t_cmds		*lst_cmds_newnode(t_shell *shell);
+void		lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
+void 		lst_cmds_freelst(t_shell *shell);
+
 /* --- Utils --- */
 
+bool	 	is_quote(const char c);
+void 		skip_whitespaces(const char *str, size_t *index);
+void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
+bool 		is_redir(const char *str, const size_t index);
+bool 		is_control(const char *str, const size_t index);
+size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 
 /* ----------------------------- Test functions ----------------------------- */
 
+void get_normal_input(t_shell *shell);
+void test_print_cmdlst(t_shell *shell);
+void test_free_cmds(t_shell *shell);
+void test_new_tokenizer(void);
 
 /* ======================== End Function Prototypes ======================== */
 

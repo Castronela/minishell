@@ -3,90 +3,112 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/11 15:34:57 by pamatya          ###   ########.fr        #
+#    Updated: 2024/12/13 17:16:31 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Compiler and flags
-CC			=	cc
-CFLAGS		=	-Wall -Wextra -Werror
-# CFLAGS		=	-Wall -Wextra -Werror -g -fsanitize=address
+# ----------------- Compiler Flags ----------------- #
 
-# Commands
-RM			=	rm -f
+CC			= 	gcc -g
+CFLAGS		= 	-Wall -Wextra -Werror
+DEPFLAGS	= 	-MMD
 
-# Directories
-# DIR_BIN		=	.
-DIR_BIN		=	bin
-DIR_INC		=	include
-DIR_LIB		=	lib
-DIR_OBJ		=	obj
-DIR_SRC		=	src
-DIR_SRC2	=	src_exe
+# ----------------- Commands ----------------- #
 
-# Libraries and paths
-LIBFT		=	libft.a
-# LIBS		=	-lft -lreadline
-# LIBS		=	$(LIBFT) -lft -lreadline
-LIBS		=	-lft -lreadline
-LIB_PATHS	=	-L$(DIR_LIB) -L/usr/local/lib
+RM			= 	rm -rf
 
-# Header paths
-# HEAD_PATHS		=	-I ./$(DIR_INC) -I ./$(DIR_LIB)/includes
-HEAD_PATHS		=	-I$(DIR_INC) -I$(DIR_LIB)/includes -I/usr/local/include
+# ----------------- Directories ----------------- #
 
-# Source and object files
-# SRCS		=	$(DIR_SRC)/main.c
-SRCS		=	$(DIR_SRC)/main.c \
-				$(DIR_SRC2)/init_shell.c $(DIR_SRC2)/lst_str_fns.c $(DIR_SRC2)/built_ins.c
-OBJS		=	$(SRCS:.c=.o)
+D_BIN		=	bin
+D_INC		=	include
+D_LIB		=	lib
+D_OBJ		=	obj
+D_SRC_PARSE	=	src_parse
+D_SRC_EXE	=	src_exe
 
-# Target Binary
+# ----------------- Headers Flag ----------------- #
+
+HEADS_FLG	=	-I$(D_INC) -I$(LIBFT_HED) -I$(READLINE_HED)
+
+# ----------------- Source, Object and Dependency files ----------------- #
+
+SRC_PARSE	= 	main.c test_fn.c utils_1.c input.c lst_cmds_fns.c tokenizer.c parse_cmdline.c syntax_validation.c
+SRC_EXE		=	init_shell.c lst_str_fns.c built_ins.c
+
+SRC			=	$(SRC_PARSE) $(SRC_EXE)
+OBJ 		+= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
+DEP			= 	$(OBJ:.o=.d)
+
+# ----------------- Target Binary ----------------- #
+
 NAME		=	minishell
-BINARY		=	$(DIR_BIN)/$(NAME)
 
+# ----------------- Libraries ----------------- #
+
+LIBS_FLG		=	$(LIBFT_FLG) $(READLINE_FLG)
+
+# LIBFT
+LIBFT			=	libft.a
+LIBFT_DIR		=	$(D_LIB)															# library file directory
+LIBFT_HED		=	$(D_LIB)/includes													# header directory
+LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library flag
+
+# Readline for Linux
+READLINE		=	libreadline.a
+READLINE_DIR	=	/usr/local/lib
+READLINE_HED	=	/usr/local/include
+READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
+
+# Leak Sanitizer for leak check on Mac (run: make LEAK=1)
+LEAKSAN			=	liblsan.dylib
+LEAKSAN_DIR		=	/Users/dstinghe/LeakSanitizer
+LEAKSAN_HED		= 	/Users/dstinghe/LeakSanitizer/include
+LEAKSAN_FLG		=	-L$(LEAKSAN_DIR) -l$(basename $(subst lib,,$(LEAKSAN)))
+		
+ifeq ($(LEAK), 1)
+	LIBS_FLG	+=	$(LEAKSAN_FLG)
+endif
+
+
+# ----------------- Color Codes ----------------- #
+
+RESET 		= 	\033[0m
+RED 		= 	\033[31m
+GREEN 		= 	\033[32m
+YELLOW 		= 	\033[33m
+BLUE 		= 	\033[34m
 
 # ----------------- Rules ----------------- #
+
 all: $(NAME)
+	@echo "$(GREEN)Compilation finished$(RESET)"
 
-# $(NAME): $(addprefix $(DIR_OBJ)/, $(OBJ)) $(LIBFT)
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(BINARY)
+$(NAME): $(OBJ)
+	@echo "Compiling minishell..."
+	@make -sC $(D_LIB)
+	@$(CC) $(CFLAGS) $(HEADS_FLG) $^ $(LIBS_FLG) -o $(D_BIN)/$@ 
 
-# $(DIR_OBJ)/%.o: %.c
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(D_OBJ)/%.o: $(D_SRC_PARSE)/%.c
+	@$(CC) $(CFLAGS) $(HEADS_FLG) $(DEPFLAGS) -c $< -o $@
 
-$(LIBFT):
-	@$(MAKE) -sC $(DIR_LIB) all
+$(D_OBJ)/%.o: $(D_SRC_EXE)/%.c
+	@$(CC) $(CFLAGS) $(HEADS_FLG) $(DEPFLAGS) -c $< -o $@
+
+-include $(DEP)
 
 clean:
-	@$(RM) $(OBJS)
-	@$(MAKE) -sC $(DIR_LIB) clean
+	@$(RM) $(OBJ) $(DEP)
+	@echo "$(YELLOW)Cleaned Objects & Dependencies$(RESET)"
 
-fclean: clean
-	@$(RM) $(BINARY)
-	@$(RM) $(DIR_LIB)/libft.a
-	@$(MAKE) -sC $(DIR_LIB) fclean
+fclean:
+	@$(RM) $(OBJ) $(DEP) $(D_BIN)/$(NAME)
+	@make fclean -sC $(D_LIB)
+	@echo "$(YELLOW)Cleaned All$(RESET)"
 
-re: fclean
-	@$(MAKE) all
-
-bug: $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) $(HEAD_PATHS) $(LIB_PATHS) $(LIBS) -o $(DIR_BIN)/bug
-
-run: re
-	@./$(DIR_BIN)/$(NAME)
-
-val:
-	@valgrind --leak-check=full ./$(DIR_BIN)/$(NAME) 
-# @valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(DIR_BIN)/$(NAME)
-# @valgrind --leak-check=full --show-leak-kinds=all ./$(DIR_BIN)/$(NAME)
-# @valgrind --leak-check=full --show-leak-kinds=all --gen-suppressions=all ./$(DIR_BIN)/$(NAME) 2>val_sup.txt
-# @valgrind --leak-check=full --show-leak-kinds=all --suppressions=readline_suppressions.supp ./your_program
+re: fclean all
 
 # valgpt: re
 # 	@valgrind --leak-check=full --gen-suppressions=all --suppressions=<(
