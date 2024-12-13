@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/13 17:16:31 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/13 17:30:25 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ HEADS_FLG	=	-I$(D_INC) -I$(LIBFT_HED) -I$(READLINE_HED)
 # ----------------- Source, Object and Dependency files ----------------- #
 
 SRC_PARSE	= 	main.c test_fn.c utils_1.c input.c lst_cmds_fns.c tokenizer.c parse_cmdline.c syntax_validation.c
-SRC_EXE		=	init_shell.c lst_str_fns.c built_ins.c
+SRC_EXE		=	init_shell.c lst_str_fns.c
 
 SRC			=	$(SRC_PARSE) $(SRC_EXE)
 OBJ 		+= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
