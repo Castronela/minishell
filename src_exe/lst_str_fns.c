@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/26 14:36:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/14 18:43:23 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ of the old node
   - Connects the next pointer of the old node's previous to the new node
   - Connects the new node's previous pointer to the prev of the old node
   - Connects the new node's next pointer to the next of the old node
-  - connects the previous pointer of the old node's next pointer to the new node
+  - Connects the previous pointer of the old node's next pointer to the new node
 
 !! Needs to be checked if this function needs to receive double pointers
 */
@@ -158,7 +158,6 @@ Function to delete a single node in the list of t_lst_str type:
   
 !! Needs to be checked if this function needs to receive double pointer
 */
-
 void	ft_del_node(t_lst_str *node)
 {
 	// if (!node || !*node)
@@ -167,4 +166,24 @@ void	ft_del_node(t_lst_str *node)
 	if (node->str)
 		free(node->str);
 	free(node);
+}
+
+/*
+Function to search through the linked list using provided keyword and return
+the pointer to that node, such that the manipulation of that node like adding-to
+or its deletion is possible.
+*/
+t_lst_str	*ft_find_node(t_lst_str *list, char *keyword)
+{
+	t_lst_str	*found_node;
+	int			i;
+	
+	if (!list)
+		return (NULL);
+	while ((list->str))
+	{
+		if (compare_strings(list->str, keyword, 1));
+		
+		list = list->next;
+	}
 }

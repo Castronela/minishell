@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/13 18:45:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/14 18:07:21 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,11 @@ int			main(int ac, char **av, char **envp);
 // src_exe/built_ins.c
 int		is_built_in(char *cmd);
 void	exe_built_in(t_shell *shl);
-void	exe_echo(t_cmds *cmd);
+void	mini_echo(t_shell *shl);
+int		mini_pwd(t_shell *shl, t_cmds *cmd);
+int		mini_export(t_shell *shl, t_cmds *cmd);
+
+
 int		compare_strings(const char *str1, const char *str2, int abs_toggle);
 
 // src_exe/init_shell.c

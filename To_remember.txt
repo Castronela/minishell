@@ -1,0 +1,20 @@
+This is a note for writing things about code that has already been written but 
+not thoroughly checked for bugs; and also for feature ideas / insights to be
+added later.
+
+1.	Notes to remember:
+	-	Checking the 2-way links in the t_lst_str struct, especially the *prev 
+		links in that how they have been currently constructed.
+	-	Check what the "OLDPWD" variable in the env is, and add it if required
+	-	Needs to be checked if these functions in the lst_str_fns.c file need to
+		receive double pointer:
+		void	ft_replace_node(t_lst_str *old, t_lst_str *new);
+		void	ft_del_node(t_lst_str *node);
+
+2.	Feature ideas/ insights
+	-	Feature to be added in the future: the env_bak can be used to store a
+		copy of the env but as a key:value pair using another field, for easy
+		extraction during variable expansion. Also, this list may also be used
+		to store other external vairables other than env variables which may be
+		created by the user during a session.
+	-	

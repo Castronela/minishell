@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/13 17:15:50 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/14 17:31:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Built-in echo function
   - if the command contains "-n ", then it writes to fd_out without a newline
   - if command contains no -n option, then it writes to fd_out followed by a newline
 */
-void	exe_echo(t_shell *shl)
+void	mini_echo(t_shell *shl)
 {
 	char	*str;
 	int		new_line;
