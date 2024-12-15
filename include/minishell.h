@@ -88,7 +88,9 @@
 
 typedef struct s_lst_str
 {
-    char				*str;
+    char				*str;		// This later may be replaced by 'key' as its redundant. It is kept for now so as not to disrupt workflow with partner's branch/work as well as while mergin with test.
+	char				*key;		// Field introduced to replace str field, which will store the whole variable and value in case of shl->env, but will store these variables as key-value pair in separate fields for shl->variables.
+	char				*val;		// This field will store the values of the variables whose names are stored by key. In case of shl->env and shl->env_paths, this field should be defaulted to NULL. This separation is done for easy extraction of variables as well as storage of other variables as users make them in the minishell.
     struct s_lst_str	*prev;
     struct s_lst_str	*next;
 }   t_lst_str;
@@ -112,7 +114,7 @@ typedef struct s_cmds
 typedef struct s_shell
 {
 	t_lst_str	*env;				// Stores env variables from the calling shell
-	t_lst_str	*env_bak;			// Stores a backup of the env variables from the calling shell
+	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
@@ -148,12 +150,12 @@ void	mini_echo(t_shell *shl);
 int		mini_pwd(t_shell *shl, t_cmds *cmd);
 int		mini_export(t_shell *shl, t_cmds *cmd);
 
-
 int		compare_strings(const char *str1, const char *str2, int abs_toggle);
 
 // src_exe/init_shell.c
 void 	init_shell(t_shell *shl, char **envp);
 void	copy_env(t_shell *shl, char **envp);
+void	populate_variables(t_shell *shl);
 void	copy_env_paths(t_shell *shl, char **envp);
 void	update_shlvl(t_shell *shl);
 void	set_prompt(t_shell *shl, char *prefix, char *separator);
@@ -162,13 +164,20 @@ char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 void	exit_early(t_shell *shl, char **split, char *msg);
 void	ft_print_lst(t_lst_str *root);
 
+void	arg_error(char **av);
+void	clearout(t_shell *shl);
+
 
 /* lst_str_fns.c */
 t_lst_str	*ft_lst_new(char *str);
+t_lst_str	*ft_var_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
+void		ft_replace_node(t_lst_str *old, t_lst_str *new);
+void		ft_del_node(t_lst_str *node);
+t_lst_str	*ft_find_node(t_lst_str *list, char *key);
 
 
 

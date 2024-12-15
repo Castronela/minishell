@@ -67,7 +67,7 @@ void cwd_up(t_shell *shl)
 	char		*nwd;
 
 	node[0] = shl->env;
-	node[1] = shl->env_bak;
+	node[1] = shl->variables;
 	nwd = shl->cur_wd;
 
 	while (node[0])

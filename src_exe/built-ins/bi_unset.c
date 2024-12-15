@@ -20,10 +20,10 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 
 
 	
-	// Also store this in env_bak according to new layout proposed below.
+	// Also store this in variables according to new layout proposed below.
 	
 	// Feature to be added inthe future:
-	// the env_bak can be used to store a copy of the env but as a key:value
+	// the variables can be used to store a copy of the env but as a key:value
 	// pair using another field, for easy extraction during variable expansion.
 	// Also, this list may also be used to store other external vairables other
 	// than env variables which may be created by the user during a session.

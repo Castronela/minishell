@@ -40,6 +40,29 @@ int	compare_strings(const char *str1, const char *str2, int abs_toggle)
 	return (1);
 }
 
+/*
+Function to add a new varaible to the minishell memory but not to shl->env
+  - The parameter 'str' is split against '=' and ported into ft_var_new fn
+  - One variable is added upon per fn call
+  - Does not write the variable to shl->env, this is only possible using the
+    mini_export function
+  - If malloc fails at any time, exit_early function is used to exit safely
+*/
+void	store_variable(t_shell *shl, char *str)
+{
+	t_lst_str	*new_var;
+	char		**split;
+
+	split = ft_split(str, '=');
+	if (!split)
+		exit_early(shl, NULL, "Could not split new variable string");
+	new_var = ft_var_new(*split, *(split + 1));
+	if (!new_var)
+		exit_early(shl, split, "Could not malloc new variable list node");
+	ft_lst_addback(&shl->variables, new_var);
+	ft_free2d(split);
+}
+
 // #include <stdio.h>
 
 // int main(void)

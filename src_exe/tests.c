@@ -34,7 +34,7 @@ void	test_initiations(t_shell *shl, int ac, char **av, char **envp)
 	ft_print_lst(shl->env);
 	write(1, "\n", 1);
 	write(1, "\n", 1);
-	// ft_print_lst(shl->env_bak);
+	// ft_print_lst(shl->variables);
 	// write(1, "\n", 1);
 	// write(1, "\n", 1);
 	

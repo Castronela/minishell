@@ -12,20 +12,21 @@
 
 #include "../../include/minishell.h"
 
+int		mini_export(t_shell *shl, t_cmds *cmd);
+void	store_variable(t_shell *shl, char *str);
+
+/*
+Function for built-in export function
+*/
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
 	t_lst_str	*new_var;
+	char		**split;
 
-	new_var = ft_lst_new(*(cmd->args) + 1);
+	new_var = ft_lst_new(*(cmd->args + 1));
 	if (!new_var)
-		return (-1);
+		exit_early(shl, NULL, "Could not malloc new variable");
 	ft_lst_addback(&shl->env, new_var);
-	// Also store this in env_bak according to new layout proposed below.
-	
-	// Feature to be added inthe future:
-	// the env_bak can be used to store a copy of the env but as a key:value
-	// pair using another field, for easy extraction during variable expansion.
-	// Also, this list may also be used to store other external vairables other
-	// than env variables which may be created by the user during a session.
+	store_variable(shl, *(cmd->args + 1));
 	return (0);
 }

@@ -13,21 +13,25 @@
 #include "../include/minishell.h"
 
 t_lst_str	*ft_lst_new(char *str);
+t_lst_str	*ft_var_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
+t_lst_str	*ft_find_node(t_lst_str *list, char *key);
 
 /*
 Creates a new node of type t_lst_str
   - Returns a new node of t_lst_str type struct
   - Mallocs memory for new node and uses ft_strdup to allocate memory for arg. "str"
   - Returns NULL if malloc fails
-Libft Description: Allocates (with malloc(3)) and returns a new node. The member 
-variable ’content’ is initialized with the value of the parameter ’content’. 
-The variable ’next’ is initialized to NULL.
+  - The fields 'key', 'val', ’next’, and 'prev' are initialized to NULL.
+  - The fields 'key' and 'val' are for variable storage.
+  - The fields ’next’ and 'prev' are for creating links.
+Libft Description: Allocates (with malloc) and returns a new node. The member 
+variable 'str' is initialized with the value of the parameter 'str'. 
 */
 t_lst_str	*ft_lst_new(char *str)
 {
@@ -37,9 +41,34 @@ t_lst_str	*ft_lst_new(char *str)
 	if (!new_node)
 		return (NULL);
 	new_node->str = ft_strdup(str);
+	new_node->key = NULL;
+	new_node->val = NULL;
 	new_node->next = NULL;
 	new_node->prev = NULL;
 	return (new_node);
+}
+
+/*
+Creates a new node of type t_lst_str for variable type list
+  - Returns a new node of t_lst_str type struct
+  - Mallocs memory for new node and uses ft_strdup to allocate memory for arg. "str"
+  - Returns NULL if malloc fails
+  - The fields ’next’ and 'prev' are initialized to NULL, used for creating links
+  - The fields 'key' and 'val' are initialized from values received as parameters key and val
+*/
+t_lst_str	*ft_var_new(char *key, char *val)
+{
+	t_lst_str	*new_var;
+
+	new_var = malloc(sizeof(t_lst_str));
+	if (!new_var)
+		return (NULL);
+	new_var->str = NULL;
+	new_var->key = ft_strdup(key);
+	new_var->val = ft_strdup(val);
+	new_var->next = NULL;
+	new_var->prev = NULL;
+	return (new_var);
 }
 
 /*
@@ -122,6 +151,8 @@ void	ft_lst_free(t_lst_str **root)
 		free_node = del_node;
 		del_node = del_node->next;
 		free(free_node->str);
+		free(free_node->key);
+		free(free_node->val);
 		free(free_node);
 	}
 	*root = NULL;
@@ -165,25 +196,25 @@ void	ft_del_node(t_lst_str *node)
 		return ;
 	if (node->str)
 		free(node->str);
+		free(node->key);
+		free(node->val);
 	free(node);
 }
 
 /*
-Function to search through the linked list using provided keyword and return
+Function to search through the linked list using provided key and return
 the pointer to that node, such that the manipulation of that node like adding-to
 or its deletion is possible.
 */
-t_lst_str	*ft_find_node(t_lst_str *list, char *keyword)
+t_lst_str	*ft_find_node(t_lst_str *list, char *key)
 {
-	t_lst_str	*found_node;
-	int			i;
-	
 	if (!list)
 		return (NULL);
 	while ((list->str))
 	{
-		if (compare_strings(list->str, keyword, 1));
-		
+		if (compare_strings(list->key, key, 1));
+			return (list);
 		list = list->next;
 	}
+	return (NULL);
 }

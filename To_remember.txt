@@ -12,7 +12,7 @@ added later.
 		void	ft_del_node(t_lst_str *node);
 
 2.	Feature ideas/ insights
-	-	Feature to be added in the future: the env_bak can be used to store a
+	-	Feature to be added in the future: the variables can be used to store a
 		copy of the env but as a key:value pair using another field, for easy
 		extraction during variable expansion. Also, this list may also be used
 		to store other external vairables other than env variables which may be

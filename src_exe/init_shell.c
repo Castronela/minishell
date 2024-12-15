@@ -37,7 +37,7 @@ Initializes the elements of the shell struct "t_shell"
 void	init_shell(t_shell *shl, char **envp)
 {
 	shl->env = NULL;
-	shl->env_bak = NULL;
+	shl->variables = NULL;
 	shl->env_paths = NULL;
 	shl->cur_wd = NULL;
 	shl->last_bin_arg = NULL;
@@ -55,7 +55,7 @@ void	init_shell(t_shell *shl, char **envp)
 
 /*
 Copies the environment variables to the shell struct
-  - Copies the environment variables into shl->env and shl->env_bak as lists
+  - Copies the environment variables into shl->env and shl->variables as lists
   - Frees allocations and exits the program if malloc fails
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
@@ -63,19 +63,24 @@ Copies the environment variables to the shell struct
 void	copy_env(t_shell *shl, char **envp)
 {
 	int 		i;
-	t_lst_str	*new_node[2];
+	t_lst_str	*new_node;
+	char		**split;
 	
 	i = -1;
 	while (envp[++i])
 	{
-		new_node[0] = ft_lst_new(envp[i]);
-		if (!new_node[0])
+		new_node = ft_lst_new(envp[i]);
+		if (!new_node)
 			exit_early(shl, NULL, "Could not malloc t_lst_str node");
-		ft_lst_addback(&shl->env, new_node[0]);
-		new_node[1] = ft_lst_new(envp[i]);
-		if (!new_node[1])
-			exit_early(shl, NULL, "Could not malloc t_lst_str node");
-		ft_lst_addback(&shl->env_bak, new_node[1]);
+		ft_lst_addback(&shl->env, new_node);
+		split = ft_split(envp[i], '=');
+		if (!split)
+			exit_early(shl, NULL, "Could not split for new variable");
+		new_node = ft_var_new(*split[0], *split[1]);
+		if (!new_node)
+			exit_early(shl, split, "Could not malloc t_lst_str new_node");
+		ft_lst_addback(&shl->variables, new_node);
+		ft_free2d(split);
 	}
 }
 
@@ -121,14 +126,14 @@ void	copy_env_paths(t_shell *shl, char **envp)
 Updates the SHLVL environment variable
   - Finds the SHLVL variable in the environment list using ft_strncmp
   - Assignes shl->shlvl as int by converting using ft_atoi
-  - Updates the SHLVL variable in the shl->env and shl->env_bak lists by 1 as char*
+  - Updates the SHLVL variable in the shl->env and shl->variables lists by 1 as char*
   - Frees the new value of SHLVL
   - Frees the new
 
 !! Correction required:
   - This function will fail when the shlvl goes into two digits because, while
 	the shlvl is malloc'd correctly for any case including for two digits, the
-	env and env_bak elements of shl are only updated with assignment at a single
+	env and variables elements of shl are only updated with assignment at a single
 	char address by dereferencing shlvl instead of replacing the allocation itself
 */
 void	update_shlvl(t_shell *shl)
@@ -138,7 +143,7 @@ void	update_shlvl(t_shell *shl)
 	// char		shlvl;
 
 	new_node[0] = shl->env;
-	new_node[1] = shl->env_bak;
+	new_node[1] = shl->variables;
 	while (new_node[0])
 	{
 		if (ft_strncmp(new_node[0]->str, "SHLVL=", 6) == 0)
@@ -198,8 +203,8 @@ void	exit_early(t_shell *shl, char **split, char *msg)
 {
 	if (shl->env != NULL)
 		ft_lst_free(&shl->env);
-	if (shl->env_bak != NULL)
-		ft_lst_free(&shl->env_bak);
+	if (shl->variables != NULL)
+		ft_lst_free(&shl->variables);
 	if (shl->env_paths != NULL)
 		ft_lst_free(&shl->env_paths);
 	if (shl->cur_wd)
@@ -233,7 +238,7 @@ void	arg_error(char **av)
 void	clearout(t_shell *shl)
 {
 	ft_lst_free(&shl->env);
-	ft_lst_free(&shl->env_bak);
+	ft_lst_free(&shl->variables);
 	ft_lst_free(&shl->env_paths);
 	free(shl->cur_wd);
 	free(shl->prompt);
