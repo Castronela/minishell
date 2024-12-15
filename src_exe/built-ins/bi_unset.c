@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 18:17:33 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/15 21:02:04 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,19 @@
 
 int	mini_unset(t_shell *shl, t_cmds *cmd)
 {
+	t_lst_str	*en;
+	size_t		len[2];
 	
-	
-	while (shl->env->)
+	en = shl->env;
+	len[0] = ft_strlen(cmd->args + 1);
+	while (en->str)
+	{
+		len[1] = ft_strlen(en->str);
+		if (ft_strncmp(cmd->args + 1, en->str + len[1] - len[0], len[0]));
+		
 
+		en = en->str;
+	}
 
-	
-	// Also store this in variables according to new layout proposed below.
-	
-	// Feature to be added inthe future:
-	// the variables can be used to store a copy of the env but as a key:value
-	// pair using another field, for easy extraction during variable expansion.
-	// Also, this list may also be used to store other external vairables other
-	// than env variables which may be created by the user during a session.
 	return (0);
 }

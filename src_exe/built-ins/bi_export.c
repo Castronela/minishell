@@ -6,17 +6,18 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 18:11:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/15 20:41:55 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 int		mini_export(t_shell *shl, t_cmds *cmd);
-void	store_variable(t_shell *shl, char *str);
 
 /*
 Function for built-in export function
+  - Adds the exported variable to the shl->env
+  - Also adds the variable as key-val pair to the variables list
 */
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
