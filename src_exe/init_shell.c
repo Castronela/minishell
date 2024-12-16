@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 14:31:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 15:38:07 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,14 @@ void	copy_env(t_shell *shl, char **envp)
 	i = -1;
 	while (envp[++i])
 	{
-		new_node = ft_lst_new(envp[i]);
+		new_node = ft_lst_new(envp[i], NULL);
 		if (!new_node)
 			exit_early(shl, NULL, "Could not malloc t_lst_str node");
 		ft_lst_addback(&shl->env, new_node);
 		split = ft_split(envp[i], '=');
 		if (!split)
 			exit_early(shl, NULL, "Could not split for new variable");
-		new_node = ft_var_new(*split[0], *split[1]);
+		new_node =ft_lst_new(*split[0], *split[1]);
 		if (!new_node)
 			exit_early(shl, split, "Could not malloc t_lst_str new_node");
 		ft_lst_addback(&shl->variables, new_node);
@@ -108,7 +108,7 @@ void	copy_env_paths(t_shell *shl, char **envp)
 	i = -1;
 	while (paths[++i])
 	{
-		new_node = ft_lst_new(paths[i]);
+		new_node = ft_lst_new(paths[i], NULL);
 		if (!new_node)
 			exit_early(shl, paths, "Could not malloc t_lst_str node");
 		ft_lst_addback(&shl->env_paths, new_node);

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 14:31:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 15:34:57 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	compare_strings(const char *key, const char *field, int abs_toggle)
 
 /*
 Function to add a new varaible to the minishell memory but not to shl->env
-  - The parameter 'str' is split against '=' and ported into ft_var_new fn
+  - The parameter 'str' is split against '=' and ported intoft_lst_new fn
   - One variable is added upon per fn call
   - Does not write the variable to shl->env, this is only possible using the
     mini_export function
@@ -69,7 +69,7 @@ void	store_variable(t_shell *shl, char *str)
 	split = ft_split(str, '=');
 	if (!split)
 		exit_early(shl, NULL, "Could not split new variable string");
-	new_var = ft_var_new(*split, *(split + 1));
+	new_var =ft_lst_new(*split, *(split + 1));
 	if (!new_var)
 		exit_early(shl, split, "Could not malloc new variable list node");
 	ft_lst_addback(&shl->variables, new_var);

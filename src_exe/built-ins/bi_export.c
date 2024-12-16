@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/15 20:41:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 15:35:55 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 	t_lst_str	*new_var;
 	char		**split;
 
-	new_var = ft_lst_new(*(cmd->args + 1));
+	new_var = ft_lst_new(*(cmd->args + 1), NULL);
 	if (!new_var)
 		exit_early(shl, NULL, "Could not malloc new variable");
 	ft_lst_addback(&shl->env, new_var);
