@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 15:34:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 20:33:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
-t_lst_str	*ft_find_node(t_lst_str *list, char *key);
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field);
 
 /*
 Creates a new node of type t_lst_str for variable type list
@@ -173,23 +173,74 @@ void	ft_del_node(t_lst_str *node)
 		return ;
 	if (node->key)
 		free(node->key);
+	if (node->val)
 		free(node->val);
 	free(node);
 }
 
 /*
-Function to search through the linked list using provided key and return
+Function to remove a certain node from the list and reconnect the severed pieces
+  - If it is the first node, then it simply deletes the node and returns
+  - If it is the last node, then it
+  - Gets the nodes that are before and after it in the list
+  - Connects the nodes before and after to each other
+  - Deletes the node by freeing it using ft_del_node fn
+*/
+void	ft_remove_node(t_lst_str *node)
+{
+	t_lst_str	*before;
+	t_lst_str	*after;
+
+	if (!node->prev)
+	{
+		if (node->next)
+			ft_del_node(node);
+		return ;			// Have to confirm wheather this is enough or root pointer is required to be set to NULL, as it means that this is the first element
+	}
+	if (!node->next)
+	{
+		if (node->prev)
+		{
+			before = node->prev;
+			before->next = NULL;	
+		}
+		ft_del_node(node);
+		return ;
+	}
+	before = node->prev;
+	after = node->next;
+	before->next = after;
+	after->prev = before;
+	ft_del_node(node);
+}
+
+/*
+Function to search through the linked list using provided str and return
 the pointer to that node, such that the manipulation of that node like adding-to
 or its deletion is possible.
+  - The list is of type t_lst_str so it has multiple fields, hence search-field
+	argument is required to specify which field in the list to search
+  - Search field can be 0 or 1, 0 meant to 'key' field and 1 meant to search the
+	'val' field
 */
-t_lst_str	*ft_find_node(t_lst_str *list, char *key)
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field)
 {
-	if (!list)
+	if (!list || !str)
 		return (NULL);
-	while ((list->key))
+	if (search_field < 0 || search_field > 1)
+		return (NULL);
+	while (list)
 	{
-		if (compare_strings(list->key, key, 1));
-			return (list);
+		if (search_field == 0)
+		{
+			if (compare_strings(str, list->key, 1))
+				return (list);
+		}
+		else if (search_field == 1)
+		{
+			if (compare_strings(str, list->val, 1))
+				return (list);	
+		}
 		list = list->next;
 	}
 	return (NULL);

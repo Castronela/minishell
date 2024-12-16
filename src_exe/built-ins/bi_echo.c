@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 17:31:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:18:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	mini_echo(t_shell *shl)
 	str = *(shl->cmds_lst->args + pr_index);
 
 	// if -n option is present, set new_line to 1
-	if (compare_strings(str, "-n", 1))
+	if (compare_strings("-n", str, 1))
 	{
 		new_line = 1;
 		pr_index++;

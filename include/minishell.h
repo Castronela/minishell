@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 15:34:09 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 19:17:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,11 +118,11 @@ typedef struct s_shell
 	char		*cur_wd;			// Stores the current working directory
 	char		*last_bin_arg;		// Stores the last argument of the binary that was last executed
 	char		*prompt;			// Stores the prompt string for the minishell
+	int			exit_code;			// Stores the exit code from the last executed command
 
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
-	int			exit_code;			// Stores the exit code from the last executed command
 }	t_shell;
 
 
@@ -135,16 +135,19 @@ typedef struct s_shell
 //--------------------------------------------------------------------------------------//
 
 
-// src/main.c
+// src_parse/main.c
+
 int			main(int ac, char **av, char **envp);
-// int			main(int ac, char **av);
+// src_exe/test_main.c
+void		test_initiations(t_shell *shl, int ac, char **av, char **envp);
 
 
 /* ============================== src_exe/... ============================== */
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/....c ------------- */
+
 int			is_built_in(char *cmd);
-void		exec_built_in(t_shell *shl);
+void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_cd(t_shell *shl);
 void		mini_echo(t_shell *shl);
@@ -152,6 +155,7 @@ int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 
 /* ------------------------- src_exe/init_shell.c ------------------------- */
+
 void 		init_shell(t_shell *shl, char **envp);
 void		copy_env(t_shell *shl, char **envp);
 void		copy_env_paths(t_shell *shl, char **envp);
@@ -160,6 +164,7 @@ void		set_prompt(t_shell *shl, char *prefix, char *separator);
 char		*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 /* ----------------------------- lst_str_fns.c ----------------------------- */
+
 t_lst_str	*ft_lst_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
@@ -167,16 +172,16 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
-t_lst_str	*ft_find_node(t_lst_str *list, char *key);
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field);
 
 /* ------------------------------ utilities.c ------------------------------ */
-int			compare_strings(const char *key, const char *field, int abs_toggle);
+
+int			compare_strings(const char *str, const char *field, int exact);
 void		store_variable(t_shell *shl, char *str);
 void		arg_error(char **av);
 void		exit_early(t_shell *shl, char **split, char *msg);
 void		clearout(t_shell *shl);
 void		ft_print_lst(t_lst_str *root);
-
 
 /* ============================= src_parse/... ============================= */
 

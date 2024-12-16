@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 14:36:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 18:13:31 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../include/minishell.h"
 
 int		is_built_in(char *cmd);
-void	exec_built_in(t_shell *shl);
+void	exec_built_in(t_shell *shl, t_cmds *cmd);
 
 /*
 Notes:
@@ -35,7 +35,6 @@ Your shell must implement the following builtins:
 ◦ env with no options or arguments
 ◦ exit with no options
 */
-
 // Function to check whether the command is in the built-in list
 int	is_built_in(char *cmd)
 {
@@ -56,13 +55,13 @@ int	is_built_in(char *cmd)
 	return (0);
 }
 
-void	exec_built_in(t_shell *shl)
+void	exec_built_in(t_shell *shl, t_cmds *cmd)
 {
-	size_t	bin_point;
+	size_t	binpt_offset;
 
-	bin_point = ft_strlen(shl->cmds_lst->bin_path) - 5;
-	if (ft_strncmp(shl->cmds_lst->bin_path + bin_point, "echo", 5) == 0)
-		mini_echo(shl->cmds_lst);
+	binpt_offset = ft_strlen(cmd->bin_path) - 5;
+	if (ft_strncmp(cmd->bin_path + binpt_offset, "echo", 5) == 0)
+		mini_echo(shl);
 	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 3) == 0)
 	// 	mini_cd(shl->cmds_lst);
 	// if (ft_strncmp(shl->cmds_lst->bin, "pwd", 4) == 0)

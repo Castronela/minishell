@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 14:41:09 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:18:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void	mini_cd(t_shell *shl)
 
 	str = *(shl->cmds_lst->args + 1);
 	exp_path = expand_path(str, shl->cur_wd);
-	if (compare_strings(*(str + 1), ".", 1))
+	if (compare_strings(".", *(str + 1), 1))
 		return ;
-	else if (compare_strings(*(str + 1), "..", 1))
+	else if (compare_strings("..", *(str + 1), 1))
 		cwd_up(shl);
 	else if (path_is_dir(*(str + 1)))
 		update_cwd(shl);
@@ -88,7 +88,7 @@ void cwd_up(t_shell *shl)
 // 	int		dir_len;
 
 // 	dir_len = ft_strlen(cwd);
-// 	if (compare_strings(path, "../", 0))
+// 	if (compare_strings("../", path, 0))
 // 	{
 // 		while ()
 // 	}

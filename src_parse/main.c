@@ -1,6 +1,9 @@
 # include "minishell.h"
+// #include <../include/minishell.h>
 
-int main()
+int main(int ac, char **av, char **envp)
 {
-    test_new_tokenizer();
+   t_shell  shl;
+   
+   test_initiations(&shl, ac, av, envp);
 }
