@@ -6,28 +6,32 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/09/26 14:36:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:26:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 t_lst_str	*ft_lst_new(char *str);
+t_lst_str	*ft_var_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
+t_lst_str	*ft_find_node(t_lst_str *list, char *key);
 
 /*
 Creates a new node of type t_lst_str
   - Returns a new node of t_lst_str type struct
   - Mallocs memory for new node and uses ft_strdup to allocate memory for arg. "str"
   - Returns NULL if malloc fails
-Libft Description: Allocates (with malloc(3)) and returns a new node. The member 
-variable ’content’ is initialized with the value of the parameter ’content’. 
-The variable ’next’ is initialized to NULL.
+  - The fields 'key', 'val', ’next’, and 'prev' are initialized to NULL.
+  - The fields 'key' and 'val' are for variable storage.
+  - The fields ’next’ and 'prev' are for creating links.
+Libft Description: Allocates (with malloc) and returns a new node. The member 
+variable 'str' is initialized with the value of the parameter 'str'. 
 */
 t_lst_str	*ft_lst_new(char *str)
 {
@@ -36,10 +40,33 @@ t_lst_str	*ft_lst_new(char *str)
 	new_node = malloc(sizeof(t_lst_str));
 	if (!new_node)
 		return (NULL);
-	new_node->str = ft_strdup(str);
+	new_node->key = ft_strdup(str);
+	new_node->val = NULL;
 	new_node->next = NULL;
 	new_node->prev = NULL;
 	return (new_node);
+}
+
+/*
+Creates a new node of type t_lst_str for variable type list
+  - Returns a new node of t_lst_str type struct
+  - Mallocs memory for new node and uses ft_strdup to allocate memory for arg. "str"
+  - Returns NULL if malloc fails
+  - The fields ’next’ and 'prev' are initialized to NULL, used for creating links
+  - The fields 'key' and 'val' are initialized from values received as parameters key and val
+*/
+t_lst_str	*ft_var_new(char *key, char *val)
+{
+	t_lst_str	*new_var;
+
+	new_var = malloc(sizeof(t_lst_str));
+	if (!new_var)
+		return (NULL);
+	new_var->key = ft_strdup(key);
+	new_var->val = ft_strdup(val);
+	new_var->next = NULL;
+	new_var->prev = NULL;
+	return (new_var);
 }
 
 /*
@@ -121,7 +148,8 @@ void	ft_lst_free(t_lst_str **root)
 	{
 		free_node = del_node;
 		del_node = del_node->next;
-		free(free_node->str);
+		free(free_node->key);
+		free(free_node->val);
 		free(free_node);
 	}
 	*root = NULL;
@@ -133,9 +161,9 @@ of the old node
   - Connects the next pointer of the old node's previous to the new node
   - Connects the new node's previous pointer to the prev of the old node
   - Connects the new node's next pointer to the next of the old node
-  - connects the previous pointer of the old node's next pointer to the new node
+  - Connects the previous pointer of the old node's next pointer to the new node
 
-!! Needs to be checked if this function needs to receive double pointers
+!!! Needs to be checked if this function needs to receive double pointers
 */
 void	ft_replace_node(t_lst_str *old, t_lst_str *new)
 {
@@ -156,15 +184,33 @@ Function to delete a single node in the list of t_lst_str type:
   - Frees the allocation of its malloc'd element (str)
   - Frees the allocation of the node itself
   
-!! Needs to be checked if this function needs to receive double pointer
+!!! Needs to be checked if this function needs to receive double pointer
 */
-
 void	ft_del_node(t_lst_str *node)
 {
 	// if (!node || !*node)
 	if (!node)
 		return ;
-	if (node->str)
-		free(node->str);
+	if (node->key)
+		free(node->key);
+		free(node->val);
 	free(node);
+}
+
+/*
+Function to search through the linked list using provided key and return
+the pointer to that node, such that the manipulation of that node like adding-to
+or its deletion is possible.
+*/
+t_lst_str	*ft_find_node(t_lst_str *list, char *key)
+{
+	if (!list)
+		return (NULL);
+	while ((list->key))
+	{
+		if (compare_strings(list->key, key, 1));
+			return (list);
+		list = list->next;
+	}
+	return (NULL);
 }

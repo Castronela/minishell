@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   b-i_echo.c                                         :+:      :+:    :+:   */
+/*   bi_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 19:31:28 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/14 17:31:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,29 @@ Built-in echo function
   - if the command contains "-n ", then it writes to fd_out without a newline
   - if command contains no -n option, then it writes to fd_out followed by a newline
 */
-void	exe_echo(t_shell *shl)
+void	mini_echo(t_shell *shl)
 {
 	char	*str;
-	int		nl;
-	int		start_at;
+	int		new_line;
+	int		pr_index;
 
-	nl = 0;
-	start_at = 1;
-	str = *(shl->cmds_lst->args + start_at);
-	
-	// if -n option is present, set nl to 1
-	if (ft_strncmp(str, "-n\0", 3) == 0)
+	new_line = 0;
+	pr_index = 1;
+	str = *(shl->cmds_lst->args + pr_index);
+
+	// if -n option is present, set new_line to 1
+	if (compare_strings(str, "-n", 1))
 	{
-		nl = 1;
-		start_at++;
-		str = *(shl->cmds_lst->args + start_at);
+		new_line = 1;
+		pr_index++;
+		str = *(shl->cmds_lst->args + pr_index);
 	}
-	write(shl->cmds_lst->fd_out, str, ft_strlen(str));
-	// if nl is 1, write a newline to fd_out
-	if (nl == 1)
-		write(1, "\n", 1);
+	while (shl->cmds_lst->args + pr_index)
+	{
+		str = *(shl->cmds_lst->args + pr_index++);
+		write(shl->cmds_lst->fd_out, str, ft_strlen(str));
+	}
+	// if new_line is 1, write a newline to fd_out
+	if (new_line)
+		write(shl->cmds_lst->fd_out, "\n", 1);
 }
