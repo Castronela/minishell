@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 18:06:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:31:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,6 @@ void	copy_env_paths(t_shell *shl, char **envp);
 void	update_shlvl(t_shell *shl);
 void	set_prompt(t_shell *shl, char *prefix, char *separator);
 char	*assemble_prompt(char *prefix, char *cwd, char *separator);
-
-void	exit_early(t_shell *shl, char **split, char *msg);
-void	ft_print_lst(t_lst_str *root);
-
-void	arg_error(char **av);
-void	clearout(t_shell *shl);
 
 /*
 Initializes the elements of the shell struct "t_shell"
@@ -146,15 +140,15 @@ void	update_shlvl(t_shell *shl)
 	new_node[1] = shl->variables;
 	while (new_node[0])
 	{
-		if (ft_strncmp(new_node[0]->str, "SHLVL=", 6) == 0)
+		if (ft_strncmp(new_node[0]->key, "SHLVL=", 6) == 0)
 		{
-			shl->shlvl = ft_atoi(new_node[0]->str + 6) + 1;
+			shl->shlvl = ft_atoi(new_node[0]->key + 6) + 1;
 			// shlvl = ft_strdup(ft_itoa(shl->shlvl));
 			shlvl = ft_itoa(shl->shlvl);
 			if (!shlvl)
 				exit_early(shl, NULL, "itoa failed");
-			*(new_node[0]->str + 6) = *shlvl;										// Correction required
-			*(new_node[1]->str + 6) = *shlvl;										// Correction required
+			*(new_node[0]->key + 6) = *shlvl;										// Correction required
+			*(new_node[1]->key + 6) = *shlvl;										// Correction required
 			free(shlvl);
 			break ;
 		}
@@ -199,49 +193,3 @@ char	*assemble_prompt(char *prefix, char *cwd, char *separator)
 	return (tmp[1]);
 }
 
-void	exit_early(t_shell *shl, char **split, char *msg)
-{
-	if (shl->env != NULL)
-		ft_lst_free(&shl->env);
-	if (shl->variables != NULL)
-		ft_lst_free(&shl->variables);
-	if (shl->env_paths != NULL)
-		ft_lst_free(&shl->env_paths);
-	if (shl->cur_wd)
-		free(shl->cur_wd);
-	if (shl->prompt)
-		free(shl->prompt);
-	if (split)
-		ft_free2d(split);
-	perror(msg);
-	exit(errno);
-}
-
-void	ft_print_lst(t_lst_str *root)
-{
-	while (root)
-	{
-		ft_printf("%s\n", root->str);
-		root = root->next;
-	}
-}
-
-void	arg_error(char **av)
-{
-	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
-	ft_putstr_fd("Minishell: ", 2);
-	ft_putstr_fd(av[1], 2);
-	ft_putstr_fd(": No such file or directory\n", 2);
-	exit(127);
-}
-
-void	clearout(t_shell *shl)
-{
-	ft_lst_free(&shl->env);
-	ft_lst_free(&shl->variables);
-	ft_lst_free(&shl->env_paths);
-	free(shl->cur_wd);
-	free(shl->prompt);
-	// free(shl->last_bin_arg);
-	rl_clear_history();
-}

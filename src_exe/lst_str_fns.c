@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/15 20:49:44 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:26:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ t_lst_str	*ft_lst_new(char *str)
 	new_node = malloc(sizeof(t_lst_str));
 	if (!new_node)
 		return (NULL);
-	new_node->str = ft_strdup(str);
-	new_node->key = NULL;
+	new_node->key = ft_strdup(str);
 	new_node->val = NULL;
 	new_node->next = NULL;
 	new_node->prev = NULL;
@@ -63,7 +62,6 @@ t_lst_str	*ft_var_new(char *key, char *val)
 	new_var = malloc(sizeof(t_lst_str));
 	if (!new_var)
 		return (NULL);
-	new_var->str = NULL;
 	new_var->key = ft_strdup(key);
 	new_var->val = ft_strdup(val);
 	new_var->next = NULL;
@@ -150,7 +148,6 @@ void	ft_lst_free(t_lst_str **root)
 	{
 		free_node = del_node;
 		del_node = del_node->next;
-		free(free_node->str);
 		free(free_node->key);
 		free(free_node->val);
 		free(free_node);
@@ -166,7 +163,7 @@ of the old node
   - Connects the new node's next pointer to the next of the old node
   - Connects the previous pointer of the old node's next pointer to the new node
 
-!! Needs to be checked if this function needs to receive double pointers
+!!! Needs to be checked if this function needs to receive double pointers
 */
 void	ft_replace_node(t_lst_str *old, t_lst_str *new)
 {
@@ -187,15 +184,14 @@ Function to delete a single node in the list of t_lst_str type:
   - Frees the allocation of its malloc'd element (str)
   - Frees the allocation of the node itself
   
-!! Needs to be checked if this function needs to receive double pointer
+!!! Needs to be checked if this function needs to receive double pointer
 */
 void	ft_del_node(t_lst_str *node)
 {
 	// if (!node || !*node)
 	if (!node)
 		return ;
-	if (node->str)
-		free(node->str);
+	if (node->key)
 		free(node->key);
 		free(node->val);
 	free(node);
@@ -210,7 +206,7 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *key)
 {
 	if (!list)
 		return (NULL);
-	while ((list->str))
+	while ((list->key))
 	{
 		if (compare_strings(list->key, key, 1));
 			return (list);

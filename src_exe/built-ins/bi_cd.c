@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 17:32:14 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:41:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void cwd_up(t_shell *shl)
 
 	while (node[0])
 	{
-		if (ft_strncmp(node[0]->str, "PWD=", 4) == 0)
+		if (ft_strncmp(node[0]->key, "PWD=", 4) == 0)
 		{
 			
 		}

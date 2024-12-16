@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/14 18:07:21 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:42:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,8 @@
 //                                   Type Definitions                                   //
 //--------------------------------------------------------------------------------------//
 
-
 typedef struct s_lst_str
-{
-    char				*str;		// This later may be replaced by 'key' as its redundant. It is kept for now so as not to disrupt workflow with partner's branch/work as well as while mergin with test.
+{		// This later may be replaced by 'key' as its redundant. It is kept for now so as not to disrupt workflow with partner's branch/work as well as while mergin with test.
 	char				*key;		// Field introduced to replace str field, which will store the whole variable and value in case of shl->env, but will store these variables as key-value pair in separate fields for shl->variables.
 	char				*val;		// This field will store the values of the variables whose names are stored by key. In case of shl->env and shl->env_paths, this field should be defaulted to NULL. This separation is done for easy extraction of variables as well as storage of other variables as users make them in the minishell.
     struct s_lst_str	*prev;
@@ -101,7 +99,7 @@ typedef struct s_cmds
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
-	char			*hd_str;		// If << is present, this will contain the heredoc string, else NULL
+	t_lst_str		*hd_str;		// If << is present, this will contain the heredoc string, else NULL
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
 	int				apend;			// If >> is present, this will be set to 1, else 0
@@ -142,33 +140,26 @@ int			main(int ac, char **av, char **envp);
 // int			main(int ac, char **av);
 
 
-/* ------------------------------ src_exe/... ------------------------------ */
-// src_exe/built_ins.c
-int		is_built_in(char *cmd);
-void	exe_built_in(t_shell *shl);
-void	mini_echo(t_shell *shl);
-int		mini_pwd(t_shell *shl, t_cmds *cmd);
-int		mini_export(t_shell *shl, t_cmds *cmd);
+/* ============================== src_exe/... ============================== */
 
-int		compare_strings(const char *str1, const char *str2, int abs_toggle);
+/* ------------- src_exe/built_ins.c and src_exe/built_ins/*.c ------------- */
+int			is_built_in(char *cmd);
+void		exec_built_in(t_shell *shl);
 
-// src_exe/init_shell.c
-void 	init_shell(t_shell *shl, char **envp);
-void	copy_env(t_shell *shl, char **envp);
-void	populate_variables(t_shell *shl);
-void	copy_env_paths(t_shell *shl, char **envp);
-void	update_shlvl(t_shell *shl);
-void	set_prompt(t_shell *shl, char *prefix, char *separator);
-char	*assemble_prompt(char *prefix, char *cwd, char *separator);
+void		mini_cd(t_shell *shl);
+void		mini_echo(t_shell *shl);
+int			mini_export(t_shell *shl, t_cmds *cmd);
+int			mini_pwd(t_shell *shl, t_cmds *cmd);
 
-void	exit_early(t_shell *shl, char **split, char *msg);
-void	ft_print_lst(t_lst_str *root);
+/* ------------------------- src_exe/init_shell.c ------------------------- */
+void 		init_shell(t_shell *shl, char **envp);
+void		copy_env(t_shell *shl, char **envp);
+void		copy_env_paths(t_shell *shl, char **envp);
+void		update_shlvl(t_shell *shl);
+void		set_prompt(t_shell *shl, char *prefix, char *separator);
+char		*assemble_prompt(char *prefix, char *cwd, char *separator);
 
-void	arg_error(char **av);
-void	clearout(t_shell *shl);
-
-
-/* lst_str_fns.c */
+/* ----------------------------- lst_str_fns.c ----------------------------- */
 t_lst_str	*ft_lst_new(char *str);
 t_lst_str	*ft_var_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
@@ -179,9 +170,18 @@ void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *key);
 
+/* ------------------------------ utilities.c ------------------------------ */
+int			compare_strings(const char *key, const char *field, int abs_toggle);
+void		store_variable(t_shell *shl, char *str);
+int			compare_strings(const char *key, const char *field, int abs_toggle);
+void		store_variable(t_shell *shl, char *str);
+void		arg_error(char **av);
+void		exit_early(t_shell *shl, char **split, char *msg);
+void		clearout(t_shell *shl);
+void		ft_print_lst(t_lst_str *root);
 
 
-/* ----------------------------- src_parse/... ----------------------------- */
+/* ============================= src_parse/... ============================= */
 
 void		parser(t_shell *shell);
 
@@ -215,10 +215,10 @@ size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 
 /* ----------------------------- Test functions ----------------------------- */
 
-void get_normal_input(t_shell *shell);
-void test_print_cmdlst(t_shell *shell);
-void test_free_cmds(t_shell *shell);
-void test_new_tokenizer(void);
+void 		get_normal_input(t_shell *shell);
+void 		test_print_cmdlst(t_shell *shell);
+void 		test_free_cmds(t_shell *shell);
+void 		test_new_tokenizer(void);
 
 /* ======================== End Function Prototypes ======================== */
 

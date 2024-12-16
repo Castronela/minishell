@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/10 19:10:09 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 14:34:48 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	test_initiations(t_shell *shl, int ac, char **av, char **envp)
 	write(1, "\n", 1);
 	
 	// shl->cmds_lst->args = ft_lst_new("Hello World");
-	// exe_echo(shl->cmds_lst);
+	// mini_echo(shl->cmds_lst);
 	// ft_lst_free(&shl->cmds_lst->args);
 
 	clearout(&shl);
