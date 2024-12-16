@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 14:42:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 15:34:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
 
-/* ------------- src_exe/built_ins.c and src_exe/built_ins/*.c ------------- */
+/* ------------- src_exe/built_ins.c and src_exe/built_ins/....c ------------- */
 int			is_built_in(char *cmd);
 void		exec_built_in(t_shell *shl);
 
@@ -160,8 +160,7 @@ void		set_prompt(t_shell *shl, char *prefix, char *separator);
 char		*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 /* ----------------------------- lst_str_fns.c ----------------------------- */
-t_lst_str	*ft_lst_new(char *str);
-t_lst_str	*ft_var_new(char *key, char *val);
+t_lst_str	*ft_lst_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
@@ -171,8 +170,6 @@ void		ft_del_node(t_lst_str *node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *key);
 
 /* ------------------------------ utilities.c ------------------------------ */
-int			compare_strings(const char *key, const char *field, int abs_toggle);
-void		store_variable(t_shell *shl, char *str);
 int			compare_strings(const char *key, const char *field, int abs_toggle);
 void		store_variable(t_shell *shl, char *str);
 void		arg_error(char **av);
