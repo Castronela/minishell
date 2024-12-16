@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 15:34:57 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:06:00 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <include/minishell.h>
+#include "minishell.h"
 
 int		compare_strings(const char *key, const char *field, int abs_toggle);
 void	store_variable(t_shell *shl, char *str);

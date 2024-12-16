@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_str_fns.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 15:34:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/16 16:05:28 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ t_lst_str	*ft_lst_new(char *key, char *val)
 	new_var = malloc(sizeof(t_lst_str));
 	if (!new_var)
 		return (NULL);
-	
 	new_var->key = NULL;
 	new_var->val = NULL;
 	if (key)
@@ -188,7 +187,7 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *key)
 		return (NULL);
 	while ((list->key))
 	{
-		if (compare_strings(list->key, key, 1));
+		if (compare_strings(list->key, key, 1))
 			return (list);
 		list = list->next;
 	}

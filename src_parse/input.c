@@ -6,24 +6,24 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:17:16 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/13 15:23:39 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:45:20 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 void get_normal_input(t_shell *shell);
-
-static void reset_input_vars(t_shell *shell);
+void reset_cmd_vars(t_shell *shell, int free_before);
 
 /*
 Function in testing phase
+Run 'reset_input_vars' with second arg 0, before calling this function
 */
 void get_normal_input(t_shell *shell)
 {
     while (true)
     {
-        reset_input_vars(shell);
+        reset_cmd_vars(shell, 1);
         shell->cmdline = readline(shell->prompt);
         if (!shell->cmdline)
         {
@@ -34,14 +34,23 @@ void get_normal_input(t_shell *shell)
         }
         add_history(shell->cmdline);
         parser(shell);
-        test_print_cmdlst(shell);
-        lst_cmds_freelst(shell);
-        free(shell->cmdline);
+        test_print_cmdlst(shell, 30);
     }
 }
 
-static void reset_input_vars(t_shell *shell)
+/*
+Nullifies all cmd vars
+    - if 'free_before' is > 0: frees all non-null cmd vars before nullifying
+*/
+void reset_cmd_vars(t_shell *shell, int free_before)
 {
+    if (free_before)
+    {
+        if (shell->cmdline)
+            free(shell->cmdline);
+        if (shell->cmds_lst)
+            lst_cmds_freelst(shell);
+    }
     shell->cmdline = NULL;
     shell->cmds_lst = NULL;
     shell->open_qt = 0;

@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/13 16:37:29 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/16 18:46:45 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@ void	parser(t_shell *shell);
 static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count);
 static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t	*index_cmd);
+static char **get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
 
 /*
-(Main FN) Initializes command structure:
-	- reads and extracts tokens from commandline
-	- initializes separately every command structure with command data
+(Main FN) Initializes 'shell->cmds_lst':
+	- creates new node for linked list 'shell->cmds_lst'
+	- attaches new node to end of linked list
+	- initializes new node
+	- does syntax check for control operators and quoted strings
 */
 void	parser(t_shell *shell)
 {
@@ -41,6 +44,12 @@ void	parser(t_shell *shell)
 		get_normal_input(shell);
 }
 
+/*
+Initializes 'new_cmdnode' with tokens from a single command:
+	- reads and extracts tokens from commandline
+	- sorts tokens into 'new_cmdnode', according to their type (redir, control, arg)
+	- upon finding a control operator, stores operator and exits function
+*/
 static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 {
 	char	*token;
@@ -63,6 +72,10 @@ static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 	}
 }
 
+/*
+Initializes 'new_cmdnode->args' with 'argument':
+	- adds 'argument' and a tailing NULL to 2d array 
+*/
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count)
 {
 	(*arg_count)++;
@@ -77,24 +90,53 @@ static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_
 	new_cmdnode->args[(*arg_count)] = NULL;
 }
 
+/*
+Initializes 'new_cmdnode' with redirection targets:
+	- checks redirection type of 'operator'
+	- retrieves next token and stores it 
+	into 'new_cmdnode' as redirection target
+	- does syntax check for redirection operators
+*/
 static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t	*index_cmd)
 {
 	char	*redir_target;
 	char	**cmdnode_fd;
 
-	if (!ft_strncmp(operator, RD_IN, ft_strlen(RD_IN) + 1))
-		cmdnode_fd = &new_cmdnode->file_in;
+	if (!ft_strncmp(operator, RD_HD, ft_strlen(RD_HD)))
+		cmdnode_fd = get_heredoc_del_pt(shell, new_cmdnode, operator);
 	else if (!ft_strncmp(operator, RD_OUT, ft_strlen(RD_OUT)))
 	{
 		cmdnode_fd = &new_cmdnode->file_out;
-		if (!ft_strncmp(operator, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
+		new_cmdnode->apend = 0;
+		if (!ft_strncmp(operator, RD_OUT_A, ft_strlen(RD_OUT_A)))
 			new_cmdnode->apend = 1;
 	}
 	else
-		cmdnode_fd = &new_cmdnode->hd_str;
+		cmdnode_fd = &new_cmdnode->file_in;
 	free(operator);
 	redir_target = get_next_token(shell, index_cmd);
 	*cmdnode_fd = redir_target;
 	if (is_redir_target_valid(redir_target) == false)
 		get_normal_input(shell);
+}
+
+/*
+Returns pointer to heredoc delimiter pointer:
+	- creates new node for linked list 'new_cmdnode->heredocs_lst'
+	- if creation fails, frees 'operator' before exiting
+	- attaches new node to end of linked list
+	- returns reference to 'key' var of new node
+*/
+static char **get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
+{
+	t_lst_str *heredoc_node;
+	
+	heredoc_node = ft_lst_new(NULL, NULL);
+	if (!heredoc_node)
+	{
+		free(operator);
+		exit_early(shell, NULL, ERRMSG_MALLOC);
+	}
+	ft_lst_addback(&new_cmdnode->heredocs_lst, heredoc_node);
+	return (&heredoc_node->key);
 }
