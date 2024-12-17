@@ -67,12 +67,13 @@ void test_new_tokenizer(void)
 	reset_cmd_vars(&shell, 0);
 
 	// shell.cmdline = ft_strdup("cmd1 <<file_o1 <file_i1 <<EOF arg1 |cmd2 <<file_o2 >file_i2 arg2");
-	shell.cmdline = ft_strdup("cmd1 >>file1 >>file2");
+	// shell.cmdline = ft_strdup("cmd1 <<EOF <<EOF");
 
-	// shell.prompt = "$ ";
-	// get_normal_input(&shell);
+	shell.prompt = "$ ";
+	get_normal_input(&shell);
 
-	parser(&shell);
-	test_print_cmdlst(&shell, 30);
-	reset_cmd_vars(&shell, 1);
+	// parser(&shell);
+	// heredoc(&shell);
+	// test_print_cmdlst(&shell, 30);
+	// reset_cmd_vars(&shell, 1);
 }

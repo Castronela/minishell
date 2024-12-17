@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:17:16 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/16 18:45:20 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:24:21 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void get_normal_input(t_shell *shell)
         }
         add_history(shell->cmdline);
         parser(shell);
+        heredoc(shell);
         test_print_cmdlst(shell, 30);
     }
 }

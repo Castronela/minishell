@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 18:44:24 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 14:56:37 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 # define SQ '\''
 # define DQ '\"'
 
+# define PS2 ">"
+
 // ---- Redirection Operators ------------------------------------------------------------
 
 # define RD_IN "<"				// input redirection
@@ -60,8 +62,6 @@
 # define CT_PIPE "|"			// pipe control
 
 # define CONTROL_OPERATORS CT_PIPE
-
-
 
 
 //--------------------------------------------------------------------------------------//
@@ -196,6 +196,7 @@ bool		is_redir_target_valid(char *redir_target);
 
 /* --- Heredoc --- */
 
+void heredoc(t_shell *shell);
 
 /* --- Cmds list functions --- */
 
