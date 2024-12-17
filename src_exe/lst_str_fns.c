@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 19:15:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 20:59:47 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
-t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field);
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /*
 Creates a new node of type t_lst_str for variable type list
@@ -185,32 +185,28 @@ Function to remove a certain node from the list and reconnect the severed pieces
   - Connects the nodes before and after to each other
   - Deletes the node by freeing it using ft_del_node fn
 */
-void	ft_remove_node(t_lst_str *node)
+void	ft_remove_node(t_lst_str **root, t_lst_str *node)
 {
-	t_lst_str	*before;
-	t_lst_str	*after;
-
-	if (!node->prev)
+	if (!root || !*root || !node)
+		return ;
+	if (!node->prev && !node->next)			// Case 1: is first & only node
+		ft_lst_free(root);
+	else
 	{
-		if (node->next)
-			ft_del_node(node);
-		return ;			// Have to confirm wheather this is enough or root pointer is required to be set to NULL, as it means that this is the first element
-	}
-	if (!node->next)
-	{
-		if (node->prev)
+		if (!node->prev && node->next)		// Case 2: first node of many
 		{
-			before = node->prev;
-			before->next = NULL;	
+			node->next->prev = NULL;
+			*root = node->next;
+		}
+		else if (node->prev && !node->next)	// Case 2: is last node
+			node->prev->next = NULL;
+		else								// Case 3: is middle node
+		{
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
 		}
 		ft_del_node(node);
-		return ;
 	}
-	before = node->prev;
-	after = node->next;
-	before->next = after;
-	after->prev = before;
-	ft_del_node(node);
 }
 
 /*
@@ -219,25 +215,27 @@ the pointer to that node, such that the manipulation of that node like adding-to
 or its deletion is possible.
   - The list is of type t_lst_str so it has multiple fields, hence search-field
 	argument is required to specify which field in the list to search
-  - Search field can be 0 or 1, 0 meant to 'key' field and 1 meant to search the
-	'val' field
+  - Search field can be 0 or 1, 0 meant for 'key' field and 1 meant for 'val'
+	field to be searched
+  - The toggle 'mod' can be either 0 or 1. 1 means exact search, and if mod is 0
+	then it searches for the 'str' in the specified field of list even if the
+	field is a larger string than 'str'. The function uses compare_strings to
+	find the node so the 'mod' toggle is fed as the 'exact' parameter for that fn.
 */
-t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field)
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 {
-	if (!list || !str)
-		return (NULL);
-	if (search_field < 0 || search_field > 1)
+	if (!list || !str || searchfield < 0 || searchfield > 1)
 		return (NULL);
 	while (list)
 	{
-		if (search_field == 0)
+		if (searchfield == 0)
 		{
-			if (compare_strings(str, list->key, 1))
+			if (compare_strings(str, list->key, mod))
 				return (list);
 		}
-		else if (search_field == 1)
+		else if (searchfield == 1)
 		{
-			if (compare_strings(str, list->val, 1))
+			if (compare_strings(str, list->val, mod))
 				return (list);	
 		}
 		list = list->next;

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 16:58:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 20:55:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
-t_lst_str	*ft_find_node(t_lst_str *list, char *str, const int search_field);
+t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /* ------------------------------ utilities.c ------------------------------ */
 
