@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/16 18:46:45 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 14:27:36 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,22 +100,25 @@ Initializes 'new_cmdnode' with redirection targets:
 static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t	*index_cmd)
 {
 	char	*redir_target;
-	char	**cmdnode_fd;
+	char	**cmdnode_filept;
 
+	cmdnode_filept = NULL;
 	if (!ft_strncmp(operator, RD_HD, ft_strlen(RD_HD)))
-		cmdnode_fd = get_heredoc_del_pt(shell, new_cmdnode, operator);
+		cmdnode_filept = get_heredoc_del_pt(shell, new_cmdnode, operator);
 	else if (!ft_strncmp(operator, RD_OUT, ft_strlen(RD_OUT)))
 	{
-		cmdnode_fd = &new_cmdnode->file_out;
+		cmdnode_filept = &new_cmdnode->file_out;
 		new_cmdnode->apend = 0;
 		if (!ft_strncmp(operator, RD_OUT_A, ft_strlen(RD_OUT_A)))
 			new_cmdnode->apend = 1;
 	}
 	else
-		cmdnode_fd = &new_cmdnode->file_in;
+		cmdnode_filept = &new_cmdnode->file_in;
 	free(operator);
 	redir_target = get_next_token(shell, index_cmd);
-	*cmdnode_fd = redir_target;
+	if (cmdnode_filept && *cmdnode_filept)
+		free(*cmdnode_filept);
+	*cmdnode_filept = redir_target;
 	if (is_redir_target_valid(redir_target) == false)
 		get_normal_input(shell);
 }
