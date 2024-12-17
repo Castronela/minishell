@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 20:59:47 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 21:08:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
+void		ft_remove_node(t_lst_str **root, t_lst_str *node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /*
