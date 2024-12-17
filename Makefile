@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/17 15:25:02 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/17 19:25:06 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ D_OBJ		=	obj
 SRC_MAIN	=	main.c
 
 SRC_PARSE	= 	test_fn.c utils_1.c input.c lst_cmds_fns.c tokenizer.c parse_cmdline.c syntax_validation.c\
-				heredoc.c
+				heredoc.c var_expansion.c
 VPATH		+=	src_parse
 
 SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c #built_ins.c bi_cd.c bi_echo.c bi_export.c bi_pwd.c

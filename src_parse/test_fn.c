@@ -4,7 +4,8 @@
 
 void test_print_cmdlst(t_shell *shell, int spacing);
 void test_free_cmds(t_shell *shell);
-void test_new_tokenizer(void);
+void test_new_tokenizer(char **envp);
+void test_var_exp(char **envp);
 
 
 void test_print_cmdlst(t_shell *shell, int spacing)
@@ -61,13 +62,14 @@ void test_free_cmds(t_shell *shell)
 	}
 }
 
-void test_new_tokenizer(void)
+void test_new_tokenizer(char **envp)
 {
 	t_shell shell;
+	init_shell(&shell, envp);
 	reset_cmd_vars(&shell, 0);
 
 	// shell.cmdline = ft_strdup("cmd1 <<file_o1 <file_i1 <<EOF arg1 |cmd2 <<file_o2 >file_i2 arg2");
-	// shell.cmdline = ft_strdup("cmd1 <<EOF <<EOF");
+	// shell.cmdline = ft_strdup("cmd1 $USER");
 
 	shell.prompt = "$ ";
 	get_normal_input(&shell);
@@ -75,5 +77,22 @@ void test_new_tokenizer(void)
 	// parser(&shell);
 	// heredoc(&shell);
 	// test_print_cmdlst(&shell, 30);
-	// reset_cmd_vars(&shell, 1);
+	reset_cmd_vars(&shell, 1);
+	clearout(&shell);
+}
+
+void test_var_exp(char **envp)
+{
+	t_shell shell;
+	char *str = ft_strdup("$\"USER\"$USER$SHELL");
+	init_shell(&shell, envp);
+	t_lst_str new = { .key = ft_strdup("VAR"), .val = ft_strdup("value"), .prev = NULL, .next = NULL};
+	ft_lst_addback(&shell.variables, &new);
+	// for(t_lst_str *node = shell.variables; node; node = node->next)
+	// 	printf("%30s : %s\n", node->key, node->val);
+	// printf("%s\n", get_var_value(&shell, str));
+	var_expansion(&shell, &str);
+	printf("%s\n", str);
+	free(str);
+	// clearout(&shell);
 }

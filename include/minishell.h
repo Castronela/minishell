@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 14:56:37 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 21:16:54 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,11 +216,18 @@ size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 /* ----------------------------- Test functions ----------------------------- */
 
 void 		get_normal_input(t_shell *shell);
+void 		var_expansion(t_shell *shell, char **str);
+void var_expand_args(t_shell *shell, t_cmds *cmd_node);
+
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
-void 		test_new_tokenizer(void);
+void test_new_tokenizer(char **envp);
+void 		test_var_exp(char **envp);
 
 /* ======================== End Function Prototypes ======================== */
 
 #endif
+
+
+// "  hello  $USER'$USER'"

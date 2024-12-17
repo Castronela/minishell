@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 16:04:43 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 19:14:37 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void	init_shell(t_shell *shl, char **envp)
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "Your wish My command: ", " $> ");
-
-
 }
 
 /*
