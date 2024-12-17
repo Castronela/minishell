@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 15:35:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 19:08:54 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ Function for built-in export function
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
 	t_lst_str	*new_var;
-	char		**split;
 
 	new_var = ft_lst_new(*(cmd->args + 1), NULL);
 	if (!new_var)
