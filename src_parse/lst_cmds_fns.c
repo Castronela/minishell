@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/13 14:10:10 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/16 15:40:31 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	new_cmd->bin_path = NULL;
 	new_cmd->args = NULL;
-	new_cmd->hd_str = NULL;
+	new_cmd->heredocs_lst = NULL;
 	new_cmd->fd_in = STDIN_FILENO;
 	new_cmd->fd_out = STDOUT_FILENO;
 	new_cmd->apend = 0;
@@ -62,8 +62,8 @@ void lst_cmds_freelst(t_shell *shell)
 			free (cmd_node->bin_path);
 		if (cmd_node->args)
 			ft_free2d(cmd_node->args);
-		if (cmd_node->hd_str)
-			free(cmd_node->hd_str);
+		if (cmd_node->heredocs_lst)
+			ft_lst_free(&cmd_node->heredocs_lst);
 		if (cmd_node->file_in)
 			free(cmd_node->file_in);
 		if (cmd_node->file_out)

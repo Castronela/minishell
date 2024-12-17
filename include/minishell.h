@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 19:17:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 16:58:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@
 # define SQ '\''
 # define DQ '\"'
 
+# define PS2 ">"
+
 // ---- Redirection Operators ------------------------------------------------------------
 
 # define RD_IN "<"				// input redirection
@@ -60,8 +62,6 @@
 # define CT_PIPE "|"			// pipe control
 
 # define CONTROL_OPERATORS CT_PIPE
-
-
 
 
 //--------------------------------------------------------------------------------------//
@@ -99,7 +99,7 @@ typedef struct s_cmds
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
-	t_lst_str		*hd_str;		// If << is present, this will contain the heredoc string, else NULL
+	t_lst_str		*heredocs_lst;	// If << is present, this will contain the heredoc string, else NULL
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
 	int				apend;			// If >> is present, this will be set to 1, else 0
@@ -120,6 +120,7 @@ typedef struct s_shell
 	char		*prompt;			// Stores the prompt string for the minishell
 	int			exit_code;			// Stores the exit code from the last executed command
 
+	//	Cmd vars; will be reset on every new command prompt 
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
@@ -144,7 +145,11 @@ void		test_initiations(t_shell *shl, int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
 
+/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
+
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/....c ------------- */
+
+/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
 int			is_built_in(char *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
@@ -199,6 +204,7 @@ bool		is_redir_target_valid(char *redir_target);
 
 /* --- Heredoc --- */
 
+void heredoc(t_shell *shell);
 
 /* --- Cmds list functions --- */
 
@@ -218,7 +224,8 @@ size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 /* ----------------------------- Test functions ----------------------------- */
 
 void 		get_normal_input(t_shell *shell);
-void 		test_print_cmdlst(t_shell *shell);
+void		reset_cmd_vars(t_shell *shell, int free_before);
+void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_new_tokenizer(void);
 

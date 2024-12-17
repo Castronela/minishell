@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 16:44:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 17:17:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	copy_env(t_shell *shl, char **envp)
 		split = ft_split(envp[i], '=');
 		if (!split)
 			exit_early(shl, NULL, "Could not split for new variable");
+		new_node =ft_lst_new(split[0], split[1]);
 		new_node =ft_lst_new(split[0], split[1]);
 		if (!new_node)
 			exit_early(shl, split, "Could not malloc t_lst_str new_node");

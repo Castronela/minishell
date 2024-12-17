@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 20:33:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 17:00:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ t_lst_str	*ft_lst_new(char *key, char *val)
 	new_var = malloc(sizeof(t_lst_str));
 	if (!new_var)
 		return (NULL);
-	
 	new_var->key = NULL;
 	new_var->val = NULL;
 	if (key)
