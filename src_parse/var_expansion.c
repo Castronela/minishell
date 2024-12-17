@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_expansion.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/17 21:06:38 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 23:56:18 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	start_index = index++;
 	while (str[index])
 	{
-		if (str[index] == SPACE || str[index] == '$' || is_quote(str[index]))
+		if (!ft_isalnum(str[index]))
 			break ;
 		index++;
 	}
