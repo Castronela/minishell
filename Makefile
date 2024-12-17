@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/16 16:06:31 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/17 14:16:28 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,31 +20,35 @@ DEPFLAGS	= 	-MMD
 
 RM			= 	rm -rf
 
-# ----------------- Directories ----------------- #
+# ----------------- Default Directories ----------------- #
 
 D_BIN		=	bin
 D_INC		=	include
 D_LIB		=	lib
 D_OBJ		=	obj
-D_SRC_PARSE	=	src_parse
-D_SRC_EXE	=	src_exe
-
-# ----------------- Headers Flag ----------------- #
-
-HEADS_FLG	=	-I$(D_INC) -I$(LIBFT_HED) -I$(READLINE_HED)
 
 # ----------------- Source, Object and Dependency files ----------------- #
 
-SRC_PARSE	= 	main.c test_fn.c utils_1.c input.c lst_cmds_fns.c tokenizer.c parse_cmdline.c syntax_validation.c
-SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c #built_ins.c bi_cd.c bi_echo.c bi_export.c bi_pwd.c
+SRC_MAIN	=	main.c
 
-SRC			=	$(SRC_PARSE) $(SRC_EXE)
+SRC_PARSE	= 	test_fn.c utils_1.c input.c lst_cmds_fns.c tokenizer.c parse_cmdline.c syntax_validation.c
+VPATH		+=	src_parse
+
+SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c #built_ins.c bi_cd.c bi_echo.c bi_export.c bi_pwd.c
+VPATH		+=	src_exe
+
+SRC			=	$(SRC_MAIN) $(SRC_PARSE) $(SRC_EXE)
 OBJ 		+= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
 DEP			= 	$(OBJ:.o=.d)
+
 
 # ----------------- Target Binary ----------------- #
 
 NAME		=	minishell
+
+# ----------------- Headers Flag ----------------- #
+
+HEADS_FLG	=	-I$(D_INC) -I$(LIBFT_HED) -I$(READLINE_HED)
 
 # ----------------- Libraries ----------------- #
 
@@ -91,10 +95,7 @@ $(NAME): $(OBJ)
 	@make -sC $(D_LIB)
 	@$(CC) $(CFLAGS) $(HEADS_FLG) $^ $(LIBS_FLG) -o $(D_BIN)/$@ 
 
-$(D_OBJ)/%.o: $(D_SRC_PARSE)/%.c
-	@$(CC) $(CFLAGS) $(HEADS_FLG) $(DEPFLAGS) -c $< -o $@
-
-$(D_OBJ)/%.o: $(D_SRC_EXE)/%.c
+$(D_OBJ)/%.o: %.c
 	@$(CC) $(CFLAGS) $(HEADS_FLG) $(DEPFLAGS) -c $< -o $@
 
 -include $(DEP)
