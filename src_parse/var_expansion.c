@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/17 23:56:18 by david            ###   ########.fr       */
+/*   Updated: 2024/12/18 01:03:13 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void	var_expansion(t_shell *shell, char **str)
 			open_qt = 0;
 		if ((*str)[index] == '$' && open_qt != SQ)
 		{
-			if ((*str)[index + 1] && (*str)[index + 1] != DQ && (*str)[index
-				+ 1] != SPACE)
+			if ((*str)[index + 1] && (ft_isalpha((*str)[index + 1]) 
+				|| (*str)[index + 1] == '_'))
 				*str = expand_var(shell, *str, &index);
 		}
 		index++;
@@ -88,7 +88,7 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	start_index = index++;
 	while (str[index])
 	{
-		if (!ft_isalnum(str[index]))
+		if (!ft_isalnum(str[index]) && str[index] != '_')
 			break ;
 		index++;
 	}

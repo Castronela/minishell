@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_str_fns.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 16:05:28 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/17 23:54:34 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,8 +171,10 @@ void	ft_del_node(t_lst_str *node)
 	if (!node)
 		return ;
 	if (node->key)
+	{
 		free(node->key);
 		free(node->val);
+	}
 	free(node);
 }
 

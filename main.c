@@ -6,5 +6,5 @@ int	main(int ac, char **av, char **envp)
     (void)av;
     // (void)envp;
 
-    test_new_tokenizer(envp);
+    test_var_exp(envp);
 }

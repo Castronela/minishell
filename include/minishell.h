@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 21:16:54 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 01:01:52 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,10 @@
 # define BG_MAGENTA "\033[45m"
 # define BG_CYAN "\033[46m"
 # define BG_WHITE "\033[47m"
+# define BG_RESET "\033[0m"
+
+# define C_RED "\033[31m"
+# define C_GREEN "\033[32m"
 
 
 
