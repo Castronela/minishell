@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_str_fns.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 21:08:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/18 01:13:49 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,9 +172,11 @@ void	ft_del_node(t_lst_str *node)
 	if (!node)
 		return ;
 	if (node->key)
+	{
 		free(node->key);
 	if (node->val)
 		free(node->val);
+	}
 	free(node);
 }
 

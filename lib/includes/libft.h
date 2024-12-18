@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:24:05 by pamatya           #+#    #+#             */
-/*   Updated: 2024/07/04 21:17:12 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 19:48:31 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	*ft_memchr(const void *str, int c, size_t n);
 int		ft_memcmp(const char *str1, const char *str2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_realloc(void *ptr, size_t size);
+void	*ft_recalloc(void *ptr, size_t size);
 void	ft_free2d(char **memory);
 void	ft_free_safe(void **memory);
 void	ft_free2d_safe(char ***memory);
@@ -64,7 +65,9 @@ void	ft_putnbr_fd(int n, int fd);
 
 // lib/Libft/ft_string
 size_t	ft_strlen(const char *str);
+size_t	ft_strlen2(const char *str);
 size_t	ft_strlcpy(char *dest, const char *src, size_t dsize);
+size_t	ft_strlcpy2(char *dest, const char *src, size_t dsize);
 size_t	ft_strlcat(char *dest, const char *src, size_t dsize);
 char	*ft_strchr(const char *str, int c);
 char	*ft_strrchr(const char *str, int c);

@@ -4,7 +4,8 @@
 
 void test_print_cmdlst(t_shell *shell, int spacing);
 void test_free_cmds(t_shell *shell);
-void test_new_tokenizer(void);
+void test_new_tokenizer(char **envp);
+void test_var_exp(char **envp);
 
 
 void test_print_cmdlst(t_shell *shell, int spacing)
@@ -61,13 +62,14 @@ void test_free_cmds(t_shell *shell)
 	}
 }
 
-void test_new_tokenizer(void)
+void test_new_tokenizer(char **envp)
 {
 	t_shell shell;
+	init_shell(&shell, envp);
 	reset_cmd_vars(&shell, 0);
 
 	// shell.cmdline = ft_strdup("cmd1 <<file_o1 <file_i1 <<EOF arg1 |cmd2 <<file_o2 >file_i2 arg2");
-	// shell.cmdline = ft_strdup("cmd1 <<EOF <<EOF");
+	// shell.cmdline = ft_strdup("cmd1 $USER");
 
 	shell.prompt = "$ ";
 	get_normal_input(&shell);
@@ -75,5 +77,109 @@ void test_new_tokenizer(void)
 	// parser(&shell);
 	// heredoc(&shell);
 	// test_print_cmdlst(&shell, 30);
-	// reset_cmd_vars(&shell, 1);
+	reset_cmd_vars(&shell, 1);
+	clearout(&shell);
+}
+
+/*
+TODO clear out ambiguity of test 5 and 6
+in bash $ is left out, in shell $ gets printed
+*/
+void test_var_exp(char **envp)
+{
+	t_shell shell;
+	char *str;
+	char *good;
+	init_shell(&shell, envp);
+	t_lst_str *new = malloc(sizeof(*new));
+	new->key = ft_strdup("VAR");
+	new->val = ft_strdup("there");
+	new->prev = NULL;
+	new->next = NULL;
+	ft_lst_addback(&shell.variables, new);
+	// for(t_lst_str *node = shell.variables; node; node = node->next)
+	// 	printf("%30s : %s\n", node->key, node->val);
+
+	//Test 1
+	str = ft_strdup("$VAR Hello$VAR, World$VAR");
+	good = ft_strdup("there Hellothere, Worldthere");
+	printf("Test 1: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 2
+	str = ft_strdup("$VAR$VAR, World");
+	good = ft_strdup("therethere, World");
+	printf("Test 2: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 3
+	str = ft_strdup("Hello'$VAR', World");
+	good = ft_strdup("Hello'$VAR', World");
+	printf("Test 3: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 4
+	str = ft_strdup("Hello\"$VAR\", World");
+	good = ft_strdup("Hello\"there\", World");
+	printf("Test 4: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 5
+	str = ft_strdup("Hello$'VAR', World");
+	good = ft_strdup("Hello$'VAR', World");
+	printf("Test 5: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 6
+	str = ft_strdup("Hello$\"VAR\", World");
+	good = ft_strdup("Hello$\"VAR\", World");
+	printf("Test 6: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 7
+	str = ft_strdup("Hello $ , World$");
+	good = ft_strdup("Hello $ , World$");
+	printf("Test 7: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+	//Test 8
+	str = ft_strdup("Hello \"$\"VAR , World$");
+	good = ft_strdup("Hello \"$\"VAR , World$");
+	printf("Test 8: %s\n", str);
+	var_expansion(&shell, &str);
+	printf("%10s\n", !strcmp(str, good) ? BG_GREEN"good:"BG_RESET : BG_RED"bad:"BG_RESET);
+	printf(C_GREEN"\t%s\n"BG_RESET, good);
+	printf("\t%s\n\n", str);
+	free(str);
+	free(good);
+
+	clearout(&shell);
 }
