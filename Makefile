@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/18 16:27:34 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/18 17:54:58 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,9 +30,8 @@ D_OBJ		=	obj
 # ----------------- Source, Object and Dependency files ----------------- #
 
 SRC_MAIN	=	main.c
-SRC_PARSE	= 	utils_1.c input.c lst_cmds_fns.c tokenizer.c \
+SRC_PARSE	= 	utils_1.c lst_cmds_fns.c tokenizer.c remove_quotes.c \
 				parse_cmdline.c syntax_validation.c heredoc.c var_expansion.c \
-				remove_quotes.c \
 				test_fn.c
 SRC_EXE		=	init_shell.c start_shell.c lst_str_fns.c utilities.c \
 				built_ins.c bi_echo.c bi_export.c bi_pwd.c bi_unset.c

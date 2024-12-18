@@ -6,15 +6,35 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/18 14:49:40 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 15:17:25 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:39:50 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void	remove_args_closed_quotes(t_shell *shell, t_cmds *cmd_node);
 void	remove_closed_quotes(t_shell *shell, char **str);
 size_t	count_closed_quotes(char *str);
 
+/*
+Removes enclosing quotes from all arguments of 'cmd_node'
+*/
+void	remove_args_closed_quotes(t_shell *shell, t_cmds *cmd_node)
+{
+	size_t index;
+
+	index = -1;
+	while (cmd_node->args && cmd_node->args[++index])
+		remove_closed_quotes(shell, &cmd_node->args[index]);
+}
+
+/*
+Removes all enclosing quotes from 'str'
+	- allocates memory for new string
+	- iterates through original string
+	- copies characters to new string, but skips opening
+	or enclosing quotes
+*/
 void	remove_closed_quotes(t_shell *shell, char **str)
 {
 	char	*new_str;
@@ -43,6 +63,9 @@ void	remove_closed_quotes(t_shell *shell, char **str)
 	*str = new_str;
 }
 
+/*
+Counts all enclosing quotes from 'str'
+*/
 size_t	count_closed_quotes(char *str)
 {
 	size_t	open_quotes_count;

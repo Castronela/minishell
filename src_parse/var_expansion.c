@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_expansion.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 01:03:13 by david            ###   ########.fr       */
+/*   Updated: 2024/12/18 18:34:16 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,24 @@ static char	*expand_var(t_shell *shell, char *str, size_t *index);
 static char	*get_var_name(t_shell *shell, const char *str, size_t index);
 static char	*get_var_value(t_shell *shell, char *var_name);
 
+/*
+Expands variables from all arguments of 'cmd_node'
+*/
 void var_expand_args(t_shell *shell, t_cmds *cmd_node)
 {
     size_t index;
 
     index = -1;
-    while (cmd_node->args[++index])
+    while (cmd_node->args && cmd_node->args[++index])
         var_expansion(shell, &cmd_node->args[index]);
 }
 
+/*
+Expands variables from 'str'
+	- checks for '$' chars, not enclosed in single quotes
+	- calls 'expand_var' if char following '$' is alphabetic 
+	or underscore
+*/
 void	var_expansion(t_shell *shell, char **str)
 {
 	size_t	index;
@@ -51,6 +60,18 @@ void	var_expansion(t_shell *shell, char **str)
 	}
 }
 
+/*
+Substitues the first variable in string with the variable's value
+	- retrieves the variable name and the variable's value
+	- allocates memory for new string
+	- copies first part of original string, up to the start of the variable name,
+	to new string
+	- concatenates variable's value to new string
+	- concatenates rest of original string, starting from the end of variable name,
+	to new string
+	- frees original string and returns new string
+Note: only call when 'str' at 'index' is a '$'
+*/
 static char	*expand_var(t_shell *shell, char *str, size_t *index)
 {
 	char	*str_expanded;
@@ -80,6 +101,11 @@ static char	*expand_var(t_shell *shell, char *str, size_t *index)
 	return (str_expanded);
 }
 
+/*
+Retrieves variable name, starting from $
+	- reads and returns string after '$', untill a character is
+	NOT alphanumeric or underscore
+*/
 static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 {
 	size_t	start_index;
@@ -98,6 +124,9 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	return (var_name);
 }
 
+/*
+Finds and returns value of variable 'var_name'
+*/
 static char	*get_var_value(t_shell *shell, char *var_name)
 {
 	char		*var_value;

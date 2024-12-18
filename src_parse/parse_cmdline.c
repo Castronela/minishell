@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 16:25:16 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 17:22:10 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	parser(t_shell *shell)
 		lst_cmds_addback(shell, new_cmdnode);
 		init_cmd_lst(shell, new_cmdnode, &index_cmd);
 		var_expand_args(shell, new_cmdnode);
+		remove_args_closed_quotes(shell, new_cmdnode);
 	}
 	if (!is_valid_control(shell) || !is_valid_quotation(shell))
 	{
