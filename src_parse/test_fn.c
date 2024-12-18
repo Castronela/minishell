@@ -4,7 +4,8 @@
 
 void test_print_cmdlst(t_shell *shell, int spacing);
 void test_free_cmds(t_shell *shell);
-void test_new_tokenizer(char **envp);
+// void test_new_tokenizer(char **envp);
+void test_new_tokenizer(t_shell *shl, char **envp);
 void test_var_exp(char **envp);
 
 
@@ -61,25 +62,26 @@ void test_free_cmds(t_shell *shell)
 		free(cmd_node_free);
 	}
 }
+/* Dont need this anymore `*/
+// // void test_new_tokenizer(char **envp)
+// void test_new_tokenizer(t_shell *shl)
+// {
+// 	// t_shell shell;
+// 	// init_shell(&shell, envp);
+// 	reset_cmd_vars(shl, 0);
 
-void test_new_tokenizer(char **envp)
-{
-	t_shell shell;
-	init_shell(&shell, envp);
-	reset_cmd_vars(&shell, 0);
+// 	// shell.cmdline = ft_strdup("cmd1 <<file_o1 <file_i1 <<EOF arg1 |cmd2 <<file_o2 >file_i2 arg2");
+// 	// shell.cmdline = ft_strdup("cmd1 $USER");
 
-	// shell.cmdline = ft_strdup("cmd1 <<file_o1 <file_i1 <<EOF arg1 |cmd2 <<file_o2 >file_i2 arg2");
-	// shell.cmdline = ft_strdup("cmd1 $USER");
+// 	shell.prompt = "$ ";
+// 	start_shell(shl);
 
-	shell.prompt = "$ ";
-	get_normal_input(&shell);
-
-	// parser(&shell);
-	// heredoc(&shell);
-	// test_print_cmdlst(&shell, 30);
-	reset_cmd_vars(&shell, 1);
-	clearout(&shell);
-}
+// 	// parser(shl);
+// 	// heredoc(shl);
+// 	// test_print_cmdlst(shl, 30);
+// 	reset_cmd_vars(shl, 1);
+// 	clearout(shl);
+// }
 
 /*
 TODO clear out ambiguity of test 5 and 6

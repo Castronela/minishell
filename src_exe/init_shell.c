@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 01:13:03 by david            ###   ########.fr       */
+/*   Updated: 2024/12/18 15:29:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
-	set_prompt(shl, "Your wish My command: ", " $> ");
+	set_prompt(shl, "Mini: ", " % ");
+	reset_cmd_vars(shl, 0);
 }
 
 /*

@@ -6,11 +6,11 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 20:23:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/18 14:38:02 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <../include/minishell.h>
+#include "../include/minishell.h"
 
 int		compare_strings(const char *str, const char *field, int exact);
 void	store_variable(t_shell *shl, char *str);
@@ -81,7 +81,8 @@ void	arg_error(char **av)
 	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
 	ft_putstr_fd("Minishell: ", 2);
 	ft_putstr_fd(av[1], 2);
-	ft_putstr_fd(": No such file or directory\n", 2);
+	ft_putstr_fd(": Syntax error; too many arguments\n", 2);
+	ft_putstr_fd("Usage: ./<path to minishell executable>\n", 2);
 	exit(127);
 }
 

@@ -6,12 +6,11 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 21:11:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/17 21:45:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-
 
 /*
 Function that mimics the built-in unset command in shell

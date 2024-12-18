@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 01:10:47 by david            ###   ########.fr       */
+/*   Updated: 2024/12/18 16:16:12 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@
 //--------------------------------------------------------------------------------------//
 
 typedef struct s_lst_str
-{		// This later may be replaced by 'key' as its redundant. It is kept for now so as not to disrupt workflow with partner's branch/work as well as while mergin with test.
+{
 	char				*key;		// Field introduced to replace str field, which will store the whole variable and value in case of shl->env, but will store these variables as key-value pair in separate fields for shl->variables.
 	char				*val;		// This field will store the values of the variables whose names are stored by key. In case of shl->env and shl->env_paths, this field should be defaulted to NULL. This separation is done for easy extraction of variables as well as storage of other variables as users make them in the minishell.
     struct s_lst_str	*prev;
@@ -140,14 +140,12 @@ typedef struct s_shell
 //--------------------------------------------------------------------------------------//
 
 
-// src_parse/main.c
-
 int			main(int ac, char **av, char **envp);
-// src_exe/test_main.c
-void		test_initiations(t_shell *shl, int ac, char **av, char **envp);
-
 
 /* ============================== src_exe/... ============================== */
+
+/* ----------------------------- start_shell.c ----------------------------- */
+void		start_shell(t_shell *shl);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -162,8 +160,9 @@ void		mini_cd(t_shell *shl);
 void		mini_echo(t_shell *shl);
 int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
+int			mini_unset(t_shell *shl, t_cmds *cmd);
 
-/* ------------------------- src_exe/init_shell.c ------------------------- */
+/* -------------------------- src_exe/init_shell.c -------------------------- */
 
 void 		init_shell(t_shell *shl, char **envp);
 void		copy_env(t_shell *shl, char **envp);
@@ -228,14 +227,13 @@ size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 
 /* ----------------------------- Test functions ----------------------------- */
 
-void 		get_normal_input(t_shell *shell);
+// void 		start_shell(t_shell *shell);
 void 		var_expansion(t_shell *shell, char **str);
-void var_expand_args(t_shell *shell, t_cmds *cmd_node);
-
+void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
-void test_new_tokenizer(char **envp);
+void 		test_new_tokenizer(t_shell *shl, char **envp);
 void 		test_var_exp(char **envp);
 
 /* ======================== End Function Prototypes ======================== */

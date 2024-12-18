@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmdline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/17 21:07:07 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 15:47:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ void	parser(t_shell *shell)
 		var_expand_args(shell, new_cmdnode);
 	}
 	if (!is_valid_control(shell) || !is_valid_quotation(shell))
-		get_normal_input(shell);
+	{
+		reset_cmd_vars(shell, 1);
+		start_shell(shell);
+	}
 }
 
 /*
@@ -121,7 +124,10 @@ static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, siz
 		free(*cmdnode_filept);
 	*cmdnode_filept = redir_target;
 	if (is_redir_target_valid(redir_target) == false)
-		get_normal_input(shell);
+	{
+		reset_cmd_vars(shell, 1);
+		start_shell(shell);
+	}
 }
 
 /*
