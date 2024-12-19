@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/19 16:39:48 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 17:29:45 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ bool	is_redir_target_valid(t_shell *shell, char *redir_target);
 /*
 Returns true if all open quotes from cmdline are closed
 	- on failure prints error message, sets exit code and resets cmd vars
+	- on success sets exit code to 0
 */
 bool	is_valid_quotation(t_shell *shell)
 {
@@ -29,12 +30,14 @@ bool	is_valid_quotation(t_shell *shell)
 		reset_cmd_vars(shell, 1);
 		return (false);
 	}
+	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }
 
 /*
 Returns true if control operator is followed by a valid command
 	- on failure prints error message, sets exit code and resets cmd vars
+	- on success sets exit code to 0
 */
 bool	is_valid_control(t_shell *shell)
 {
@@ -52,12 +55,14 @@ bool	is_valid_control(t_shell *shell)
 		}
 		cmd_node = cmd_node->next;
 	}
+	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }
 
 /*
 Returns true if redirection target exists and is not an operator
 	- on failure prints error message, sets exit code and resets cmd vars
+	- on success sets exit code to 0
 */
 bool	is_redir_target_valid(t_shell *shell, char *redir_target)
 {
@@ -75,5 +80,6 @@ bool	is_redir_target_valid(t_shell *shell, char *redir_target)
 		reset_cmd_vars(shell, 1);
 		return (false);
 	}
+	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }
