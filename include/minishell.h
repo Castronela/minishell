@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/19 16:34:06 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 18:18:21 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@
 
 # define ERRMSG_MALLOC "Error malloc"
 # define ERRMSG_PIPE "Error pipe"
+# define ERRMSG_SIGNAL "Error signal"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -236,6 +237,10 @@ void 		var_expansion(t_shell *shell, char **str);
 /* ------------------------------- Pipe Setup ------------------------------- */
 
 void 		init_pipes(t_shell *shell);
+
+/* -------------------------------- Signals -------------------------------- */
+
+void 		set_signal(t_shell *shell);
 
 /* --------------------------------- Utils ---------------------------------- */
 
