@@ -6,13 +6,13 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 18:34:16 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 17:30:02 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void var_expand_args(t_shell *shell, t_cmds *cmd_node);
+void		var_expand_args(t_shell *shell, t_cmds *cmd_node);
 void		var_expansion(t_shell *shell, char **str);
 
 static char	*expand_var(t_shell *shell, char *str, size_t *index);
@@ -22,19 +22,19 @@ static char	*get_var_value(t_shell *shell, char *var_name);
 /*
 Expands variables from all arguments of 'cmd_node'
 */
-void var_expand_args(t_shell *shell, t_cmds *cmd_node)
+void	var_expand_args(t_shell *shell, t_cmds *cmd_node)
 {
-    size_t index;
+	size_t	index;
 
-    index = -1;
-    while (cmd_node->args && cmd_node->args[++index])
-        var_expansion(shell, &cmd_node->args[index]);
+	index = -1;
+	while (cmd_node->args && cmd_node->args[++index])
+		var_expansion(shell, &cmd_node->args[index]);
 }
 
 /*
 Expands variables from 'str'
 	- checks for '$' chars, not enclosed in single quotes
-	- calls 'expand_var' if char following '$' is alphabetic 
+	- calls 'expand_var' if char following '$' is alphabetic
 	or underscore
 */
 void	var_expansion(t_shell *shell, char **str)
@@ -52,8 +52,8 @@ void	var_expansion(t_shell *shell, char **str)
 			open_qt = 0;
 		if ((*str)[index] == '$' && open_qt != SQ)
 		{
-			if ((*str)[index + 1] && (ft_isalpha((*str)[index + 1]) 
-				|| (*str)[index + 1] == '_'))
+			if ((*str)[index + 1] && (ft_isalpha((*str)[index + 1])
+					|| (*str)[index + 1] == '_' || (*str)[index + 1] == '?'))
 				*str = expand_var(shell, *str, &index);
 		}
 		index++;
@@ -64,10 +64,12 @@ void	var_expansion(t_shell *shell, char **str)
 Substitues the first variable in string with the variable's value
 	- retrieves the variable name and the variable's value
 	- allocates memory for new string
-	- copies first part of original string, up to the start of the variable name,
+	- copies first part of original string,
+		up to the start of the variable name,
 	to new string
 	- concatenates variable's value to new string
-	- concatenates rest of original string, starting from the end of variable name,
+	- concatenates rest of original string,
+		starting from the end of variable name,
 	to new string
 	- frees original string and returns new string
 Note: only call when 'str' at 'index' is a '$'
@@ -114,6 +116,11 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	start_index = index++;
 	while (str[index])
 	{
+		if (str[start_index + 1] == '?')
+		{
+			index++;
+			break ;
+		}
 		if (!ft_isalnum(str[index]) && str[index] != '_')
 			break ;
 		index++;
@@ -138,6 +145,11 @@ static char	*get_var_value(t_shell *shell, char *var_name)
 	var_node = shell->variables;
 	while (var_node)
 	{
+		if (!ft_strncmp("$?", var_name, 3))
+		{
+			var_value = ft_itoa(shell->exit_code);
+			break ;
+		}
 		if (!ft_strncmp(var_node->key, var_name + 1, ft_strlen(var_node->key)
 				+ 1))
 		{
