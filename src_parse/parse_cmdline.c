@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 17:22:10 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 16:40:14 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,7 @@ void	parser(t_shell *shell)
 		remove_args_closed_quotes(shell, new_cmdnode);
 	}
 	if (!is_valid_control(shell) || !is_valid_quotation(shell))
-	{
-		reset_cmd_vars(shell, 1);
 		start_shell(shell);
-	}
 }
 
 /*
@@ -131,11 +128,8 @@ static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	if (cmdnode_filept && *cmdnode_filept)
 		free(*cmdnode_filept);
 	*cmdnode_filept = redir_target;
-	if (is_redir_target_valid(redir_target) == false)
-	{
-		reset_cmd_vars(shell, 1);
+	if (is_redir_target_valid(shell, redir_target) == false)
 		start_shell(shell);
-	}
 }
 
 /*

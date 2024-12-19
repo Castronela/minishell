@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/19 16:25:33 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 16:34:06 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,13 @@
 # define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
 # define ERRMSG_OPEN_QUOTE "minishell: syntax error: unclosed quotes"
 # define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
+
+
+//--------------------------------------------------------------------------------------//
+//                                     Error Codes                                      //
+//--------------------------------------------------------------------------------------//
+
+# define ERRCODE_SYNTAX 258
 
 
 //--------------------------------------------------------------------------------------//
@@ -203,7 +210,7 @@ char		*get_next_token(t_shell *shell, size_t *index_cmd);
 
 bool		is_valid_quotation(t_shell *shell);
 bool		is_valid_control(t_shell *shell);
-bool		is_redir_target_valid(char *redir_target);
+bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 
 /* -------------------------------- Heredoc -------------------------------- */
 
