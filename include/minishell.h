@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 16:16:12 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/19 16:50:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ typedef struct s_shell
 	int			exit_code;			// Stores the exit code from the last executed command
 
 	//	Cmd vars; will be reset on every new command prompt 
+	pid_t		*pid;				// This stores the pid of all the processes forked during execution
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
@@ -156,11 +157,14 @@ void		start_shell(t_shell *shl);
 int			is_built_in(char *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
-void		mini_cd(t_shell *shl);
 void		mini_echo(t_shell *shl);
 int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
+
+void		mini_cd(t_shell *shl, t_cmds *cmd);
+int			path_is_dir(char *path);
+void		update_cwd(t_shell *shl, char *new_cwd);
 
 /* -------------------------- src_exe/init_shell.c -------------------------- */
 

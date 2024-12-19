@@ -6,16 +6,15 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 19:06:20 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/19 16:31:50 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-void	mini_cd(t_shell *shl);
-void	cwd_up(t_shell *shl);
+void	mini_cd(t_shell *shl, t_cmds *cmd);
 int		path_is_dir(char *path);
-char	*expand_path(char *path, char *cwd);
+void	update_cwd(t_shell *shl, char *new_cwd);
 
 /*
 Built-in cd function
@@ -23,19 +22,21 @@ Built-in cd function
   - If the path is only "..", then cwd_up() is called which updates the cwd system variable to one step above
   - If the path contains anything else, it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
 */
-void	mini_cd(t_shell *shl)
+void	mini_cd(t_shell *shl, t_cmds *cmd)
 {
-	char	*str;
-	char	*exp_path;
-
-	str = *(shl->cmds_lst->args + 1);
-	exp_path = expand_path(str, shl->cur_wd);
-	if (compare_strings(".", (str + 1), 1))
+	char	*new_cwd;
+	
+	if (path_is_dir(*(cmd->args + 1)) == 0)
+	{
+		shl->exit_code = errno;
 		return ;
-	else if (compare_strings("..", (str + 1), 1))
-		cwd_up(shl);
-	else if (path_is_dir((str + 1)))
-		update_cwd(shl);
+	}	
+	
+	if (chdir(*(cmd->args + 1)) < 0)
+		shl->exit_code = errno;
+	new_cwd = getcwd(NULL, 0);
+	update_cwd(shl, new_cwd);
+	return (0);
 }
 
 /*
@@ -61,36 +62,25 @@ int	path_is_dir(char *path)
 	return (0);
 }
 
-void cwd_up(t_shell *shl)
+void	update_cwd(t_shell *shl, char *new_cwd)
 {
-	t_lst_str	*node[2];
-	char		*nwd;
+	t_lst_str	*new_env_node;
+	t_lst_str	*new_var_node;
+	t_lst_str	*old_env_node;
+	t_lst_str	*old_var_node;
 
-	node[0] = shl->env;
-	node[1] = shl->variables;
-	nwd = shl->cur_wd;
-
-	while (node[0])
+	old_env_node = ft_find_node(shl->env, "PWD", 0, 0);
+	old_var_node = ft_find_node(shl->variables, "PWD", 1, 1);
+	new_env_node = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
+	if (!new_env_node)
+		exit_early(shl, NULL, "new_env_node malloc failed");
+	new_var_node = ft_lst_new("PWD", new_cwd);
 	{
-		if (ft_strncmp(node[0]->key, "PWD=", 4) == 0)
-		{
-			
-		}
-		node[0] = node[0]->next;
-		node[1] = node[1]->next;
+		free(new_env_node);
+		exit_early(shl, NULL, "new_env_node malloc failed");
 	}
-
+	ft_replace_node(old_env_node, new_env_node);
+	ft_replace_node(old_var_node, new_var_node);
+	free(shl->cur_wd);
+	shl->cur_wd = ft_strdup(new_cwd);
 }
-
-// char	*expand_path(char *path, char *cwd)
-// {
-// 	char	*exp_path;
-// 	int		dir_len;
-
-// 	dir_len = ft_strlen(cwd);
-// 	if (compare_strings("../", path, 0))
-// 	{
-// 		while ()
-// 	}
-		
-// }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 15:47:08 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/19 17:07:21 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	start_shell(t_shell *shl)
 		add_history(shl->cmdline);
 		parser(shl);
         heredoc(shl);
+		// execution starts here
         test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
@@ -42,4 +43,48 @@ void	start_shell(t_shell *shl)
 	// print_cwd(shl);
 	// print_shlvl(shl);
 	
+}
+
+void	mini_execute(t_shell *shl)
+{
+	int		extern_cmds;
+	int		cmds_index;
+
+	cmds_index = 0;
+	extern_cmds = count_extern_cmds(shl->cmds_lst);
+	shl->pid = malloc(extern_cmds * sizeof(pid_t));
+	if (!shl->pid)
+		exit_early(shl, NULL, "PID malloc failed");
+	while (shl->cmds_lst)
+	{
+		if (is_built_in(*(shl->cmds_lst->args)))
+			exec_built_in(shl, shl->cmds_lst);
+		else
+		{
+			if (shl->pid[cmds_index] = fork() < 0)
+				exit_early(shl, NULL, "Forking failed");
+			if (shl->pid[cmds_index] == 0)
+			{
+				
+			}
+			
+			cmds_index++;
+			
+		}
+		shl->cmds_lst = shl->cmds_lst->next;
+	}
+}
+
+int	count_extern_cmds(t_cmds *cmds)
+{
+	int	count;
+
+	count = 0;
+	while (cmds)
+	{
+		if (!is_built_in(*(cmds->args)))
+			count++;
+		cmds = cmds->next;
+	}
+	return (count);
 }
