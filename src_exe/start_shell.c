@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 15:47:08 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/19 15:52:53 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	start_shell(t_shell *shl)
 		add_history(shl->cmdline);
 		parser(shl);
         heredoc(shl);
+		init_pipes(shl);
         test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}

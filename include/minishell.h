@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 17:53:57 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/19 16:25:33 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,14 +75,13 @@
 // ---- Function Error Message -----------------------------------------------------------
 
 # define ERRMSG_MALLOC "Error malloc"
+# define ERRMSG_PIPE "Error pipe"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
 # define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
 # define ERRMSG_OPEN_QUOTE "minishell: syntax error: unclosed quotes"
 # define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
-
-
 
 
 //--------------------------------------------------------------------------------------//
@@ -227,7 +226,11 @@ size_t		count_closed_quotes(char *str);
 void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
 void 		var_expansion(t_shell *shell, char **str);
 
-/* ---------------------------------- Utils ---------------------------------- */
+/* ------------------------------- Pipe Setup ------------------------------- */
+
+void 		init_pipes(t_shell *shell);
+
+/* --------------------------------- Utils ---------------------------------- */
 
 bool	 	is_quote(const char c);
 void 		skip_whitespaces(const char *str, size_t *index);
