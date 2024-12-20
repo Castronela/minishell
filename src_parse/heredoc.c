@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 19:24:11 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 19:36:16 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,10 @@ static int	heredoc_prompt_parent(t_shell *shell, t_lst_str *heredoc_node,
 		wait4(pid, &exit_code, 0, NULL);
 		close((*hd_pipe)[1]);
 		if (WEXITSTATUS(exit_code))
-			exit_early(shell, NULL, NULL);
+		{
+		    close((*hd_pipe)[0]); 
+            exit_early(shell, NULL, NULL);
+        }
 		if (WIFSIGNALED(exit_code))
 			return (1);
 	}

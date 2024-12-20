@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/19 17:29:45 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 19:58:20 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,14 @@ bool	is_valid_control(t_shell *shell)
 			reset_cmd_vars(shell, 1);
 			return (false) ;
 		}
+		if (cmd_node->ctl_operator && !cmd_node->args && !cmd_node->file_in && !cmd_node->file_out && !cmd_node->heredocs_lst)
+		{
+			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR, cmd_node->ctl_operator);
+			shell->exit_code = ERRCODE_SYNTAX;
+			reset_cmd_vars(shell, 1);
+			return (false) ;
+		}
+		
 		cmd_node = cmd_node->next;
 	}
 	shell->exit_code = EXIT_SUCCESS;
