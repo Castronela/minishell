@@ -14,12 +14,14 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 {
 	t_cmds *cmd_node;
 
-	printf("\n%*s%s\n\n", spacing, "COMMANDLINE : ", shell->cmdline);
+	printf("\n%*s%s\n", spacing, "COMMANDLINE : ", shell->cmdline);
 	cmd_node = shell->cmds_lst;
 	for (int i = 0; cmd_node; i++)
 	{
-		printf("Command nr. %d\n\n", i+1);
-		printf("%*s%s", spacing, "bin path : ", cmd_node->bin_path ? cmd_node->bin_path : "");
+		printf("Command nr. %d\n", i+1);
+		printf("\n%*s%d", spacing, "cmd_index : ", cmd_node->cmd_index);
+		printf("\n%*s%d", spacing, "exc_index : ", cmd_node->exc_index);
+		printf("\n\n%*s%s", spacing, "bin path : ", cmd_node->bin_path ? cmd_node->bin_path : "");
 		printf("\n%*s", spacing, "args : ");
 		for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
 			printf("(%s) ", cmd_node->args[j]);

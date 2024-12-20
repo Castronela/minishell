@@ -63,7 +63,7 @@ int main()
         if (chdir("src_parse") < 0)
             exit(200);        
     }
-    else
+    else if (pid != 0)
     {
         wait(NULL); // Wait for the child process to finish
         // close(fd[0]);

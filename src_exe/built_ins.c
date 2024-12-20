@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 18:13:31 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 17:15:49 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,40 +38,33 @@ Your shell must implement the following builtins:
 // Function to check whether the command is in the built-in list
 int	is_built_in(char *cmd)
 {
-	if (ft_strncmp(cmd, "echo", 5) == 0)
+	if (ft_strncmp(cmd, "echo", 4) == 0 || ft_strncmp(cmd, "cd", 2) == 0 ||
+		ft_strncmp(cmd, "pwd", 3) == 0 || ft_strncmp(cmd, "export", 6) == 0 ||
+		ft_strncmp(cmd, "unset", 5) == 0 || ft_strncmp(cmd, "env", 5) == 0 ||
+		ft_strncmp(cmd, "exit", 4) == 0)
 		return (1);
-	else if (ft_strncmp(cmd, "cd", 3) == 0)
-		return (1);
-	else if (ft_strncmp(cmd, "pwd", 4) == 0)
-		return (1);
-	else if (ft_strncmp(cmd, "export", 7) == 0)
-		return (1);
-	else if (ft_strncmp(cmd, "unset", 6) == 0)
-		return (1);
-	else if (ft_strncmp(cmd, "env", 4) == 0)
-		return (1);
-	else if (ft_strncmp(cmd, "exit", 5) == 0)
-		return (1);
-	return (0);
+	else
+		return (0);
 }
 
 void	exec_built_in(t_shell *shl, t_cmds *cmd)
 {
 	size_t	binpt_offset;
 
+	(void)shl;
 	binpt_offset = ft_strlen(cmd->bin_path) - 5;
-	if (ft_strncmp(cmd->bin_path + binpt_offset, "echo", 5) == 0)
-		mini_echo(shl);
-	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 3) == 0)
+	if (ft_strncmp(cmd->bin_path + binpt_offset, "echo", 4) == 0)
+		mini_echo(cmd);
+	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 2) == 0)
 	// 	mini_cd(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "pwd", 4) == 0)
+	// if (ft_strncmp(shl->cmds_lst->bin, "pwd", 3) == 0)
 	// 	mini_pwd(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "export", 7) == 0)
+	// if (ft_strncmp(shl->cmds_lst->bin, "export", 6) == 0)
 	// 	mini_export(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "unset", 6) == 0)
+	// if (ft_strncmp(shl->cmds_lst->bin, "unset", 5) == 0)
 	// 	mini_unset(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "env", 4) == 0)
+	// if (ft_strncmp(shl->cmds_lst->bin, "env", 3) == 0)
 	// 	mini_env(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "exit", 5) == 0)
+	// if (ft_strncmp(shl->cmds_lst->bin, "exit", 4) == 0)
 	// 	mini_exit(shl->cmds_lst);
 }

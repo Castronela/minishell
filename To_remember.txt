@@ -10,6 +10,8 @@ added later.
 		receive double pointer:
 		void	ft_replace_node(t_lst_str *old, t_lst_str *new);
 		void	ft_del_node(t_lst_str *node);
+	-	Ask someone how to handle internal errors like malloc fails, whether to
+		exit minishell or just keep going and updating exit-code field
 
 2.	Feature ideas/ insights
 	-	Feature to be added in the future: the variables can be used to store a

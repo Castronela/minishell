@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_cmds_fns.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 16:00:51 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 20:15:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
-void 	lst_cmds_freelst(t_shell *shell);
+void	lst_cmds_freelst(t_shell *shell);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -23,6 +23,8 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd = malloc(sizeof(t_cmds));
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
+	new_cmd->cmd_index = 0;
+	new_cmd->exc_index = 0;
 	new_cmd->bin_path = NULL;
 	new_cmd->args = NULL;
 	new_cmd->heredocs_lst = NULL;
@@ -51,7 +53,7 @@ void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode)
 	}
 }
 
-void lst_cmds_freelst(t_shell *shell)
+void	lst_cmds_freelst(t_shell *shell)
 {
 	t_cmds *cmd_node = shell->cmds_lst;
 	t_cmds *cmd_node_free;

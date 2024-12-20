@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 19:36:16 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 20:25:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	heredoc_prompt_parent(t_shell *shell, t_lst_str *heredoc_node,
 		int (*hd_pipe)[2])
 {
 	int	exit_code;
-	int	pid;
+	pid_t	pid;
 
 	init_pipe_or_fork(shell, hd_pipe, &pid);
 	if (pid == 0)

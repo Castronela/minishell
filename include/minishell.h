@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 20:12:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 21:37:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,10 @@
 # define ERRMSG_FORK "Error fork"
 # define ERRMSG_READ "Error read"
 # define ERRMSG_WRITE "Error write"
+# define ERRMSG_OPEN "Error open"
+# define ERRMSG_EXECVE "Error execve"
+# define ERRMSG_WAITPID "Error waitpid"
+# define ERRMSG_DUP2 "Error dupe2"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -109,7 +113,8 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	int				cmd_index;		// Don't know if we require this, yet
+	int				cmd_index;	// = 0	// Field indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
+	int				exc_index;	// = 0	// Field indicate the index of the external command; should default to 0 if command is built-in
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
@@ -167,7 +172,7 @@ void		start_shell(t_shell *shl);
 int			is_built_in(char *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
-void		mini_echo(t_shell *shl);
+void		mini_echo(t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
@@ -196,6 +201,12 @@ void		ft_replace_node(t_lst_str *old, t_lst_str *new);
 void		ft_del_node(t_lst_str *node);
 void		ft_remove_node(t_lst_str **root, t_lst_str *node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
+
+/* ----------------------------- start_shell.c ----------------------------- */
+
+void		start_shell(t_shell *shl);
+void		index_cmds(t_shell *shl);
+int			get_total_cmds(t_shell *shl, int which);
 
 /* ------------------------------ utilities.c ------------------------------ */
 
@@ -258,7 +269,7 @@ bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
-void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid);
+void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
 
 /* ----------------------------- Test functions ----------------------------- */
 

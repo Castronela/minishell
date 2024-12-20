@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/16 16:18:14 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 16:08:25 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Built-in echo function
   - if the command contains "-n ", then it writes to fd_out without a newline
   - if command contains no -n option, then it writes to fd_out followed by a newline
 */
-void	mini_echo(t_shell *shl)
+void	mini_echo(t_cmds *cmd)
 {
 	char	*str;
 	int		new_line;
@@ -26,21 +26,21 @@ void	mini_echo(t_shell *shl)
 
 	new_line = 0;
 	pr_index = 1;
-	str = *(shl->cmds_lst->args + pr_index);
+	str = *(cmd->args + pr_index);
 
 	// if -n option is present, set new_line to 1
 	if (compare_strings("-n", str, 1))
 	{
 		new_line = 1;
 		pr_index++;
-		str = *(shl->cmds_lst->args + pr_index);
+		str = *(cmd->args + pr_index);
 	}
-	while (shl->cmds_lst->args + pr_index)
+	while (cmd->args + pr_index)
 	{
-		str = *(shl->cmds_lst->args + pr_index++);
-		write(shl->cmds_lst->fd_out, str, ft_strlen(str));
+		str = *(cmd->args + pr_index++);
+		write(cmd->fd_out, str, ft_strlen(str));
 	}
 	// if new_line is 1, write a newline to fd_out
 	if (new_line)
-		write(shl->cmds_lst->fd_out, "\n", 1);
+		write(cmd->fd_out, "\n", 1);
 }
