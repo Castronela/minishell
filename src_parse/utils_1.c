@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/18 18:41:21 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 19:23:30 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ bool is_redir(const char *str, const size_t index);
 bool is_control(const char *str, const size_t index);
 size_t find_longest_match_length(const char *str, const char *pattern[]);
 void reset_cmd_vars(t_shell *shell, int free_before);
+void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid);
 
 
 bool is_quote(const char c)
@@ -96,4 +97,26 @@ void reset_cmd_vars(t_shell *shell, int free_before)
     shell->cmdline = NULL;
     shell->cmds_lst = NULL;
     shell->open_qt = 0;
+}
+
+/*
+Initializes a pipe and/or a fork if 'pipe_fd' and 'pid' are not NULL
+*/
+void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid)
+{
+	if (pipe_fd)
+	{
+		if (pipe(*pipe_fd) < 0)
+			exit_early(shell, NULL, ERRMSG_PIPE);
+	}
+	if (pid)
+	{
+		*pid = fork();
+		if (*pid < 0)
+		{
+			close((*pipe_fd)[0]);
+			close((*pipe_fd)[1]);
+			exit_early(shell, NULL, ERRMSG_FORK);
+		}
+	}
 }
