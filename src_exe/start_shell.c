@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 13:43:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 20:07:34 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,18 @@ void	start_shell(t_shell *shl)
 {
 	while (1)
 	{
+		set_signal(shl);
 		shl->cmdline = readline(shl->prompt);
 		if (!shl->cmdline)
 			break ;
 		if (!(ft_strncmp(shl->cmdline, "exit", 4)))
-		{
-			free(shl->cmdline);
 			break ;
-		}
 		add_history(shl->cmdline);
-		parser(shl);
-        heredoc(shl);
+		if (parser(shl) || heredoc(shl))
+		{
+			reset_cmd_vars(shl, 1);
+			continue ;
+		}
 		init_pipes(shl);
         test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);

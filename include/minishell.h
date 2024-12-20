@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 13:46:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 20:12:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,9 @@
 # define ERRMSG_MALLOC "Error malloc"
 # define ERRMSG_PIPE "Error pipe"
 # define ERRMSG_SIGNAL "Error signal"
+# define ERRMSG_FORK "Error fork"
+# define ERRMSG_READ "Error read"
+# define ERRMSG_WRITE "Error write"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -205,7 +208,7 @@ void		ft_print_lst(t_lst_str *root);
 
 /* ============================= src_parse/... ============================= */
 
-void		parser(t_shell *shell);
+int			parser(t_shell *shell);
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
@@ -219,7 +222,7 @@ bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 
 /* -------------------------------- Heredoc -------------------------------- */
 
-void 		heredoc(t_shell *shell);
+int 		heredoc(t_shell *shell);
 
 /* -------------------------- Cmds list functions -------------------------- */
 
@@ -255,6 +258,7 @@ bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
+void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid);
 
 /* ----------------------------- Test functions ----------------------------- */
 

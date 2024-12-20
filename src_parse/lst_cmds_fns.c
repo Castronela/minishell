@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/16 15:40:31 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/20 16:00:51 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
-void lst_cmds_freelst(t_shell *shell);
+void 	lst_cmds_freelst(t_shell *shell);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
