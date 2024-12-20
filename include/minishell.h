@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/19 16:50:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 13:46:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@
 // ---- Function Error Message -----------------------------------------------------------
 
 # define ERRMSG_MALLOC "Error malloc"
+# define ERRMSG_PIPE "Error pipe"
+# define ERRMSG_SIGNAL "Error signal"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -83,6 +85,11 @@
 # define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
 
 
+//--------------------------------------------------------------------------------------//
+//                                     Error Codes                                      //
+//--------------------------------------------------------------------------------------//
+
+# define ERRCODE_SYNTAX 258
 
 
 //--------------------------------------------------------------------------------------//
@@ -200,27 +207,46 @@ void		ft_print_lst(t_lst_str *root);
 
 void		parser(t_shell *shell);
 
-/* --- Tokenizer --- */
+/* ------------------------------- Tokenizer ------------------------------- */
 
 char		*get_next_token(t_shell *shell, size_t *index_cmd);
 
-/* --- Syntax Checker --- */
+/* ---------------------------- Syntax Checker ---------------------------- */
 
 bool		is_valid_quotation(t_shell *shell);
 bool		is_valid_control(t_shell *shell);
-bool		is_redir_target_valid(char *redir_target);
+bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 
-/* --- Heredoc --- */
+/* -------------------------------- Heredoc -------------------------------- */
 
-void heredoc(t_shell *shell);
+void 		heredoc(t_shell *shell);
 
-/* --- Cmds list functions --- */
+/* -------------------------- Cmds list functions -------------------------- */
 
 t_cmds		*lst_cmds_newnode(t_shell *shell);
 void		lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void 		lst_cmds_freelst(t_shell *shell);
 
-/* --- Utils --- */
+/* -------------------------- Remove closed quotes -------------------------- */
+
+void		remove_args_closed_quotes(t_shell *shell, t_cmds *cmd_node);
+void		remove_closed_quotes(t_shell *shell, char **str);
+size_t		count_closed_quotes(char *str);
+
+/* --------------------------- Variable expansion --------------------------- */
+
+void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
+void 		var_expansion(t_shell *shell, char **str);
+
+/* ------------------------------- Pipe Setup ------------------------------- */
+
+void 		init_pipes(t_shell *shell);
+
+/* -------------------------------- Signals -------------------------------- */
+
+void 		set_signal(t_shell *shell);
+
+/* --------------------------------- Utils ---------------------------------- */
 
 bool	 	is_quote(const char c);
 void 		skip_whitespaces(const char *str, size_t *index);
@@ -228,21 +254,20 @@ void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
+void		reset_cmd_vars(t_shell *shell, int free_before);
 
 /* ----------------------------- Test functions ----------------------------- */
 
-// void 		start_shell(t_shell *shell);
-void 		var_expansion(t_shell *shell, char **str);
-void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
-void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
-void 		test_new_tokenizer(t_shell *shl, char **envp);
 void 		test_var_exp(char **envp);
+void 		test_remove_quotes(void);
 
 /* ======================== End Function Prototypes ======================== */
 
 #endif
 
 
-// "  hello  $USER'$USER'"
+// cat file
+// cat path/file
+// /bin/cat cat arg1 file

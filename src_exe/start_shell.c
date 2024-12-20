@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/19 17:07:21 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/20 13:43:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	start_shell(t_shell *shl)
 		add_history(shl->cmdline);
 		parser(shl);
         heredoc(shl);
-		// execution starts here
+		init_pipes(shl);
         test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}

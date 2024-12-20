@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/17 15:38:01 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:18:02 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 void heredoc(t_shell *shell);
 
 static void check_heredoc(t_shell *shell, t_cmds *cmd_node);
+static void var_expand_heredoc_body(t_shell *shell, t_lst_str *heredoc_node, int flag_expand_vars);
 static void append_heredoc_body(t_shell *shell, t_lst_str *heredoc_node, char *input);
-
-//TODO remove quotes from heredoc delimiter but do not expand it
 
 /*
 Loops through every command node and checks for open heredocs
@@ -45,11 +44,14 @@ Loops through every heredoc node and processes heredoc body
 static void check_heredoc(t_shell *shell, t_cmds *cmd_node)
 {
     t_lst_str *heredoc_node;
+    int flag_expand_vars;
     char *input;
 
     heredoc_node = cmd_node->heredocs_lst;
     while (heredoc_node)
     {
+        flag_expand_vars = count_closed_quotes(heredoc_node->key);
+        remove_closed_quotes(shell, &heredoc_node->key);
         input = readline(PS2);
         while (input)
         {
@@ -62,8 +64,37 @@ static void check_heredoc(t_shell *shell, t_cmds *cmd_node)
                 append_heredoc_body(shell, heredoc_node, input);
             input = readline(PS2);
         }
+        var_expand_heredoc_body(shell, heredoc_node, flag_expand_vars);
         heredoc_node = heredoc_node->next;
     }
+}
+
+/*
+Expands variables of heredoc body ONLY if 'flag_expand_vars' is 0
+    - encloses entire heredoc body in double quotes
+    - performs variable expansion
+    - removes double quotes added earlier
+*/
+static void var_expand_heredoc_body(t_shell *shell, t_lst_str *heredoc_node, int flag_expand_vars)
+{
+    char *new_hd_body;
+    size_t hd_body_len;
+    
+    if (flag_expand_vars)
+        return ;
+    hd_body_len = ft_strlen2(heredoc_node->val);
+    new_hd_body = ft_calloc(hd_body_len + 3, sizeof(*new_hd_body));
+    if (!new_hd_body)
+        exit_early(shell, NULL, ERRMSG_MALLOC);
+    new_hd_body[0] = '\"';
+    new_hd_body[hd_body_len] = '\"';
+    ft_strlcpy2(&new_hd_body[1], heredoc_node->val, hd_body_len);
+    var_expansion(shell, &new_hd_body);
+    hd_body_len = ft_strlen2(new_hd_body);
+    new_hd_body = ft_memmove(new_hd_body, &new_hd_body[1], hd_body_len);
+    new_hd_body = ft_realloc(new_hd_body, hd_body_len + 1);
+    free(heredoc_node->val);
+    heredoc_node->val = new_hd_body;
 }
 
 /*

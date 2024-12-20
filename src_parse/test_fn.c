@@ -7,6 +7,7 @@ void test_free_cmds(t_shell *shell);
 // void test_new_tokenizer(char **envp);
 void test_new_tokenizer(t_shell *shl, char **envp);
 void test_var_exp(char **envp);
+void test_remove_quotes(void);
 
 
 void test_print_cmdlst(t_shell *shell, int spacing)
@@ -184,4 +185,14 @@ void test_var_exp(char **envp)
 	free(good);
 
 	clearout(&shell);
+}
+
+void test_remove_quotes(void)
+{
+	t_shell shell;
+	char *str = ft_strdup("H\'ello\' \"the\'re\" World");
+	printf("quotes removed: %lu\n", count_closed_quotes(str));
+	remove_closed_quotes(&shell, &str);
+	printf("%s\n", str);
+	free(str);
 }

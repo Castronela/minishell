@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/17 16:56:38 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/18 18:41:21 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool is_redir(const char *str, const size_t index);
 bool is_control(const char *str, const size_t index);
 size_t find_longest_match_length(const char *str, const char *pattern[]);
+void reset_cmd_vars(t_shell *shell, int free_before);
 
 
 bool is_quote(const char c)
@@ -76,4 +77,23 @@ size_t find_longest_match_length(const char *str, const char *pattern[])
 		}
 	}
 	return (highest_len);
+}
+
+/*
+Nullifies all command variables
+	- if 'free_before' > 0 then frees command variables
+	before nullifying them
+*/
+void reset_cmd_vars(t_shell *shell, int free_before)
+{
+    if (free_before)
+    {
+        if (shell->cmdline)
+            free(shell->cmdline);
+        if (shell->cmds_lst)
+            lst_cmds_freelst(shell);
+    }
+    shell->cmdline = NULL;
+    shell->cmds_lst = NULL;
+    shell->open_qt = 0;
 }

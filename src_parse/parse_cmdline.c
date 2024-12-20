@@ -3,21 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmdline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/18 15:47:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/19 16:40:14 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
-void	parser(t_shell *shell);
+void		parser(t_shell *shell);
 
-static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
-static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count);
-static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t	*index_cmd);
-static char **get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
+static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode,
+				size_t *index_cmd);
+static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
+				size_t *arg_count);
+static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
+				size_t * index_cmd);
+static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
+				char *operator);
 
 /*
 (Main FN) Initializes 'shell->cmds_lst':
@@ -40,18 +44,17 @@ void	parser(t_shell *shell)
 		lst_cmds_addback(shell, new_cmdnode);
 		init_cmd_lst(shell, new_cmdnode, &index_cmd);
 		var_expand_args(shell, new_cmdnode);
+		remove_args_closed_quotes(shell, new_cmdnode);
 	}
 	if (!is_valid_control(shell) || !is_valid_quotation(shell))
-	{
-		reset_cmd_vars(shell, 1);
 		start_shell(shell);
-	}
 }
 
 /*
 Initializes 'new_cmdnode' with tokens from a single command:
 	- reads and extracts tokens from commandline
-	- sorts tokens into 'new_cmdnode', according to their type (redir, control, arg)
+	- sorts tokens into 'new_cmdnode', according to their type (redir, control,
+		arg)
 	- upon finding a control operator, stores operator and exits function
 */
 static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
@@ -78,9 +81,10 @@ static void	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 
 /*
 Initializes 'new_cmdnode->args' with 'argument':
-	- adds 'argument' and a tailing NULL to 2d array 
+	- adds 'argument' and a tailing NULL to 2d array
 */
-static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count)
+static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
+		size_t *arg_count)
 {
 	(*arg_count)++;
 	new_cmdnode->args = ft_realloc(new_cmdnode->args, sizeof(*new_cmdnode->args)
@@ -97,11 +101,12 @@ static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_
 /*
 Initializes 'new_cmdnode' with redirection targets:
 	- checks redirection type of 'operator'
-	- retrieves next token and stores it 
+	- retrieves next token and stores it
 	into 'new_cmdnode' as redirection target
 	- does syntax check for redirection operators
 */
-static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t	*index_cmd)
+static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
+		size_t * index_cmd)
 {
 	char	*redir_target;
 	char	**cmdnode_filept;
@@ -123,11 +128,8 @@ static void	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, siz
 	if (cmdnode_filept && *cmdnode_filept)
 		free(*cmdnode_filept);
 	*cmdnode_filept = redir_target;
-	if (is_redir_target_valid(redir_target) == false)
-	{
-		reset_cmd_vars(shell, 1);
+	if (is_redir_target_valid(shell, redir_target) == false)
 		start_shell(shell);
-	}
 }
 
 /*
@@ -137,10 +139,11 @@ Returns pointer to heredoc delimiter pointer:
 	- attaches new node to end of linked list
 	- returns reference to 'key' var of new node
 */
-static char **get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
+static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
+		char *operator)
 {
-	t_lst_str *heredoc_node;
-	
+	t_lst_str	*heredoc_node;
+
 	heredoc_node = ft_lst_new(NULL, NULL);
 	if (!heredoc_node)
 	{
