@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/20 17:18:29 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/21 19:22:55 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,6 +71,12 @@ READLINE_DIR	=	/usr/local/lib
 READLINE_HED	=	/usr/local/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
+VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
+					--leak-check=full \
+					--show-leak-kinds=all \
+					--trace-children=yes \
+					-s \
+					# --child-silent-after-fork=yes \
 # Leak Sanitizer for leak check on Mac (run: make LEAK=1)
 LEAKSAN			=	liblsan.dylib
 LEAKSAN_DIR		=	/Users/dstinghe/LeakSanitizer
@@ -94,6 +100,9 @@ BLUE 		= 	\033[34m
 
 all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
+
+valgrind: $(NAME)
+	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
 
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."

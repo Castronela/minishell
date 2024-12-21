@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmdline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 15:09:53 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:50:51 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ Initializes 'new_cmdnode->args' with 'argument':
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count)
 {
 	(*arg_count)++;
-	new_cmdnode->args = ft_realloc(new_cmdnode->args, sizeof(*new_cmdnode->args)
-			* (*arg_count + 1));
+	new_cmdnode->args = ft_recalloc(new_cmdnode->args, sizeof(*new_cmdnode->args)
+			* (*arg_count + 1), sizeof(*new_cmdnode->args) * (*arg_count));
 	if (!new_cmdnode->args)
 	{
 		free(argument);

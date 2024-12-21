@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 19:36:16 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/21 19:53:46 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 	var_expansion(shell, &new_hd_body);
 	hd_body_len = ft_strlen2(new_hd_body);
 	new_hd_body = ft_memmove(new_hd_body, &new_hd_body[1], hd_body_len);
-	new_hd_body = ft_realloc(new_hd_body, hd_body_len + 1);
+	new_hd_body = ft_recalloc(new_hd_body, hd_body_len + 1, 0);
 	free(heredoc_node->val);
 	heredoc_node->val = new_hd_body;
 }
@@ -160,16 +160,17 @@ static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 static void	heredoc_read_pipe(t_shell *shell, int fd_read,
 		t_lst_str *heredoc_node)
 {
-	char	input[BUFFER_SIZE];
+	char	input[BUFFER_SIZE + 1];
 	int		bytes_read;
 
 	bytes_read = read(fd_read, input, BUFFER_SIZE);
 	if (bytes_read < 0)
 		exit_early(shell, NULL, ERRMSG_READ);
+	input[bytes_read] = 0;
 	while (bytes_read)
 	{
 		heredoc_node->val = ft_recalloc(heredoc_node->val,
-				ft_strlen2(heredoc_node->val) + bytes_read + 1);
+				ft_strlen2(heredoc_node->val) + bytes_read + 1, 0);
 		if (!heredoc_node->val)
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 		ft_strlcat(heredoc_node->val, input, ft_strlen2(heredoc_node->val)
@@ -177,6 +178,7 @@ static void	heredoc_read_pipe(t_shell *shell, int fd_read,
 		bytes_read = read(fd_read, input, BUFFER_SIZE);
 		if (bytes_read < 0)
 			exit_early(shell, NULL, ERRMSG_READ);
+		input[bytes_read] = 0;
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 19:58:20 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/21 15:52:44 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ bool	is_valid_quotation(t_shell *shell)
 	{
 		printf("%s ( %c )\n", ERRMSG_OPEN_QUOTE, shell->open_qt);
 		shell->exit_code = ERRCODE_SYNTAX;
-		reset_cmd_vars(shell, 1);
 		return (false);
 	}
 	shell->exit_code = EXIT_SUCCESS;
@@ -50,14 +49,12 @@ bool	is_valid_control(t_shell *shell)
 		{
 			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR, cmd_node->ctl_operator);
 			shell->exit_code = ERRCODE_SYNTAX;
-			reset_cmd_vars(shell, 1);
 			return (false) ;
 		}
 		if (cmd_node->ctl_operator && !cmd_node->args && !cmd_node->file_in && !cmd_node->file_out && !cmd_node->heredocs_lst)
 		{
 			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR, cmd_node->ctl_operator);
 			shell->exit_code = ERRCODE_SYNTAX;
-			reset_cmd_vars(shell, 1);
 			return (false) ;
 		}
 		
@@ -78,14 +75,12 @@ bool	is_redir_target_valid(t_shell *shell, char *redir_target)
 	{
 		printf("%s `%s'\n", ERRMSG_UNEXP_TOKEN, "newline");
 		shell->exit_code = ERRCODE_SYNTAX;
-		reset_cmd_vars(shell, 1);
 		return (false);
 	}
 	else if (is_control(redir_target, 0) || is_redir(redir_target, 0))
 	{
 		printf("%s `%s'\n", ERRMSG_UNEXP_TOKEN, redir_target);
 		shell->exit_code = ERRCODE_SYNTAX;
-		reset_cmd_vars(shell, 1);
 		return (false);
 	}
 	shell->exit_code = EXIT_SUCCESS;
