@@ -12,6 +12,13 @@ added later.
 		void	ft_del_node(t_lst_str *node);
 	-	Ask someone how to handle internal errors like malloc fails, whether to
 		exit minishell or just keep going and updating exit-code field
+	-	It seems after each cmd_line cycle, the pipes are not being closed as it
+		stands at the moment. Should make sure to close them and reuse pipe fds
+	-	The clearout fn needs updating, it has some leaks apparently
+	-	The fn for opening files and replacing fds has been added but it does
+		not seem to replace the fd or may be even create one, as seen from the
+		fact that the fd_out remains unchanged even though file_out is not NULL
+	-	The exec_built_in function is being called but seems not be executing
 
 2.	Feature ideas/ insights
 	-	Feature to be added in the future: the variables can be used to store a

@@ -3,16 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/20 17:18:29 by dstinghe         ###   ########.fr        #
+#    Updated: 2024/12/21 19:29:57 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # ----------------- Compiler Flags ----------------- #
 
 CC			= 	gcc -g
+# CC			= 	gcc -g -fsanitize=address
 CFLAGS		= 	-Wall -Wextra -Werror
 DEPFLAGS	= 	-MMD
 
@@ -33,7 +34,7 @@ SRC_MAIN	=	main.c
 SRC_PARSE	= 	utils_1.c lst_cmds_fns.c tokenizer.c remove_quotes.c pipes.c signal.c \
 				parse_cmdline.c syntax_validation.c heredoc.c var_expansion.c \
 				test_fn.c
-SRC_EXE		=	init_shell.c start_shell.c lst_str_fns.c utilities.c \
+SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
 				built_ins.c bi_echo.c bi_export.c bi_pwd.c bi_unset.c
 # SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c test_main.c \
 # 				built_ins.c

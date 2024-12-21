@@ -6,13 +6,16 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 21:59:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/21 19:29:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	start_shell(t_shell *shl);
+void	mini_execute(t_shell *shl);
+void	create_pids(t_shell *shl);
+void	exec_external(t_shell *shl, t_cmds *cmd, int pindex);
 void	index_cmds(t_shell *shl);
 int		get_total_cmds(t_shell *shl, int which);
 
@@ -39,8 +42,9 @@ void	start_shell(t_shell *shl)
 		}
 		init_pipes(shl);
 		index_cmds(shl);
+		get_binaries(shl);
         test_print_cmdlst(shl, 30);
-		// mini_execute(shl);
+		mini_execute(shl);
 		printf("no. of cmds:	%d\n", get_total_cmds(shl, 0));
 		printf("no. of pids:	%d\n", get_total_cmds(shl, 1));
 		reset_cmd_vars(shl, 1);
@@ -58,42 +62,46 @@ void	mini_execute(t_shell *shl)
 {
 	int		pindex;
 	t_cmds	*cmd;
-	int		ec;
 
 	pindex = 0;
 	create_pids(shl);
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
-		if (is_built_in(*(cmd->args)))
-		{
-			if (check_and_open_files(cmd) < 0)
-				exit_early(shl, NULL, ERRMSG_OPEN);
+		if (open_file_fds(cmd) < 0)
+			exit_early(shl, NULL, ERRMSG_OPEN);
+		if (cmd->exc_index != 0)
 			exec_built_in(shl, cmd);
-		}
-		else
-		{
-			// exec_external(shl, cmd, *(shl->pid + pindex));
-			if ((*(shl->pid + pindex) = fork()) < 0)
-				exit_early(shl, NULL, ERRMSG_FORK);
-			if (shl->pid[pindex] == 0)
-			{
-				if (check_and_open_files(cmd) < 0)
-					exit_early(shl, NULL, ERRMSG_OPEN);
-				if (set_redirections(cmd) < 0)
-					exit_early(shl, NULL, ERRMSG_DUP2);
-				close_fds(cmd);
-				execve(cmd->bin_path, cmd->args, shl->env);
-				exit_early(shl, NULL, ERRMSG_EXECVE);
-			}
-			if ((waitpid(*(shl->pid + pindex), &ec, 0)) == -1)
-				exit_early(shl, NULL, ERRMSG_WAITPID);
-			if (WIFEXITED(ec))
-				shl->exit_code = WEXITSTATUS(ec);				
-			pindex++;
-		}
+		// else
+		// {
+		// 	if ((*(shl->pid + pindex) = fork()) < 0)
+		// 		exit_early(shl, NULL, ERRMSG_FORK);
+		// 	exec_external(shl, cmd, pindex);
+		// 	pindex++;
+		// }
 		cmd = cmd->next;
 	}
+}
+
+void	exec_external(t_shell *shl, t_cmds *cmd, int pindex)
+{
+	int	ec;
+
+	ec = 0;
+	if (shl->pid[pindex] == 0)
+	{
+		// if (open_file_fds(cmd) < 0)
+		// 	exit_early(shl, NULL, ERRMSG_OPEN);
+		if (set_redirections(cmd) < 0)
+			exit_early(shl, NULL, ERRMSG_DUP2);
+		close_fds(cmd);
+		execve(cmd->bin_path, cmd->args, shl->env_str);
+		exit_early(shl, NULL, ERRMSG_EXECVE);
+	}
+	if ((waitpid(*(shl->pid + pindex), &ec, 0)) == -1)
+		exit_early(shl, NULL, ERRMSG_WAITPID);
+	if (WIFEXITED(ec))
+		shl->exit_code = WEXITSTATUS(ec);
 }
 
 /*/
@@ -149,6 +157,9 @@ int	get_total_cmds(t_shell *shl, int which)
 	return (total);
 }
 
+/*
+Function to malloc a pid_t pointer for the required number of pids
+*/
 void	create_pids(t_shell *shl)
 {
 	int	total_ext;

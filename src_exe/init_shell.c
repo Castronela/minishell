@@ -6,18 +6,19 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 15:38:03 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/21 19:41:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void 	init_shell(t_shell *shl, char **envp);
-void	copy_env(t_shell *shl, char **envp);
-void	copy_env_paths(t_shell *shl, char **envp);
-void	update_shlvl(t_shell *shl);
-void	set_prompt(t_shell *shl, char *prefix, char *separator);
-char	*assemble_prompt(char *prefix, char *cwd, char *separator);
+void 		init_shell(t_shell *shl, char **envp);
+void		copy_env(t_shell *shl, char **envp);
+static void	copy_env_str(t_shell *shl, char **envp, int size);
+void		copy_env_paths(t_shell *shl, char **envp);
+void		update_shlvl(t_shell *shl);
+void		set_prompt(t_shell *shl, char *prefix, char *separator);
+char		*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 /*
 Initializes the elements of the shell struct "t_shell"
@@ -30,6 +31,7 @@ Initializes the elements of the shell struct "t_shell"
 */
 void	init_shell(t_shell *shl, char **envp)
 {
+	shl->env_str = NULL;
 	shl->env = NULL;
 	shl->variables = NULL;
 	shl->env_paths = NULL;
@@ -42,7 +44,7 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
-	set_prompt(shl, "Mini: ", " % ");
+	set_prompt(shl, "<< ", " >> % ");
 	reset_cmd_vars(shl, 0);
 }
 
@@ -58,7 +60,7 @@ void	copy_env(t_shell *shl, char **envp)
 	int 		i;
 	t_lst_str	*new_node;
 	char		**split;
-	
+
 	i = -1;
 	while (envp[++i])
 	{
@@ -76,6 +78,27 @@ void	copy_env(t_shell *shl, char **envp)
 		ft_lst_addback(&shl->variables, new_node);
 		ft_free2d(split);
 	}
+	copy_env_str(shl, envp, i);
+}
+
+/*
+Function to copy envp variables as double char pointers for execve
+*/
+static void	copy_env_str(t_shell *shl, char **envp, int size)
+{
+	int i;
+	
+	i = -1;
+	shl->env_str = malloc((size + 1) * sizeof(char *));
+	if (!shl->env_str)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	while (envp[++i])
+	{
+		shl->env_str[i] = ft_strdup(envp[i]);
+		if (!shl->env_str[i])
+			exit_early(shl, shl->env_str, ERRMSG_MALLOC);
+	}
+		
 }
 
 /*

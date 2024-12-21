@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 21:37:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/21 18:19:49 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ typedef struct s_cmds
 
 typedef struct s_shell
 {
+	char		**env_str;			// Copy of **envp, as required by execve fn
 	t_lst_str	*env;				// Stores env variables from the calling shell
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
@@ -204,9 +205,24 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /* ----------------------------- start_shell.c ----------------------------- */
 
+int			get_binaries(t_shell *shl);
+char		*get_binary_path(t_shell *shl, t_cmds *cmd);
+int			remove_path(t_cmds *cmd);
+
+/* ----------------------------- start_shell.c ----------------------------- */
+
 void		start_shell(t_shell *shl);
+void		mini_execute(t_shell *shl);
+void		create_pids(t_shell *shl);
+void		exec_external(t_shell *shl, t_cmds *cmd, int pindex);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
+
+/* ------------------------------ redirection.c ------------------------------ */
+
+int			open_file_fds(t_cmds *cmd);
+int			set_redirections(t_cmds *cmd);
+void		close_fds(t_cmds *cmd);
 
 /* ------------------------------ utilities.c ------------------------------ */
 
