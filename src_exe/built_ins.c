@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 17:15:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/21 20:01:47 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,22 +49,18 @@ int	is_built_in(char *cmd)
 
 void	exec_built_in(t_shell *shl, t_cmds *cmd)
 {
-	size_t	binpt_offset;
-
-	(void)shl;
-	binpt_offset = ft_strlen(cmd->bin_path) - 5;
-	if (ft_strncmp(cmd->bin_path + binpt_offset, "echo", 4) == 0)
+	if (compare_strings(*cmd->args, "echo", 1))
 		mini_echo(cmd);
-	// if (ft_strncmp(shl->cmds_lst->bin, "cd", 2) == 0)
-	// 	mini_cd(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "pwd", 3) == 0)
-	// 	mini_pwd(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "export", 6) == 0)
-	// 	mini_export(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "unset", 5) == 0)
-	// 	mini_unset(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "env", 3) == 0)
-	// 	mini_env(shl->cmds_lst);
-	// if (ft_strncmp(shl->cmds_lst->bin, "exit", 4) == 0)
-	// 	mini_exit(shl->cmds_lst);
+	else if (compare_strings(*cmd->args, "cd", 1))
+		mini_cd(shl, cmd);
+	else if (compare_strings(*cmd->args, "pwd", 1))
+		mini_pwd(shl, cmd);
+	else if (compare_strings(*cmd->args, "export", 1))
+		mini_export(shl, cmd);
+	else if (compare_strings(*cmd->args, "unset", 1))
+		mini_unset(shl, cmd);
+	// else if (compare_strings(*cmd->args, "env", 1))
+	// 	mini_env(shl, cmd);
+	// else if (compare_strings(*cmd->args, "exit", 1))
+	// 	mini_exit(shl, cmd);
 }
