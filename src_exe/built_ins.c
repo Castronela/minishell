@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 20:01:47 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 19:32:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 		mini_export(shl, cmd);
 	else if (compare_strings(*cmd->args, "unset", 1))
 		mini_unset(shl, cmd);
-	// else if (compare_strings(*cmd->args, "env", 1))
-	// 	mini_env(shl, cmd);
-	// else if (compare_strings(*cmd->args, "exit", 1))
-	// 	mini_exit(shl, cmd);
+	else if (compare_strings(*cmd->args, "env", 1))
+		mini_env(shl, cmd);
+	else if (compare_strings(*cmd->args, "exit", 1))
+		mini_exit(shl);
 }

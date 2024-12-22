@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/20 20:15:17 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 17:55:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	lst_cmds_freelst(t_shell *shell)
 	while (cmd_node)
 	{
 		if (cmd_node->bin_path)
-			free (cmd_node->bin_path);
+			free(cmd_node->bin_path);
 		if (cmd_node->args)
 			ft_free2d(cmd_node->args);
 		if (cmd_node->heredocs_lst)

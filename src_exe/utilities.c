@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/20 20:34:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 19:21:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,10 @@ void	store_variable(t_shell *shl, char *str)
 	ft_free2d(split);
 }
 
+/*
+Function to check if there are more than necessary args from user; if there is
+then print an error message and exit
+*/
 void	arg_error(char **av)
 {
 	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
@@ -86,32 +90,51 @@ void	arg_error(char **av)
 	exit(127);
 }
 
-void	exit_early(t_shell *shl, char **split, char *msg)
+/*
+Function for an early exit if there is some internal failure eg. malloc errors
+  - Calls clearout() function, which frees all allocated t_shell fields
+  - Calls lst_cmds_freelst() fn, that frees all t_cmds nodes and their fields
+  - Frees any double char pointer allocated locally by the calling function
+  - Prints an error message with perror() fn including the string 'msg'
+  - Exits with the default global error variable 'errno'
+*/
+void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 {
+	clearout(shl);
+	lst_cmds_freelst(shl);
+	if (double_ptr)
+		ft_free2d(double_ptr);
+	if (msg != NULL)
+		perror(msg);
+	exit(errno);
+}
+
+/*
+Function to free any allocated memory during the minishell session and return
+  - When called, the fn frees all allocated t_shell field pointers, clears the 
+	readline history, and return control to the calling function.
+  - This function is meant to exit minishell without memory leaks from pointers
+	accesible from the main stack.
+  - The funciton will not free any memory allocated locally by the calling fn
+	which is not accessible through the main stack.
+  - The function also does not free any t_cmds struct nodes with the assumption
+	that this will occur within the minishell session at the end of each command
+	cycle.
+*/
+void	clearout(t_shell *shl)
+{
+	if (shl->env_str!= NULL)
+		ft_free2d(shl->env_str);
 	if (shl->env != NULL)
 		ft_lst_free(&shl->env);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
 	if (shl->env_paths != NULL)
 		ft_lst_free(&shl->env_paths);
-	if (shl->cur_wd)
+	if (shl->cur_wd != NULL)
 		free(shl->cur_wd);
-	if (shl->prompt)
+	if (shl->prompt != NULL)
 		free(shl->prompt);
-	if (split)
-		ft_free2d(split);
-	perror(msg);
-	exit(errno);
-}
-
-void	clearout(t_shell *shl)
-{
-	ft_lst_free(&shl->env);
-	ft_lst_free(&shl->variables);
-	ft_lst_free(&shl->env_paths);
-	free(shl->cur_wd);
-	free(shl->prompt);
-	// free(shl->last_bin_arg);
 	rl_clear_history();
 }
 

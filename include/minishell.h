@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 18:19:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 20:15:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,10 +113,9 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	int				cmd_index;	// = 0	// Field indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
-	int				exc_index;	// = 0	// Field indicate the index of the external command; should default to 0 if command is built-in
+	int				cmd_index;		// Field indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
+	int				exc_index;		// Field indicate the index of the external command; should default to 0 if command is built-in
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
-	// char			*bin;			// Maybe this is not necessary
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
 	t_lst_str		*heredocs_lst;	// If << is present, this will contain the heredoc string, else NULL
 	int				fd_in;			// Defaults to STDINFILENO
@@ -136,7 +135,6 @@ typedef struct s_shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
-	char		*last_bin_arg;		// Stores the last argument of the binary that was last executed
 	char		*prompt;			// Stores the prompt string for the minishell
 	int			exit_code;			// Stores the exit code from the last executed command
 
@@ -160,13 +158,9 @@ typedef struct s_shell
 int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
-
 /* ----------------------------- start_shell.c ----------------------------- */
+
 void		start_shell(t_shell *shl);
-
-/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
-
-/* ------------- src_exe/built_ins.c and src_exe/built_ins/....c ------------- */
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -181,6 +175,13 @@ int			mini_unset(t_shell *shl, t_cmds *cmd);
 void		mini_cd(t_shell *shl, t_cmds *cmd);
 int			path_is_dir(char *path);
 void		update_cwd(t_shell *shl, char *new_cwd);
+
+void		mini_env(t_shell *shl, t_cmds *cmd);
+void		update_last_var(t_shell *shl, t_cmds *cmd);
+int			update_var_str(char *var_pointer, char *var_name, char *new_val);
+int			count_pointers(char **dp);
+
+void		mini_exit(t_shell *shl);
 
 /* -------------------------- src_exe/init_shell.c -------------------------- */
 
@@ -288,6 +289,8 @@ void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
 
 /* ----------------------------- Test functions ----------------------------- */
+
+void		test_by_print(t_shell *shl);
 
 void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);

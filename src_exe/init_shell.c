@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 19:41:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 17:45:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->variables = NULL;
 	shl->env_paths = NULL;
 	shl->cur_wd = NULL;
-	shl->last_bin_arg = NULL;
 	shl->prompt = NULL;
 	copy_env(shl, envp);
 	copy_env_paths(shl, envp);
@@ -96,9 +95,9 @@ static void	copy_env_str(t_shell *shl, char **envp, int size)
 	{
 		shl->env_str[i] = ft_strdup(envp[i]);
 		if (!shl->env_str[i])
-			exit_early(shl, shl->env_str, ERRMSG_MALLOC);
+			exit_early(shl, NULL, ERRMSG_MALLOC);
 	}
-		
+	shl->env_str[i] = NULL;
 }
 
 /*

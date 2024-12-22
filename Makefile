@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/21 19:29:57 by pamatya          ###   ########.fr        #
+#    Updated: 2024/12/22 19:28:19 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ SRC_PARSE	= 	utils_1.c lst_cmds_fns.c tokenizer.c remove_quotes.c pipes.c signal
 				parse_cmdline.c syntax_validation.c heredoc.c var_expansion.c \
 				test_fn.c
 SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
-				built_ins.c bi_echo.c bi_export.c bi_pwd.c bi_unset.c
+				built_ins.c bi_cd.c bi_echo.c bi_env.c bi_exit.c bi_export.c bi_pwd.c bi_unset.c \
+				tests.c
 # SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c test_main.c \
 # 				built_ins.c
 # SRC_BI		=	bi_cd.c	bi_echo.c bi_export.c bi_pwd.c

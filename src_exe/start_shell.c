@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 19:29:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 19:32:47 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	start_shell(t_shell *shl)
 		shl->cmdline = readline(shl->prompt);
 		if (!shl->cmdline)
 			break ;
-		if (!(ft_strncmp(shl->cmdline, "exit", 4)))
-			break ;
+		// if (!(ft_strncmp(shl->cmdline, "exit", 4)))
+		// 	break ;
 		add_history(shl->cmdline);
 		if (parser(shl) || heredoc(shl))
 		{
@@ -44,15 +44,10 @@ void	start_shell(t_shell *shl)
 		index_cmds(shl);
 		get_binaries(shl);
         test_print_cmdlst(shl, 30);
+		test_by_print(shl);
 		mini_execute(shl);
-		printf("no. of cmds:	%d\n", get_total_cmds(shl, 0));
-		printf("no. of pids:	%d\n", get_total_cmds(shl, 1));
 		reset_cmd_vars(shl, 1);
 	}
-	// print_env(shl);
-	// print_env_paths(shl);
-	// print_cwd(shl);
-	// print_shlvl(shl);
 }
 
 /*

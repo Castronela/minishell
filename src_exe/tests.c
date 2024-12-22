@@ -6,11 +6,24 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 16:07:04 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 15:10:28 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void	test_by_print(t_shell *shl)
+{
+	printf("no. of cmds:	%d\n", get_total_cmds(shl, 0));
+	printf("no. of pids:	%d\n", get_total_cmds(shl, 1));
+	// print_env(shl);
+	// print_env_paths(shl);
+	// print_cwd(shl);
+	// print_shlvl(shl);	
+	
+}
+	
+	
 
 
 // static void	print_env(t_shell *shl)

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/19 16:31:50 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/22 20:25:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,10 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		shl->exit_code = errno;
 		return ;
 	}	
-	
 	if (chdir(*(cmd->args + 1)) < 0)
 		shl->exit_code = errno;
 	new_cwd = getcwd(NULL, 0);
 	update_cwd(shl, new_cwd);
-	return (0);
 }
 
 /*
@@ -62,25 +60,32 @@ int	path_is_dir(char *path)
 	return (0);
 }
 
+/*
+Function to update the current working directory
+  - Updates 
+
+
+!!! Potential leaks when not freeing the pointer returned by ft_strjoin
+*/
 void	update_cwd(t_shell *shl, char *new_cwd)
 {
-	t_lst_str	*new_env_node;
-	t_lst_str	*new_var_node;
-	t_lst_str	*old_env_node;
-	t_lst_str	*old_var_node;
+	t_lst_str	*env_node[2];
+	t_lst_str	*var_node[2];
 
-	old_env_node = ft_find_node(shl->env, "PWD", 0, 0);
-	old_var_node = ft_find_node(shl->variables, "PWD", 1, 1);
-	new_env_node = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
-	if (!new_env_node)
+	env_node[0] = ft_find_node(shl->env, "PWD", 0, 0);
+	env_node[1] = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
+	if (!env_node[1])
 		exit_early(shl, NULL, "new_env_node malloc failed");
-	new_var_node = ft_lst_new("PWD", new_cwd);
+	ft_replace_node(env_node[0], env_node[1]);
+	
+	var_node[0] = ft_find_node(shl->variables, "PWD", 1, 1);
+	var_node[1] = ft_lst_new("PWD", new_cwd);
+	if (!var_node[1])
 	{
-		free(new_env_node);
+		free(env_node[1]);
 		exit_early(shl, NULL, "new_env_node malloc failed");
 	}
-	ft_replace_node(old_env_node, new_env_node);
-	ft_replace_node(old_var_node, new_var_node);
+	ft_replace_node(var_node[0], var_node[1]);
 	free(shl->cur_wd);
 	shl->cur_wd = ft_strdup(new_cwd);
 }
