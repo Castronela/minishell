@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/13 13:54:13 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/22 02:31:39 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,11 @@ static size_t	get_argument_end_index(t_shell *shell, size_t index_cmd)
 	while (shell->cmdline[index_cmd])
 	{
 		if (is_quote(shell->cmdline[index_cmd]))
+		{
 			skip_quoted_str(shell, shell->cmdline, &index_cmd);
+			if (!shell->cmdline[index_cmd])
+				break ;
+		}
 		else if (shell->cmdline[index_cmd] == SPACE)
 			break ;
 		else if (operator_length_at_index(shell->cmdline, index_cmd) > 0)

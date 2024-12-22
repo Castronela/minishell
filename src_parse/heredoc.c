@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/21 19:53:46 by david            ###   ########.fr       */
+/*   Updated: 2024/12/22 02:45:02 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,74 +14,88 @@
 
 int			heredoc(t_shell *shell);
 
-static int	heredoc_process_body(t_shell *shell, t_cmds *cmd_node);
-static int	heredoc_prompt_parent(t_shell *shell, t_lst_str *heredoc_node,
-				int (*hd_pipe)[2]);
-static void	heredoc_prompt(t_shell *shell, const char *hd_delimiter,
-				int fd_pipe[]);
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
+static int	heredoc_prep_prompt(t_shell *shell, int (*hd_pipe)[2]);
+static void	heredoc_prompt(t_shell *shell, int fd_pipe[]);
 static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 				int flag_expand_vars);
-static void	heredoc_read_pipe(t_shell *shell, int fd_read,
-				t_lst_str *heredoc_node);
+static char	*heredoc_read_pipe(t_shell *shell, int fd_read);
+static int	append_to_str(char **str, char *append, int w_newline);
 
 /*
 Loops through every command node and checks for open heredocs
 */
 int	heredoc(t_shell *shell)
 {
-	t_cmds	*cmd_node;
+	t_cmds		*cmd_node;
+	t_lst_str	*heredoc_node;
+	int			flag_expand_vars;
 
 	cmd_node = shell->cmds_lst;
 	while (cmd_node)
 	{
-		if (heredoc_process_body(shell, cmd_node))
+		heredoc_node = cmd_node->heredocs_lst;
+		while (heredoc_node)
 		{
-			if (write(STDOUT_FILENO, "\n", 1) < 0)
-				exit_early(shell, NULL, ERRMSG_WRITE);
-			return (1);
+			flag_expand_vars = count_closed_quotes(heredoc_node->key);
+			remove_closed_quotes(shell, &heredoc_node->key);
+			if (heredoc_get_body(shell, heredoc_node))
+			{
+				if (write(STDOUT_FILENO, "\n", 1) < 0)
+					exit_early(shell, NULL, ERRMSG_WRITE);
+				return (1);
+			}
+			heredoc_body_var_expand(shell, heredoc_node, flag_expand_vars);
+			heredoc_node = heredoc_node->next;
 		}
 		cmd_node = cmd_node->next;
 	}
 	return (0);
 }
 
-static int	heredoc_process_body(t_shell *shell, t_cmds *cmd_node)
+/*
+Retrieves all necessary Heredoc body from user
+*/
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
 {
-	t_lst_str	*heredoc_node;
-	int			flag_expand_vars;
-	int			hd_pipe[2];
+	char	*input;
+	int		hd_pipe[2];
 
-	heredoc_node = cmd_node->heredocs_lst;
-	while (heredoc_node)
+	while (true)
 	{
-		flag_expand_vars = count_closed_quotes(heredoc_node->key);
-		remove_closed_quotes(shell, &heredoc_node->key);
-		if (heredoc_prompt_parent(shell, heredoc_node, &hd_pipe))
-		{
-			close(hd_pipe[0]);
+		if (heredoc_prep_prompt(shell, &hd_pipe))
 			return (1);
+		input = heredoc_read_pipe(shell, hd_pipe[0]);
+		if (!input)
+			break ;
+		else if (!ft_strncmp(input, heredoc_node->key,
+				ft_strlen(heredoc_node->key) + 1))
+			break ;
+		else if (append_to_str(&heredoc_node->val, input, 1))
+		{
+			free(input);
+			close(hd_pipe[0]);
+			exit_early(shell, NULL, ERRMSG_MALLOC);
 		}
-		heredoc_read_pipe(shell, hd_pipe[0], heredoc_node);
-		close(hd_pipe[0]);
-		heredoc_body_var_expand(shell, heredoc_node, flag_expand_vars);
-		heredoc_node = heredoc_node->next;
+		free(input);
 	}
+	if (input)
+		free(input);
+	close(hd_pipe[0]);
 	return (0);
 }
 
-static int	heredoc_prompt_parent(t_shell *shell, t_lst_str *heredoc_node,
-		int (*hd_pipe)[2])
+/*
+Function to prepare and launch heredoc prompt in a child process
+*/
+static int	heredoc_prep_prompt(t_shell *shell, int (*hd_pipe)[2])
 {
 	int	exit_code;
 	int	pid;
 
 	init_pipe_or_fork(shell, hd_pipe, &pid);
 	if (pid == 0)
-	{
-		signal(SIGINT, SIG_DFL);
-		clearout(shell);
-		heredoc_prompt(shell, heredoc_node->key, *hd_pipe);
-	}
+		heredoc_prompt(shell, *hd_pipe);
 	else
 	{
 		signal(SIGINT, SIG_IGN);
@@ -89,41 +103,45 @@ static int	heredoc_prompt_parent(t_shell *shell, t_lst_str *heredoc_node,
 		close((*hd_pipe)[1]);
 		if (WEXITSTATUS(exit_code))
 		{
-		    close((*hd_pipe)[0]); 
-            exit_early(shell, NULL, NULL);
-        }
+			close((*hd_pipe)[0]);
+			exit_early(shell, NULL, NULL);
+		}
 		if (WIFSIGNALED(exit_code))
+		{
+			close((*hd_pipe)[0]);
 			return (1);
+		}
 	}
 	return (0);
 }
 
-static void	heredoc_prompt(t_shell *shell, const char *hd_delimiter,
-		int fd_pipe[])
+/*
+Prompts user for Heredoc body
+	- Child process, started from 'heredoc_prep_prompt'
+	- frees all vars from 'shell'
+	- sets signal SIGINT to default
+	- prompts user for input and writes it into the pipe
+*/
+static void	heredoc_prompt(t_shell *shell, int fd_pipe[])
 {
 	char	*input;
 	int		exit_status;
 
+	clearout(shell);
+	reset_cmd_vars(shell, 1);
+	signal(SIGINT, SIG_DFL);
 	exit_status = 0;
 	close(fd_pipe[0]);
 	input = readline(PS2);
-	while (input)
+	if (input)
 	{
-		if (!ft_strncmp(hd_delimiter, input, ft_strlen(hd_delimiter) + 1))
-			break ;
-		if (write(fd_pipe[1], input, ft_strlen(input)) < 0 || write(fd_pipe[1],
-				"\n", 1) < 0)
+		if (write(fd_pipe[1], input, ft_strlen(input)) < 0)
 		{
 			perror(ERRMSG_WRITE);
 			exit_status = 1;
-			break ;
 		}
 		free(input);
-		input = readline(PS2);
 	}
-	if (input)
-		free(input);
-	reset_cmd_vars(shell, 1);
 	close(fd_pipe[1]);
 	exit(exit_status);
 }
@@ -157,28 +175,46 @@ static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 	heredoc_node->val = new_hd_body;
 }
 
-static void	heredoc_read_pipe(t_shell *shell, int fd_read,
-		t_lst_str *heredoc_node)
+/*
+Return allocated string of all content of 'fd_read'
+	- if NULL is returned 'fd_read' is closed
+*/
+static char	*heredoc_read_pipe(t_shell *shell, int fd_read)
 {
+	char	*final_str;
 	char	input[BUFFER_SIZE + 1];
 	int		bytes_read;
 
-	bytes_read = read(fd_read, input, BUFFER_SIZE);
+	final_str = NULL;
+	while (true)
+	{
+		bytes_read = read(fd_read, input, BUFFER_SIZE);
+		if (bytes_read <= 0)
+			break ;
+		input[bytes_read] = 0;
+		if (append_to_str(&final_str, input, 0))
+			break ;
+	}
+	close(fd_read);
 	if (bytes_read < 0)
 		exit_early(shell, NULL, ERRMSG_READ);
-	input[bytes_read] = 0;
-	while (bytes_read)
-	{
-		heredoc_node->val = ft_recalloc(heredoc_node->val,
-				ft_strlen2(heredoc_node->val) + bytes_read + 1, 0);
-		if (!heredoc_node->val)
-			exit_early(shell, NULL, ERRMSG_MALLOC);
-		ft_strlcat(heredoc_node->val, input, ft_strlen2(heredoc_node->val)
-			+ bytes_read + 1);
-		bytes_read = read(fd_read, input, BUFFER_SIZE);
-		if (bytes_read < 0)
-			exit_early(shell, NULL, ERRMSG_READ);
-		input[bytes_read] = 0;
-	}
+	if (!final_str && bytes_read)
+		exit_early(shell, NULL, ERRMSG_MALLOC);
+	return (final_str);
 }
 
+static int	append_to_str(char **str, char *append, int w_newline)
+{
+	size_t	total_len;
+
+	if (!append)
+		return (0);
+	total_len = ft_strlen2(*str) + ft_strlen2(append);
+	*str = ft_recalloc(*str, total_len + w_newline + 1, 0);
+	if (!(*str))
+		return (1);
+	ft_strlcat(*str, append, total_len + w_newline + 1);
+	if (w_newline)
+		ft_strlcat(*str, "\n", total_len + w_newline + 1);
+	return (0);
+}

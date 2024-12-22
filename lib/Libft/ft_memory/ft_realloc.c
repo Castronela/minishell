@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 15:03:40 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 18:50:28 by david            ###   ########.fr       */
+/*   Updated: 2024/12/22 01:43:23 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,17 @@ void	*ft_recalloc(void *ptr, size_t size, size_t old_size)
 		size = 1;
 	new_ptr = ft_calloc(size, sizeof(char));
 	if (!new_ptr)
+	{
+		free(ptr);
 		return (NULL);
+	}
 	if (old_size == 0)
 		old_size = ft_strlen2(ptr);
 	if (ptr)
+	{
 		ft_memcpy(new_ptr, ptr, old_size);
-	free(ptr);
+		free(ptr);
+	}
 	ptr = new_ptr;
 	return (ptr);
 }
