@@ -3,10 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
+<<<<<<< HEAD
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/20 15:03:40 by pamatya           #+#    #+#             */
 /*   Updated: 2024/12/22 19:42:44 by pamatya          ###   ########.fr       */
+=======
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/20 15:03:40 by pamatya           #+#    #+#             */
+/*   Updated: 2024/12/22 01:43:23 by david            ###   ########.fr       */
+>>>>>>> origin/test
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +36,13 @@ void	*ft_realloc(void *ptr, size_t size)
 	return (ptr);
 }
 
-void	*ft_recalloc(void *ptr, size_t size)
+/*
+Modified realloc function
+	- allocates and nulls (\0) new string
+	- if 'ptr' is double pointer, set 'old_size' to number of single pointers
+	- if 'ptr' is type char*, set 'old_size' to 0
+*/
+void	*ft_recalloc(void *ptr, size_t size, size_t old_size)
 {
 	unsigned char	*new_ptr;
 
@@ -37,10 +50,17 @@ void	*ft_recalloc(void *ptr, size_t size)
 		size = 1;
 	new_ptr = ft_calloc(size, sizeof(char));
 	if (!new_ptr)
+	{
+		free(ptr);
 		return (NULL);
+	}
+	if (old_size == 0)
+		old_size = ft_strlen2(ptr);
 	if (ptr)
-		ft_memmove(new_ptr, ptr, size);
-	free(ptr);
+	{
+		ft_memcpy(new_ptr, ptr, old_size);
+		free(ptr);
+	}
 	ptr = new_ptr;
 	return (ptr);
 }

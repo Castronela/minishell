@@ -5,10 +5,11 @@
 #                                                     +:+ +:+         +:+      #
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/04/11 14:30:19 by pamatya           #+#    #+#              #
-#    Updated: 2024/12/22 19:28:19 by pamatya          ###   ########.fr        #
+#    Created: Invalid date        by                   #+#    #+#              #
+#    Updated: 2024/12/23 16:58:20 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 # ----------------- Compiler Flags ----------------- #
 
@@ -73,6 +74,12 @@ READLINE_DIR	=	/usr/local/lib
 READLINE_HED	=	/usr/local/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
+VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
+					--leak-check=full \
+					--show-leak-kinds=all \
+					--trace-children=yes \
+					-s \
+					# --child-silent-after-fork=yes \
 # Leak Sanitizer for leak check on Mac (run: make LEAK=1)
 LEAKSAN			=	liblsan.dylib
 LEAKSAN_DIR		=	/Users/dstinghe/LeakSanitizer
@@ -96,6 +103,9 @@ BLUE 		= 	\033[34m
 
 all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
+
+valgrind: $(NAME)
+	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
 
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."

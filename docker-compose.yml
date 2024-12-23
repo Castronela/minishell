@@ -1,0 +1,8 @@
+services:
+  minishell:
+    image: minishell
+    container_name: minishell
+    build: .
+    volumes:
+      - .:/minishell
+    env_file: shell.env

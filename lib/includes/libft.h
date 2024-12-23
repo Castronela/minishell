@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 19:24:05 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 19:48:31 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/21 18:25:24 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	*ft_memchr(const void *str, int c, size_t n);
 int		ft_memcmp(const char *str1, const char *str2, size_t n);
 void	*ft_calloc(size_t count, size_t size);
 void	*ft_realloc(void *ptr, size_t size);
-void	*ft_recalloc(void *ptr, size_t size);
+void	*ft_recalloc(void *ptr, size_t size, size_t old_size);
 void	ft_free2d(char **memory);
 void	ft_free_safe(void **memory);
 void	ft_free2d_safe(char ***memory);

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 17:45:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 17:00:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->prompt = NULL;
 	copy_env(shl, envp);
 	copy_env_paths(shl, envp);
-	update_shlvl(shl);
+	// update_shlvl(shl);				// ommited for valgrind check
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
@@ -70,7 +70,6 @@ void	copy_env(t_shell *shl, char **envp)
 		split = ft_split(envp[i], '=');
 		if (!split)
 			exit_early(shl, NULL, "Could not split for new variable");
-		new_node =ft_lst_new(split[0], split[1]);
 		new_node =ft_lst_new(split[0], split[1]);
 		if (!new_node)
 			exit_early(shl, split, "Could not malloc t_lst_str new_node");
