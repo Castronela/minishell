@@ -5,4 +5,5 @@ services:
     build: .
     volumes:
       - .:/minishell
-    env_file: shell.env
+    environment:
+      - USER=${USER}

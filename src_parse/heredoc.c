@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2024/12/23 17:01:13 by pamatya          ###   ########.fr       */
+/*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
+/*   Updated: 2024/12/23 21:51:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "minishell.h"
@@ -21,7 +22,7 @@ static void	heredoc_prompt(t_shell *shell, int fd_pipe[]);
 static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 				int flag_expand_vars);
 static char	*heredoc_read_pipe(t_shell *shell, int fd_read);
-static int	append_to_str(char **str, char *append, int w_newline);
+static int	append_to_str(char **str, char *append);
 
 /*
 Loops through every command node and checks for open heredocs
@@ -40,6 +41,7 @@ int	heredoc(t_shell *shell)
 		{
 			flag_expand_vars = count_closed_quotes(heredoc_node->key);
 			remove_closed_quotes(shell, &heredoc_node->key);
+			append_to_str(&heredoc_node->key, "\n");
 			if (heredoc_get_body(shell, heredoc_node))
 			{
 				if (write(STDOUT_FILENO, "\n", 1) < 0)
@@ -72,7 +74,7 @@ static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
 		else if (!ft_strncmp(input, heredoc_node->key,
 				ft_strlen(heredoc_node->key) + 1))
 			break ;
-		else if (append_to_str(&heredoc_node->val, input, 1))
+		else if (append_to_str(&heredoc_node->val, input))
 		{
 			free(input);
 			close(hd_pipe[0]);
@@ -136,7 +138,7 @@ static void	heredoc_prompt(t_shell *shell, int fd_pipe[])
 	input = readline(PS2);
 	if (input)
 	{
-		if (write(fd_pipe[1], input, ft_strlen(input)) < 0)
+		if (write(fd_pipe[1], input, ft_strlen(input)) < 0 || write(fd_pipe[1], "\n", 1) < 0)
 		{
 			perror(ERRMSG_WRITE);
 			exit_status = 1;
@@ -193,7 +195,7 @@ static char	*heredoc_read_pipe(t_shell *shell, int fd_read)
 		if (bytes_read <= 0)
 			break ;
 		input[bytes_read] = 0;
-		if (append_to_str(&final_str, input, 0))
+		if (append_to_str(&final_str, input))
 			break ;
 	}
 	close(fd_read);
@@ -204,18 +206,16 @@ static char	*heredoc_read_pipe(t_shell *shell, int fd_read)
 	return (final_str);
 }
 
-static int	append_to_str(char **str, char *append, int w_newline)
+static int	append_to_str(char **str, char *append)
 {
 	size_t	total_len;
 
 	if (!append)
 		return (0);
 	total_len = ft_strlen2(*str) + ft_strlen2(append);
-	*str = ft_recalloc(*str, total_len + w_newline + 1, 0);
+	*str = ft_recalloc(*str, total_len + 1, 0);
 	if (!(*str))
 		return (1);
-	ft_strlcat(*str, append, total_len + w_newline + 1);
-	if (w_newline)
-		ft_strlcat(*str, "\n", total_len + w_newline + 1);
+	ft_strlcat(*str, append, total_len + 1);
 	return (0);
 }

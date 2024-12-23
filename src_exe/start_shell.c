@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 19:32:47 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:50:05 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	start_shell(t_shell *shl)
 	while (1)
 	{
 		set_signal(shl);
+		set_prev_exitcode(shl);
 		shl->cmdline = readline(shl->prompt);
 		if (!shl->cmdline)
 			break ;

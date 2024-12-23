@@ -5,4 +5,5 @@ RUN apt-get update && apt-get install -y \
 valgrind \
 libreadline-dev \
 nano \
-build-essential
+build-essential \
+&& cp -R /usr/include/readline /usr/local/include/readline

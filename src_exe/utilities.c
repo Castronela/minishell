@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 19:21:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:43:00 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	compare_strings(const char *str, const char *field, int exact)
 			return (0);
 	}
 	if (exact)
-		if (s[0] != s[1])
+		if (*s[0] != *s[1])
 			return (0);
 	return (1);
 }

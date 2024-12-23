@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 16:59:47 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:53:16 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,13 @@
 
 # define CONTROL_OPERATORS CT_PIPE
 
+// ---- Special Parameters ---------------------------------------------------------------
+
+# define DOLLAR "$"
+# define QUESTION_MARK "?"
+# define POUND "#"
+
+# define SPECIAL_OPERATORS DOLLAR, QUESTION_MARK, POUND
 
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
@@ -138,13 +145,14 @@ typedef struct s_shell
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
-	int			exit_code;			// Stores the exit code from the last executed command
 
 	//	Cmd vars; will be reset on every new command prompt 
 	pid_t		*pid;				// This stores the pid of all the processes forked during execution
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
+	int			exit_code_prev;		// Stores the exit code from the last executed command
+	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
 
 
@@ -286,6 +294,7 @@ void 		skip_whitespaces(const char *str, size_t *index);
 void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
+bool 		is_special_param(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);

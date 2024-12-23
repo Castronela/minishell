@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 17:35:32 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/19 19:45:24 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/23 15:57:48 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void set_signal(t_shell *shell)
     struct termios term;
     
     sa.sa_sigaction = signal_handler;
-    sigemptyset(&sa.sa_flags);
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_SIGINFO | SA_RESTART;
     sigaddset(&sa.sa_mask, SIGINT);
