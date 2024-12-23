@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/21 15:52:44 by david            ###   ########.fr       */
+/*   Updated: 2024/12/23 19:44:54 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ bool	is_valid_quotation(t_shell *shell)
 		shell->exit_code = ERRCODE_SYNTAX;
 		return (false);
 	}
-	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }
 
@@ -57,10 +56,8 @@ bool	is_valid_control(t_shell *shell)
 			shell->exit_code = ERRCODE_SYNTAX;
 			return (false) ;
 		}
-		
 		cmd_node = cmd_node->next;
 	}
-	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }
 
@@ -83,6 +80,5 @@ bool	is_redir_target_valid(t_shell *shell, char *redir_target)
 		shell->exit_code = ERRCODE_SYNTAX;
 		return (false);
 	}
-	shell->exit_code = EXIT_SUCCESS;
 	return (true);
 }

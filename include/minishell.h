@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 17:40:23 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/23 19:59:40 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,11 @@
 
 // ---- Special Parameters ---------------------------------------------------------------
 
+# define DOLLAR "$"
 # define QUESTION_MARK "?"
 # define POUND "#"
 
-# define SPECIAL_OPERATORS QUESTION_MARK, POUND
+# define SPECIAL_OPERATORS DOLLAR, QUESTION_MARK, POUND
 
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
@@ -140,12 +141,13 @@ typedef struct s_shell
 	char		*cur_wd;			// Stores the current working directory
 	char		*last_bin_arg;		// Stores the last argument of the binary that was last executed
 	char		*prompt;			// Stores the prompt string for the minishell
-	int			exit_code;			// Stores the exit code from the last executed command
 
 	//	Cmd vars; will be reset on every new command prompt 
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
+	int			exit_code_prev;		// Stores the exit code from the last executed command
+	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
 
 
