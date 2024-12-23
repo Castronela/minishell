@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 14:38:02 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:20:51 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	compare_strings(const char *str, const char *field, int exact)
 			return (0);
 	}
 	if (exact)
-		if (s[0] != s[1])
+		if (*s[0] != *s[1])
 			return (0);
 	return (1);
 }

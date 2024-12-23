@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/20 19:23:30 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/23 17:50:45 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void skip_whitespaces(const char *str, size_t *index);
 void skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool is_redir(const char *str, const size_t index);
 bool is_control(const char *str, const size_t index);
+bool is_special_param(const char *str, const size_t index);
 size_t find_longest_match_length(const char *str, const char *pattern[]);
 void reset_cmd_vars(t_shell *shell, int free_before);
 void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid);
@@ -55,6 +56,11 @@ bool is_redir(const char *str, const size_t index)
 bool is_control(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index], (const char *[]){CONTROL_OPERATORS, NULL}));
+}
+
+bool is_special_param(const char *str, const size_t index)
+{
+	return(find_longest_match_length(&str[index], (const char*[]){SPECIAL_OPERATORS, NULL}));
 }
 
 /*

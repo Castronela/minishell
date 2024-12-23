@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 00:55:16 by david            ###   ########.fr       */
+/*   Updated: 2024/12/23 17:40:23 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,12 @@
 
 # define CONTROL_OPERATORS CT_PIPE
 
+// ---- Special Parameters ---------------------------------------------------------------
+
+# define QUESTION_MARK "?"
+# define POUND "#"
+
+# define SPECIAL_OPERATORS QUESTION_MARK, POUND
 
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
@@ -254,6 +260,7 @@ void 		skip_whitespaces(const char *str, size_t *index);
 void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
+bool 		is_special_param(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], int *pid);

@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/19 17:30:02 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/23 18:21:43 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	start_index = index++;
 	while (str[index])
 	{
-		if (str[start_index + 1] == '?')
+		if (is_special_param(str, start_index + 1))
 		{
 			index++;
 			break ;
@@ -142,21 +142,16 @@ static char	*get_var_value(t_shell *shell, char *var_name)
 	if (!var_name)
 		return (NULL);
 	var_value = NULL;
-	var_node = shell->variables;
-	while (var_node)
+	if (is_special_param(var_name, 1))
 	{
-		if (!ft_strncmp("$?", var_name, 3))
-		{
+		if (!ft_strncmp(var_name + 1, QUESTION_MARK, ft_strlen(QUESTION_MARK) + 1))
 			var_value = ft_itoa(shell->exit_code);
-			break ;
-		}
-		if (!ft_strncmp(var_node->key, var_name + 1, ft_strlen(var_node->key)
-				+ 1))
-		{
+	}
+	else
+	{
+		var_node = ft_find_node(shell->variables, var_name + 1, 0, 1);
+		if (var_node)
 			var_value = var_node->val;
-			break ;
-		}
-		var_node = var_node->next;
 	}
 	free(var_name);
 	return (var_value);
