@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 21:50:05 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:58:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	start_shell(t_shell *shl);
 void	mini_execute(t_shell *shl);
 void	create_pids(t_shell *shl);
-void	exec_external(t_shell *shl, t_cmds *cmd, int pindex);
+void	exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void	index_cmds(t_shell *shl);
 int		get_total_cmds(t_shell *shl, int which);
 
@@ -41,12 +41,12 @@ void	start_shell(t_shell *shl)
 			reset_cmd_vars(shl, 1);
 			continue ;
 		}
-		init_pipes(shl);
 		index_cmds(shl);
+		init_pipes(shl);
 		get_binaries(shl);
-        test_print_cmdlst(shl, 30);
-		test_by_print(shl);
+		// test_by_print(shl);
 		mini_execute(shl);
+        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
 }
@@ -56,45 +56,53 @@ Function to kick-off execution
 */
 void	mini_execute(t_shell *shl)
 {
-	int		pindex;
+	int		p_index;
 	t_cmds	*cmd;
 
-	pindex = 0;
+	// printf("I am here\n");
+	p_index = 0;
 	create_pids(shl);
 	cmd = shl->cmds_lst;
+	// printf("I am here\n");
 	while (cmd)
 	{
 		if (open_file_fds(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_OPEN);
-		if (cmd->exc_index != 0)
+		// printf("I am here\n");
+		if (cmd->exc_index == 0)
 			exec_built_in(shl, cmd);
-		// else
-		// {
-		// 	if ((*(shl->pid + pindex) = fork()) < 0)
-		// 		exit_early(shl, NULL, ERRMSG_FORK);
-		// 	exec_external(shl, cmd, pindex);
-		// 	pindex++;
-		// }
+		else
+		{
+			exec_external(shl, cmd, p_index);
+			// printf("I am here\n");
+			p_index++;
+		}
 		cmd = cmd->next;
 	}
 }
 
-void	exec_external(t_shell *shl, t_cmds *cmd, int pindex)
+void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 {
 	int	ec;
 
 	ec = 0;
-	if (shl->pid[pindex] == 0)
+	if ((*(shl->pid + p_index) = fork()) < 0)
+		exit_early(shl, NULL, ERRMSG_FORK);
+	// printf("Now, I am here\n");
+	if (shl->pid[p_index] == 0)
 	{
 		// if (open_file_fds(cmd) < 0)
 		// 	exit_early(shl, NULL, ERRMSG_OPEN);
+		// printf("No no, I am here now\n");
 		if (set_redirections(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_DUP2);
-		close_fds(cmd);
+		// printf("No no no, I am here now\n");
 		execve(cmd->bin_path, cmd->args, shl->env_str);
+		// printf("Now, I am actually here\n");
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
-	if ((waitpid(*(shl->pid + pindex), &ec, 0)) == -1)
+	close_fds(cmd);
+	if ((waitpid(*(shl->pid + p_index), &ec, 0)) == -1)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFEXITED(ec))
 		shl->exit_code = WEXITSTATUS(ec);

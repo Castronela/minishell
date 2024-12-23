@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 21:43:00 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:55:21 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 int		compare_strings(const char *str, const char *field, int exact);
 void	store_variable(t_shell *shl, char *str);
 void	arg_error(char **av);
-void	exit_early(t_shell *shl, char **split, char *msg);
+void	ft_free2dint(int **memory);
+void	exit_early(t_shell *shl, char **double_ptr, char *msg);
 void	clearout(t_shell *shl);
 void	ft_print_lst(t_lst_str *root);
 
@@ -91,6 +92,23 @@ void	arg_error(char **av)
 }
 
 /*
+Function to free a 2D int pointer
+*/
+void	ft_free2dint(int **memory)
+{
+	size_t	i;
+
+	i = 0;
+	while ((memory != NULL) && (memory[i] != NULL))
+	{
+		free(memory[i]);
+		memory[i] = NULL;
+		i++;
+	}
+	free(memory);
+}
+
+/*
 Function for an early exit if there is some internal failure eg. malloc errors
   - Calls clearout() function, which frees all allocated t_shell fields
   - Calls lst_cmds_freelst() fn, that frees all t_cmds nodes and their fields
@@ -101,10 +119,11 @@ Function for an early exit if there is some internal failure eg. malloc errors
 void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 {
 	clearout(shl);
+	reset_cmd_vars(shl, 1);
 	lst_cmds_freelst(shl);
 	if (double_ptr)
 		ft_free2d(double_ptr);
-	if (msg != NULL)
+	if (msg && *msg)
 		perror(msg);
 	exit(errno);
 }

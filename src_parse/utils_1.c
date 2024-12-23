@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/23 21:42:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:58:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,20 @@ void skip_quoted_str(t_shell *shell, const char *str, size_t *index)
 	if (str[*index] == shell->open_qt)
 		shell->open_qt = 0;
 }
+/*
 
+!!! Not sure if we can use bool or its std library. Need to check this.
+*/
 bool is_redir(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index], (const char *[]){REDIRECTION_OPERATORS, NULL}));
 }
 
+/*
+
+
+!!! Not sure if we can use bool or its std library. Need to check this.
+*/
 bool is_control(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index], (const char *[]){CONTROL_OPERATORS, NULL}));
@@ -95,13 +103,16 @@ void reset_cmd_vars(t_shell *shell, int free_before)
 {
 	if (free_before)
     {
-        if (shell->pid)
+        // if (shell->pipe_fds)
+		// 	ft_free2dint(shell->pipe_fds);
+		if (shell->pid)
 			free(shell->pid);
 		if (shell->cmdline)
             free(shell->cmdline);
         if (shell->cmds_lst)
             lst_cmds_freelst(shell);
     }
+	// shell->pipe_fds = NULL;
 	shell->pid = NULL;
     shell->cmdline = NULL;
     shell->cmds_lst = NULL;
@@ -110,6 +121,8 @@ void reset_cmd_vars(t_shell *shell, int free_before)
 
 /*
 Initializes a pipe and/or a fork if 'pipe_fd' and 'pid' are not NULL
+
+!!! Need to check if this fn has been called somewhere. Potentially disruptive.
 */
 void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 {
@@ -132,3 +145,4 @@ void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 		}
 	}
 }
+ 

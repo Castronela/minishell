@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 17:00:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:57:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ Initializes the elements of the shell struct "t_shell"
   - Sets the current working directory
   - Sets the prompt
   - Frees all malloc's and exits the program if any of the above steps fail
+
+!!! Need to look into update_shlvl for leaks and other potential problems
 */
 void	init_shell(t_shell *shl, char **envp)
 {
@@ -44,6 +46,8 @@ void	init_shell(t_shell *shl, char **envp)
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
+	shl->exit_code_prev = 0;
+	shl->exit_code = 0;
 	reset_cmd_vars(shl, 0);
 }
 

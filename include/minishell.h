@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 21:53:16 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 21:57:16 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,10 @@ typedef struct s_shell
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
+	int			exit_code_prev;
+	int			exit_code;			// Stores the exit code from the last executed command
 
-	//	Cmd vars; will be reset on every new command prompt 
+	//	Cmd vars; will be reset on every new command prompt
 	pid_t		*pid;				// This stores the pid of all the processes forked during execution
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
@@ -225,7 +227,7 @@ int			remove_path(t_cmds *cmd);
 void		start_shell(t_shell *shl);
 void		mini_execute(t_shell *shl);
 void		create_pids(t_shell *shl);
-void		exec_external(t_shell *shl, t_cmds *cmd, int pindex);
+void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
 
@@ -240,7 +242,8 @@ void		close_fds(t_cmds *cmd);
 int			compare_strings(const char *str, const char *field, int exact);
 void		store_variable(t_shell *shl, char *str);
 void		arg_error(char **av);
-void		exit_early(t_shell *shl, char **split, char *msg);
+void		ft_free2dint(int **memory);
+void		exit_early(t_shell *shl, char **double_ptr, char *msg);
 void		clearout(t_shell *shl);
 void		ft_print_lst(t_lst_str *root);
 

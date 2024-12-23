@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:14 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 20:23:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 13:14:36 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,31 +29,9 @@ void	mini_env(t_shell *shl, t_cmds *cmd)
 }
 
 /*
-Function to update value of $_ variable in all places
-  - shl->env_str
-  - shl->env
-  - shl->variables
-*/
-void	update_last_var(t_shell *shl, t_cmds *cmd)
-{
-	char		*_lv;
-	t_lst_str	*_lvenv[2];
-	t_lst_str	*_lvvar[2];
-
-	_lv = find_string_ptr(shl->env_str, "_=", 2);
-	if (update_var_str(_lv, "_=", cmd) == -1)
-		exit_early(shl, NULL, ERRMSG_MALLOC);
-	_lvenv[0] = ft_find_node(shl->env, "_=", 0, 0);
-	_lvenv[1] = ft_lst_new(ft_strjoin("_=", cmd->bin_path), NULL);
-	ft_replace_node(_lvenv[0], _lvenv[1]);
-	_lvvar[0] = ft_find_node(shl->variables, "_", 1, 1);
-	_lvvar[1] = ft_lst_new("_", cmd->args[count_pointers(cmd->args) - 1]);
-	ft_replace_node(_lvvar[0], _lvvar[1]);
-}
-
-/*
-Funcito to find the pointer in double pointer that matches the provided string
-  - n is the number of characters to match while finding the pointer
+Funcito returns the pointer to a string in a double pointer that matches the 
+provided string
+  - 'n' is the number of characters to match while finding the pointer
 */
 char	*find_string_ptr(char **dp, char *str, int	n)
 {
@@ -66,6 +44,21 @@ char	*find_string_ptr(char **dp, char *str, int	n)
 			return (dp[i]);
 	}
 	return (NULL);
+}
+
+/*
+Function to count the number of char pointers contained in a double char pointer
+*/
+int	count_pointers(char **dp)
+{
+	int	i;
+
+	if (!dp || !*dp)
+		return (0);
+	i = 0;
+	while (dp[i])
+		i++;
+	return (i); 
 }
 
 /*
@@ -89,16 +82,24 @@ int	update_var_str(char *var_pointer, char *var_name, char *new_val)
 }
 
 /*
-Function to count the number of char pointers contained in a double char pointer
+Function to update value of $_ variable in all places
+  - shl->env_str
+  - shl->env
+  - shl->variables
 */
-int	count_pointers(char **dp)
+void	update_last_var(t_shell *shl, t_cmds *cmd)
 {
-	int	i;
+	char		*_lv;
+	t_lst_str	*_lvenv[2];
+	t_lst_str	*_lvvar[2];
 
-	if (!dp || !*dp)
-		return (0);
-	i = 0;
-	while (dp[i])
-		i++;
-	return (i); 
+	_lv = find_string_ptr(shl->env_str, "_=", 2);
+	if (update_var_str(_lv, "_=", cmd->bin_path) == -1)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	_lvenv[0] = ft_find_node(shl->env, "_=", 0, 0);
+	_lvenv[1] = ft_lst_new(ft_strjoin("_=", cmd->bin_path), NULL);
+	ft_replace_node(_lvenv[0], _lvenv[1]);
+	_lvvar[0] = ft_find_node(shl->variables, "_", 1, 1);
+	_lvvar[1] = ft_lst_new("_", cmd->args[count_pointers(cmd->args) - 1]);
+	ft_replace_node(_lvvar[0], _lvvar[1]);
 }

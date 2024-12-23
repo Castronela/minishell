@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/19 16:29:48 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/23 20:25:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,3 +38,41 @@ void	init_pipes(t_shell *shell)
 		cmd_node = cmd_node->next;
 	}
 }
+
+// /*
+// Initializes file desccriptors for piped commands
+//     - initializes fd_out of left command with the writing pipe
+//     - initializes fd_in of right command with the reading pipe
+
+// !!! Need to check it the first if statement here would still hold for double
+// 	pipe inputs like "||"
+// */
+// void	init_pipes(t_shell *shell)
+// {
+// 	t_cmds	*cmd_node;
+// 	int		total_pipes;
+// 	int		i;
+
+// 	cmd_node = shell->cmds_lst;
+// 	total_pipes = get_total_cmds(shell, 0);
+// 	shell->pipe_fds = malloc(total_pipes * sizeof(int *));
+// 	if (!shell->pipe_fds)
+// 		exit_early(shell, NULL, ERRMSG_MALLOC);
+// 	printf("total pipes:	%d\n", total_pipes);
+// 	shell->pipe_fds[total_pipes - 1] = NULL;
+// 	i = 0;
+// 	while (cmd_node)
+// 	{
+// 		if (cmd_node->ctl_operator && !ft_strncmp(cmd_node->ctl_operator,
+// 				CT_PIPE, ft_strlen(CT_PIPE) + 1))
+// 		{
+// 			shell->pipe_fds[i] = malloc(2 * sizeof(int));
+// 			if (!shell->pipe_fds[i])
+// 				exit_early(shell, NULL, ERRMSG_MALLOC);
+// 			cmd_node->fd_out = shell->pipe_fds[i][1];
+// 			cmd_node->next->fd_in = shell->pipe_fds[i][0];
+// 			i++;
+// 		}
+// 		cmd_node = cmd_node->next;
+// 	}
+// }

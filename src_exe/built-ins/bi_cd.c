@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 20:25:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 13:19:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	update_cwd(t_shell *shl, char *new_cwd)
 	t_lst_str	*env_node[2];
 	t_lst_str	*var_node[2];
 
-	env_node[0] = ft_find_node(shl->env, "PWD", 0, 0);
+	env_node[0] = ft_find_node(shl->env, "PWD=", 0, 0);
 	env_node[1] = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
 	if (!env_node[1])
 		exit_early(shl, NULL, "new_env_node malloc failed");

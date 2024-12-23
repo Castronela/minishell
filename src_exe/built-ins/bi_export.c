@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/17 19:08:54 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/23 13:19:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@ int		mini_export(t_shell *shl, t_cmds *cmd);
 Function for built-in export function
   - Adds the exported variable to the shl->env
   - Also adds the variable as key-val pair to the variables list
+
+
+!!! This fn doesn't yet store env variables in the shl->env_str (char **)
 */
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
