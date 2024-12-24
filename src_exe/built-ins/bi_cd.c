@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 13:19:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/24 20:09:02 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		shl->exit_code = errno;
 	new_cwd = getcwd(NULL, 0);
 	update_cwd(shl, new_cwd);
+	set_prompt(shl, "<< ", " >> % ");
 }
 
 /*
@@ -78,7 +79,7 @@ void	update_cwd(t_shell *shl, char *new_cwd)
 		exit_early(shl, NULL, "new_env_node malloc failed");
 	ft_replace_node(env_node[0], env_node[1]);
 	
-	var_node[0] = ft_find_node(shl->variables, "PWD", 1, 1);
+	var_node[0] = ft_find_node(shl->variables, "PWD", 0, 1);
 	var_node[1] = ft_lst_new("PWD", new_cwd);
 	if (!var_node[1])
 	{
