@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 21:57:16 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/24 15:42:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,6 @@ typedef struct s_shell
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
-	int			exit_code_prev;
-	int			exit_code;			// Stores the exit code from the last executed command
 
 	//	Cmd vars; will be reset on every new command prompt
 	pid_t		*pid;				// This stores the pid of all the processes forked during execution

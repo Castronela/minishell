@@ -19,11 +19,16 @@ added later.
 		not seem to replace the fd or may be even create one, as seen from the
 		fact that the fd_out remains unchanged even though file_out is not NULL
 	-	The exec_built_in function is being called but seems not be executing
-	-	The commands < echo $_ > and < $_ > do very different things. The first
-		one only prints the last argument of the previous command that was 
-		executed while the latter prints all the env variables (similar to using
-		printenv or env commands).
 	-	Should add the update_last_var() fn after each command executed
+	-	Need to check shlvl for leaks, and update shlvl and other fns to update
+		also the char** env_str. This might be the reason that shlvl is not
+		being updated at the moment when a nested minishell is called.
+	-	When minishell is called within minishell, need to figure out a way to
+		pass it the env variables of the current string shell rather than the
+		original one; conversely, check if this is already happening after
+		updating the rest of the fns for env_str as ./bin/minishell will also
+		be called by execve and execve is given the **env_str.
+
 
 2.	Feature ideas/ insights
 	-	

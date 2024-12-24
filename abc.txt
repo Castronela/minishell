@@ -1,0 +1,2 @@
+-rw-r--r--   1 pamatya  2024_heilbronn  1125 Dec 24 15:42 main.c
+drwxr-xr-x  11 pamatya  2024_heilbronn   374 Dec 24 15:42 src_exe

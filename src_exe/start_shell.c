@@ -6,18 +6,19 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 21:58:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/24 15:42:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	start_shell(t_shell *shl);
-void	mini_execute(t_shell *shl);
-void	create_pids(t_shell *shl);
-void	exec_external(t_shell *shl, t_cmds *cmd, int p_index);
-void	index_cmds(t_shell *shl);
-int		get_total_cmds(t_shell *shl, int which);
+void		start_shell(t_shell *shl);
+void		mini_execute(t_shell *shl);
+void		create_pids(t_shell *shl);
+void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
+void		index_cmds(t_shell *shl);
+int			get_total_cmds(t_shell *shl, int which);
+static void	set_prev_exitcode(t_shell *shell);
 
 // static void	print_env(t_shell *shl);
 // static void	print_shlvl(t_shell *shl);
@@ -172,4 +173,10 @@ void	create_pids(t_shell *shl)
 	shl->pid = malloc(total_ext * sizeof(pid_t));
 	if (!shl->pid)
 		exit_early(shl, NULL, "PID malloc failed");
+}
+
+static void set_prev_exitcode(t_shell *shell)
+{
+	shell->exit_code_prev = shell->exit_code;
+	shell->exit_code = 0;
 }
