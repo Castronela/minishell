@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/23 21:58:13 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 17:46:36 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ bool is_special_param(const char *str, const size_t index);
 size_t find_longest_match_length(const char *str, const char *pattern[]);
 void reset_cmd_vars(t_shell *shell, int free_before);
 void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
+int	append_to_str(char **str, char *append);
 
 
 bool is_quote(const char c)
@@ -146,3 +147,16 @@ void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 	}
 }
  
+int	append_to_str(char **str, char *append)
+{
+	size_t	total_len;
+
+	if (!append)
+		return (0);
+	total_len = ft_strlen2(*str) + ft_strlen2(append);
+	*str = ft_recalloc(*str, total_len + 1, 0);
+	if (!(*str))
+		return (1);
+	ft_strlcat(*str, append, total_len + 1);
+	return (0);
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_cmdline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/21 18:50:51 by david            ###   ########.fr       */
+/*   Updated: 2024/12/25 18:52:47 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count);
 static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t * index_cmd);
 static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
+static void expand_homedir_special_char(t_shell *shell, char **str);
 
 /*
 (Main FN) Initializes 'shell->cmds_lst':
@@ -95,6 +96,7 @@ static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_
 		free(argument);
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
+	expand_homedir_special_char(shell, &argument);
 	new_cmdnode->args[(*arg_count) - 1] = argument;
 	new_cmdnode->args[(*arg_count)] = NULL;
 }
@@ -127,6 +129,7 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size
 	redir_target = get_next_token(shell, index_cmd);
 	if (cmdnode_filept && *cmdnode_filept)
 		free(*cmdnode_filept);
+	expand_homedir_special_char(shell, &redir_target);
 	*cmdnode_filept = redir_target;
 	if (is_redir_target_valid(shell, redir_target) == false)
 		return (1);
@@ -152,4 +155,29 @@ static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *oper
 	}
 	ft_lst_addback(&new_cmdnode->heredocs_lst, heredoc_node);
 	return (&heredoc_node->key);
+}
+
+static void expand_homedir_special_char(t_shell *shell, char **str)
+{
+	t_lst_str *oldpwd_node;
+	char *new_str;
+	size_t oldpwd_len;
+	size_t str_len;
+	
+	if (!str || !*str || (!compare_strings("~", *str, 1) && !compare_strings("~/", *str, 0)))
+		return ;
+	oldpwd_node = ft_find_node(shell->variables, "OLDPWD", 0, 1);
+	oldpwd_len = ft_strlen2(oldpwd_node->val);
+	str_len = ft_strlen2(*str) - 1;
+	new_str = ft_calloc(oldpwd_len + str_len + 1, sizeof(*new_str));
+	if (!new_str)
+		exit_early(shell, NULL, ERRMSG_MALLOC);
+	ft_strlcpy2(new_str, oldpwd_node->val, oldpwd_len + 1);
+	if (str_len)
+	{
+		printf("passed\n");
+		ft_strlcat(new_str, &((*str)[1]), oldpwd_len + str_len + 1);
+	}
+	free(*str);
+	*str = new_str;
 }

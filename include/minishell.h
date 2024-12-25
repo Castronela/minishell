@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 14:07:17 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 19:07:03 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,6 +299,7 @@ bool 		is_special_param(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
+int			append_to_str(char **str, char *append);
 
 /* ----------------------------- Test functions ----------------------------- */
 
