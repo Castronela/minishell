@@ -6,13 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 18:58:54 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 19:11:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 int		mini_export(t_shell *shl, t_cmds *cmd);
+void	add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 
 /*
 Function for built-in export function
@@ -44,6 +45,6 @@ void	add_str_to_double_ptr(t_shell *shl, t_cmds *cmd)
 	dp_len = count_pointers(shl->env_str);
 	shl->env_str = ft_recalloc(shl->env_str, (dp_len + 2) * 
 			sizeof(*shl->env_str), (dp_len + 1) * sizeof(*shl->env_str));
-	*shl->env_str[dp_len] = *(cmd->args + 1);
-	*shl->env_str[dp_len + 1] = NULL;
+	shl->env_str[dp_len] = *(cmd->args + 1);
+	shl->env_str[dp_len + 1] = NULL;
 }

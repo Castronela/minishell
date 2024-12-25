@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 17:11:23 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 19:09:58 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	update_cwd(t_shell *shl, char *new_cwd)
 {
 	t_lst_str	*env_node[4];
 	t_lst_str	*var_node[4];
-	char		*old_pwd;
+	// char		*old_pwd;
 
 	env_node[0] = ft_find_node(shl->env, "PWD=", 0, 0);
 	env_node[1] = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
