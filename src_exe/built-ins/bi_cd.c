@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/24 20:09:02 by david            ###   ########.fr       */
+/*   Updated: 2024/12/25 17:11:23 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,26 @@ Built-in cd function
 */
 void	mini_cd(t_shell *shl, t_cmds *cmd)
 {
-	char	*new_cwd;
+	char		*new_cwd;
+	t_lst_str	*node;
 	
-	if (path_is_dir(*(cmd->args + 1)) == 0)
+	if (*(cmd->args + 1) == NULL)
 	{
-		shl->exit_code = errno;
-		return ;
+		node = ft_find_node(shl->variables, "HOME", 0, 1);
+		new_cwd = node->val;
 	}	
-	if (chdir(*(cmd->args + 1)) < 0)
+	else if (compare_strings(*(cmd->args + 1), "-", 1))
+	{
+		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
+		new_cwd = node->val;
+	}
+	else
+		new_cwd = *(cmd->args + 1);
+	if (chdir(new_cwd) < 0)
+	{
+		perror("Chdir error");
 		shl->exit_code = errno;
+	}
 	new_cwd = getcwd(NULL, 0);
 	update_cwd(shl, new_cwd);
 	set_prompt(shl, "<< ", " >> % ");
@@ -70,15 +81,15 @@ Function to update the current working directory
 */
 void	update_cwd(t_shell *shl, char *new_cwd)
 {
-	t_lst_str	*env_node[2];
-	t_lst_str	*var_node[2];
+	t_lst_str	*env_node[4];
+	t_lst_str	*var_node[4];
+	char		*old_pwd;
 
 	env_node[0] = ft_find_node(shl->env, "PWD=", 0, 0);
 	env_node[1] = ft_lst_new(ft_strjoin("PWD=", new_cwd), NULL);
 	if (!env_node[1])
 		exit_early(shl, NULL, "new_env_node malloc failed");
 	ft_replace_node(env_node[0], env_node[1]);
-	
 	var_node[0] = ft_find_node(shl->variables, "PWD", 0, 1);
 	var_node[1] = ft_lst_new("PWD", new_cwd);
 	if (!var_node[1])

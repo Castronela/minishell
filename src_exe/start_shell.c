@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 14:14:29 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 14:15:58 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,10 +179,4 @@ static void set_prev_exitcode(t_shell *shell)
 {
 	shell->exit_code_prev = shell->exit_code;
 	shell->exit_code = 0;	
-}
-
-static void set_prev_exitcode(t_shell *shell)
-{
-	shell->exit_code_prev = shell->exit_code;
-	shell->exit_code = 0;
 }

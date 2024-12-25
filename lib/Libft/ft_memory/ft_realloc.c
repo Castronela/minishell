@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 17:14:57 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 17:15:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 18:43:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	*ft_recalloc(void *ptr, size_t size, size_t old_size)
 		old_size = ft_strlen2(ptr);
 	if (ptr)
 	{
-		ft_memcpy(new_ptr, ptr, old_size);
+		ft_memmove(new_ptr, ptr, old_size);
 		free(ptr);
 	}
 	ptr = new_ptr;

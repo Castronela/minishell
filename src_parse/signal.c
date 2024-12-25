@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 17:35:32 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/23 15:57:48 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/25 14:57:00 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 # include <termios.h>
 
 void set_signal(t_shell *shell);
-
 static void signal_handler(int sigid, siginfo_t *info, void *ucontext);
 
 void set_signal(t_shell *shell)

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 19:31:34 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 14:48:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,6 @@
 
 void	mini_exit(t_shell *shl)
 {
-	exit_early(shl, NULL, "exit");
+	write(1, "exit\n", 5);
+	exit_early(shl, NULL, NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:14 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/23 13:14:36 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 18:07:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,9 @@ char	*find_string_ptr(char **dp, char *str, int	n)
 
 /*
 Function to count the number of char pointers contained in a double char pointer
+  - Returns total number of pointers in a double pointer
+  - Does not count the final NULL pointer, so the called has to account for it
+	according to their use case
 */
 int	count_pointers(char **dp)
 {
