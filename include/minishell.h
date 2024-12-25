@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 19:21:59 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/25 20:23:49 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_echo(t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
+void		add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 

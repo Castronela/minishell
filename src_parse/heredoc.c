@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/23 21:51:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/25 20:24:23 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static void	heredoc_prompt(t_shell *shell, int fd_pipe[]);
 static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 				int flag_expand_vars);
 static char	*heredoc_read_pipe(t_shell *shell, int fd_read);
-static int	append_to_str(char **str, char *append);
 
 /*
 Loops through every command node and checks for open heredocs
@@ -204,18 +203,4 @@ static char	*heredoc_read_pipe(t_shell *shell, int fd_read)
 	if (!final_str && bytes_read)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	return (final_str);
-}
-
-static int	append_to_str(char **str, char *append)
-{
-	size_t	total_len;
-
-	if (!append)
-		return (0);
-	total_len = ft_strlen2(*str) + ft_strlen2(append);
-	*str = ft_recalloc(*str, total_len + 1, 0);
-	if (!(*str))
-		return (1);
-	ft_strlcat(*str, append, total_len + 1);
-	return (0);
 }
