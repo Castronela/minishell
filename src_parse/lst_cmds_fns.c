@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_cmds_fns.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/22 17:55:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 19:26:45 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd->fd_out = STDOUT_FILENO;
 	new_cmd->apend = 0;
 	new_cmd->file_in = NULL;
+	new_cmd->toggle_heredoc = 0;
 	new_cmd->file_out = NULL;
 	new_cmd->ctl_operator = NULL;
 	new_cmd->next = NULL;

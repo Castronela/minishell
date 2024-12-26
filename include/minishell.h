@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 20:23:49 by david            ###   ########.fr       */
+/*   Updated: 2024/12/26 19:26:28 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ typedef struct s_cmds
 	int				fd_out;			// Defaults to STDOUTFILENO
 	int				apend;			// If >> is present, this will be set to 1, else 0
 	char			*file_in;		// Name of infile if < is present, else NULL
+	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
 	struct s_cmds	*next;
@@ -300,7 +301,7 @@ bool 		is_special_param(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
-int			append_to_str(char **str, char *append);
+int			append_to_str(char **str, char *append, int append_len);
 
 /* ----------------------------- Test functions ----------------------------- */
 

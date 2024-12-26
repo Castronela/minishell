@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/25 17:46:36 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 18:15:18 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool is_special_param(const char *str, const size_t index);
 size_t find_longest_match_length(const char *str, const char *pattern[]);
 void reset_cmd_vars(t_shell *shell, int free_before);
 void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
-int	append_to_str(char **str, char *append);
+int	append_to_str(char **str, char *append, int append_len);
 
 
 bool is_quote(const char c)
@@ -147,13 +147,15 @@ void init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 	}
 }
  
-int	append_to_str(char **str, char *append)
+int	append_to_str(char **str, char *append, int append_len)
 {
-	size_t	total_len;
+	int	total_len;
 
 	if (!append)
 		return (0);
-	total_len = ft_strlen2(*str) + ft_strlen2(append);
+	if (append_len < 0)
+		append_len = ft_strlen2(append);
+	total_len = ft_strlen2(*str) + append_len;
 	*str = ft_recalloc(*str, total_len + 1, 0);
 	if (!(*str))
 		return (1);

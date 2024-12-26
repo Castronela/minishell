@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 17:07:15 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 19:22:25 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
 				size_t *arg_count);
 static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 				size_t * index_cmd);
+static char **get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
 static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
 				char *operator);
 static void	expand_homedir_special_char(t_shell *shell, char **str);
@@ -120,18 +121,7 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	char	*redir_target;
 	char	**cmdnode_filept;
 
-	cmdnode_filept = NULL;
-	if (!ft_strncmp(operator, RD_HD, ft_strlen(RD_HD)))
-		cmdnode_filept = get_heredoc_del_pt(shell, new_cmdnode, operator);
-	else if (!ft_strncmp(operator, RD_OUT, ft_strlen(RD_OUT)))
-	{
-		cmdnode_filept = &new_cmdnode->file_out;
-		new_cmdnode->apend = 0;
-		if (!ft_strncmp(operator, RD_OUT_A, ft_strlen(RD_OUT_A)))
-			new_cmdnode->apend = 1;
-	}
-	else
-		cmdnode_filept = &new_cmdnode->file_in;
+	cmdnode_filept = get_redir_pt(shell, new_cmdnode, operator);
 	free(operator);
 	redir_target = get_next_token(shell, index_cmd);
 	if (cmdnode_filept && *cmdnode_filept)
@@ -141,6 +131,30 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	if (is_redir_target_valid(shell, redir_target) == false)
 		return (1);
 	return (0);
+}
+
+static char **get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
+{
+	if (!ft_strncmp(operator, RD_HD, ft_strlen(RD_HD) + 1))
+	{
+		new_cmdnode->toggle_heredoc = 1;
+		return (get_heredoc_del_pt(shell, new_cmdnode, operator));
+	}
+	else if (!ft_strncmp(operator, RD_IN, ft_strlen(RD_IN) + 1))
+	{
+		new_cmdnode->toggle_heredoc = 0;
+		return (&new_cmdnode->file_in);
+	}
+	else if (!ft_strncmp(operator, RD_OUT, ft_strlen(RD_OUT) + 1))
+	{
+		new_cmdnode->apend = 0;
+		return (&new_cmdnode->file_out);
+	}
+	else
+	{
+		new_cmdnode->apend = 1;
+		return (&new_cmdnode->file_out);
+	}
 }
 
 /*
@@ -185,8 +199,8 @@ static void	expand_homedir_special_char(t_shell *shell, char **str)
 	index = 1;
 	while ((*str)[index] && (*str)[index] != '/')
 		index++;
-	if (append_to_str(&new_str, lst_node->val) || append_to_str(&new_str,
-			&(*str)[index]))
+	if (append_to_str(&new_str, lst_node->val, -1) || append_to_str(&new_str,
+			&(*str)[index], -1))
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	free(*str);
 	*str = new_str;
