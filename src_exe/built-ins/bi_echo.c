@@ -6,20 +6,22 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 17:51:28 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 19:21:20 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_echo(t_cmds *cmd);
-static void set_echo_skip(const char *str, int *new_line, int *arg_index, int skip);
+static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skip);
 
 /*
 Built-in echo function
   - Need to check if this is complete/sufficient...
   - if the command contains "-n ", then it writes to fd_out without a newline
   - if command contains no -n option, then it writes to fd_out followed by a newline
+
+!!! > 25 lines
 */
 void	mini_echo(t_cmds *cmd)
 {
@@ -37,7 +39,7 @@ void	mini_echo(t_cmds *cmd)
 		if (*(str + 2) != '\0' && *(str + 2) != 'n')
 			break;
 		skip++;
-		set_echo_skip(str, &new_line, &arg_index, skip);
+		set_echo_flag(str, &new_line, &arg_index, skip);
 		str = *(cmd->args + arg_index);
 	}
 	while (*(cmd->args + arg_index))
@@ -54,7 +56,7 @@ void	mini_echo(t_cmds *cmd)
 /*
 Function to deal with -n flag anomalies
 */
-static void set_echo_skip(const char *str, int *new_line, int *arg_index, int skip)
+static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skip)
 {
 	int fl_index;
 

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 17:47:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 20:45:06 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,16 @@
 int		get_binaries(t_shell *shl);
 char	*get_binary_path(t_shell *shl, t_cmds *cmd);
 int		remove_path(t_cmds *cmd);
+
+/*
+
+
+!!! Correction needed
+	- Need to take into account the heredoc toggle while filling fd_out or the
+	argument to send to print
+	- Need to make some changes in this file but can't remember what
+	Will add later when it comes back to me...lol
+*/
 
 int	get_binaries(t_shell *shl)
 {

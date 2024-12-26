@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 19:14:54 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 20:37:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,8 +138,7 @@ typedef struct s_cmds
 
 typedef struct s_shell
 {
-	char		**env_str;			// Copy of **envp, as required by execve fn
-	t_lst_str	*env;				// Stores env variables from the calling shell
+	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
 	int			shlvl;				// Stores the current shell level
@@ -156,14 +155,9 @@ typedef struct s_shell
 }	t_shell;
 
 
-
-
-
-
 //--------------------------------------------------------------------------------------//
 //                                 Function Prototypes                                  //
 //--------------------------------------------------------------------------------------//
-
 
 int			main(int ac, char **av, char **envp);
 
@@ -179,19 +173,10 @@ void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_echo(t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
-void		add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
-
 void		mini_cd(t_shell *shl, t_cmds *cmd);
-int			path_is_dir(char *path);
-void		update_cwd(t_shell *shl, char *new_cwd);
-
 void		mini_env(t_shell *shl, t_cmds *cmd);
-void		update_last_var(t_shell *shl, t_cmds *cmd);
-int			update_var_str(char *var_pointer, char *var_name, char *new_val);
-int			count_pointers(char **dp);
-
 void		mini_exit(t_shell *shl);
 
 /* -------------------------- src_exe/init_shell.c -------------------------- */
@@ -236,10 +221,22 @@ int			open_file_fds(t_cmds *cmd);
 int			set_redirections(t_cmds *cmd);
 void		close_fds(t_cmds *cmd);
 
-/* ------------------------------ utilities.c ------------------------------ */
+/* --------------------------- environmentalists.c --------------------------- */
+
+void		update_env_var(t_shell *shl, t_cmds *cmd);
+void		update_cwd(t_shell *shl, char *new_cwd);
+void		store_variable(t_shell *shl, char *str);
+void		add_to_environment(t_shell *shl, t_cmds *cmd);
+
+/* -------------------------------- stirngs.c -------------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
-void		store_variable(t_shell *shl, char *str);
+char		*find_string_ptr(char **dp, char *str, int	n);
+int			update_var_str(char *var_pointer, char *var_name, char *new_val);
+int			count_pointers(char **dp);
+
+/* ------------------------------ utilities.c ------------------------------ */
+
 void		arg_error(char **av);
 void		ft_free2dint(int **memory);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);

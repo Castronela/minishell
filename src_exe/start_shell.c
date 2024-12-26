@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 14:15:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 19:54:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		if (set_redirections(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_DUP2);
 		// printf("No no no, I am here now\n");
-		execve(cmd->bin_path, cmd->args, shl->env_str);
+		execve(cmd->bin_path, cmd->args, shl->environ);
 		// printf("Now, I am actually here\n");
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
