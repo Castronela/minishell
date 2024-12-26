@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 19:26:28 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 20:57:07 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ void		ft_print_lst(t_lst_str *root);
 /* ============================= src_parse/... ============================= */
 
 int			parser(t_shell *shell);
+int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
@@ -264,6 +265,9 @@ bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 /* -------------------------------- Heredoc -------------------------------- */
 
 int 		heredoc(t_shell *shell);
+int			heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
+void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
+				int flag_expand_vars);
 
 /* -------------------------- Cmds list functions -------------------------- */
 
@@ -273,14 +277,13 @@ void 		lst_cmds_freelst(t_shell *shell);
 
 /* -------------------------- Remove closed quotes -------------------------- */
 
-void		remove_args_closed_quotes(t_shell *shell, t_cmds *cmd_node);
 void		remove_closed_quotes(t_shell *shell, char **str);
 size_t		count_closed_quotes(char *str);
 
 /* --------------------------- Variable expansion --------------------------- */
 
-void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
 void 		var_expansion(t_shell *shell, char **str);
+void		expand_homedir_special_char(t_shell *shell, char **str);
 
 /* ------------------------------- Pipe Setup ------------------------------- */
 

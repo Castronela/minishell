@@ -1,62 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   heredoc_2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 19:29:04 by dstinghe         ###   ########.fr       */
+/*   Created: 2024/12/26 20:24:33 by dstinghe          #+#    #+#             */
+/*   Updated: 2024/12/26 20:57:13 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int			heredoc(t_shell *shell);
-
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
 static int	heredoc_prep_prompt(t_shell *shell, int (*hd_pipe)[2]);
 static void	heredoc_prompt(t_shell *shell, int fd_pipe[]);
-static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
-				int flag_expand_vars);
 static char	*heredoc_read_pipe(t_shell *shell, int fd_read);
-
-/*
-Loops through every command node and checks for open heredocs
-*/
-int	heredoc(t_shell *shell)
-{
-	t_cmds		*cmd_node;
-	t_lst_str	*heredoc_node;
-	int			flag_expand_vars;
-
-	cmd_node = shell->cmds_lst;
-	while (cmd_node)
-	{
-		heredoc_node = cmd_node->heredocs_lst;
-		while (heredoc_node)
-		{
-			flag_expand_vars = count_closed_quotes(heredoc_node->key);
-			remove_closed_quotes(shell, &heredoc_node->key);
-			append_to_str(&heredoc_node->key, "\n", -1);
-			if (heredoc_get_body(shell, heredoc_node))
-			{
-				if (write(STDOUT_FILENO, "\n", 1) < 0)
-					exit_early(shell, NULL, ERRMSG_WRITE);
-				return (1);
-			}
-			heredoc_body_var_expand(shell, heredoc_node, flag_expand_vars);
-			heredoc_node = heredoc_node->next;
-		}
-		cmd_node = cmd_node->next;
-	}
-	return (0);
-}
 
 /*
 Retrieves all necessary Heredoc body from user
 */
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
+int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
 {
 	char	*input;
 	int		hd_pipe[2];
@@ -153,7 +116,7 @@ Expands variables of heredoc body ONLY if 'flag_expand_vars' is 0
 	- performs variable expansion
 	- removes double quotes added earlier
 */
-static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
+void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 		int flag_expand_vars)
 {
 	char	*new_hd_body;

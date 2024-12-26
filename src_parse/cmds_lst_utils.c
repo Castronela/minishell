@@ -6,15 +6,16 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 19:26:45 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 20:42:27 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void	lst_cmds_freelst(t_shell *shell);
+void	reset_cmd_vars(t_shell *shell, int free_before);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -56,9 +57,10 @@ void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode)
 
 void	lst_cmds_freelst(t_shell *shell)
 {
-	t_cmds *cmd_node = shell->cmds_lst;
-	t_cmds *cmd_node_free;
+	t_cmds	*cmd_node;
+	t_cmds	*cmd_node_free;
 
+	cmd_node = shell->cmds_lst;
 	while (cmd_node)
 	{
 		if (cmd_node->bin_path)
@@ -77,4 +79,26 @@ void	lst_cmds_freelst(t_shell *shell)
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);
 	}
+}
+
+/*
+Nullifies all command variables
+	- if 'free_before' > 0 then frees command variables
+	before nullifying them
+*/
+void	reset_cmd_vars(t_shell *shell, int free_before)
+{
+	if (free_before)
+	{
+		if (shell->pid)
+			free(shell->pid);
+		if (shell->cmdline)
+			free(shell->cmdline);
+		if (shell->cmds_lst)
+			lst_cmds_freelst(shell);
+	}
+	shell->pid = NULL;
+	shell->cmdline = NULL;
+	shell->cmds_lst = NULL;
+	shell->open_qt = 0;
 }

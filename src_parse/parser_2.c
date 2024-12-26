@@ -1,58 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_cmdline.c                                    :+:      :+:    :+:   */
+/*   parser_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 19:22:25 by dstinghe         ###   ########.fr       */
+/*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
+/*   Updated: 2024/12/26 20:55:50 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int			parser(t_shell *shell);
-
-static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode,
-				size_t *index_cmd);
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
 				size_t *arg_count);
 static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
-				size_t * index_cmd);
-static char **get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
+				size_t *index_cmd);
+static char	**get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
 static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
 				char *operator);
-static void	expand_homedir_special_char(t_shell *shell, char **str);
-
-/*
-(Main FN) Initializes 'shell->cmds_lst':
-	- creates new node for linked list 'shell->cmds_lst'
-	- attaches new node to end of linked list
-	- initializes new node
-	- does syntax check for control operators and quoted strings
-*/
-int	parser(t_shell *shell)
-{
-	size_t	index_cmd;
-	size_t	cmdline_len;
-	t_cmds	*new_cmdnode;
-
-	cmdline_len = ft_strlen(shell->cmdline);
-	index_cmd = 0;
-	while (index_cmd < cmdline_len)
-	{
-		new_cmdnode = lst_cmds_newnode(shell);
-		lst_cmds_addback(shell, new_cmdnode);
-		if (init_cmd_lst(shell, new_cmdnode, &index_cmd))
-			return (1);
-		var_expand_args(shell, new_cmdnode);
-		remove_args_closed_quotes(shell, new_cmdnode);
-	}
-	if (!is_valid_control(shell) || !is_valid_quotation(shell))
-		return (1);
-	return (0);
-}
 
 /*
 Initializes 'new_cmdnode' with tokens from a single command:
@@ -61,7 +27,7 @@ Initializes 'new_cmdnode' with tokens from a single command:
 		arg)
 	- upon finding a control operator, stores operator and exits function
 */
-static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
+int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 {
 	char	*token;
 	size_t	arg_count;
@@ -104,6 +70,8 @@ static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
 	expand_homedir_special_char(shell, &argument);
+	var_expansion(shell, &argument);
+	remove_closed_quotes(shell, &argument);
 	new_cmdnode->args[(*arg_count) - 1] = argument;
 	new_cmdnode->args[(*arg_count)] = NULL;
 }
@@ -116,7 +84,7 @@ Initializes 'new_cmdnode' with redirection targets:
 	- does syntax check for redirection operators
 */
 static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
-		size_t * index_cmd)
+		size_t *index_cmd)
 {
 	char	*redir_target;
 	char	**cmdnode_filept;
@@ -133,7 +101,7 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	return (0);
 }
 
-static char **get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
+static char	**get_redir_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
 {
 	if (!ft_strncmp(operator, RD_HD, ft_strlen(RD_HD) + 1))
 	{
@@ -177,31 +145,4 @@ static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
 	}
 	ft_lst_addback(&new_cmdnode->heredocs_lst, heredoc_node);
 	return (&heredoc_node->key);
-}
-
-static void	expand_homedir_special_char(t_shell *shell, char **str)
-{
-	t_lst_str	*lst_node;
-	size_t		index;
-	char		*new_str;
-
-	new_str = NULL;
-	if (compare_strings("~", *str, 1) || compare_strings("~/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "HOME", 0, 1);
-	else if (compare_strings("~+", *str, 1) || compare_strings("~+/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "PWD", 0, 1);
-	else if (compare_strings("~-", *str, 1) || compare_strings("~-/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "OLDPWD", 0, 1);
-	else
-		return ;
-	if (!lst_node || !lst_node->val)
-		return ;
-	index = 1;
-	while ((*str)[index] && (*str)[index] != '/')
-		index++;
-	if (append_to_str(&new_str, lst_node->val, -1) || append_to_str(&new_str,
-			&(*str)[index], -1))
-		exit_early(shell, NULL, ERRMSG_MALLOC);
-	free(*str);
-	*str = new_str;
 }

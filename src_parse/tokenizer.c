@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/22 02:31:39 by david            ###   ########.fr       */
+/*   Updated: 2024/12/26 20:22:40 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*get_next_token(t_shell *shell, size_t *index_cmd);
+char			*get_next_token(t_shell *shell, size_t *index_cmd);
 
 static size_t	get_argument_end_index(t_shell *shell, size_t index_cmd);
-static size_t operator_length_at_index(const char *str, const size_t index);
+static size_t	operator_length_at_index(const char *str, const size_t index);
 
 /*
 Returns allocated string of next token starting from index 'i_cmdline'
@@ -63,9 +63,11 @@ static size_t	get_argument_end_index(t_shell *shell, size_t index_cmd)
 }
 
 /*
-Returns length of longest operator that matches 'str' from 'index' or 0, if no matches found
+Returns length of longest operator that matches 'str' from 'index' or 0,
+	if no matches found
 */
-static size_t operator_length_at_index(const char *str, const size_t index)
+static size_t	operator_length_at_index(const char *str, const size_t index)
 {
-	return (find_longest_match_length(&str[index], (const char *[]){REDIRECTION_OPERATORS, CONTROL_OPERATORS, NULL}));
+	return (find_longest_match_length(&str[index],
+			(const char *[]){REDIRECTION_OPERATORS, CONTROL_OPERATORS, NULL}));
 }

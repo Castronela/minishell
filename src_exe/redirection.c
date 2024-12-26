@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 14:07:29 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 20:16:59 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,10 @@ int	open_file_fds(t_cmds *cmd)
 	{
 		if (cmd->fd_out != 1)
 			close(cmd->fd_out);
-		cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		if (cmd->apend)
+			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		else
+			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if (cmd->fd_out == -1)
 		{
 			if (cmd->fd_in != 0)
