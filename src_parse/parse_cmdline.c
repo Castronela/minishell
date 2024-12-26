@@ -6,19 +6,23 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/25 19:22:04 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 17:07:15 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	parser(t_shell *shell);
+int			parser(t_shell *shell);
 
-static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
-static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count);
-static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t * index_cmd);
-static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator);
-static void expand_homedir_special_char(t_shell *shell, char **str);
+static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode,
+				size_t *index_cmd);
+static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
+				size_t *arg_count);
+static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
+				size_t * index_cmd);
+static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
+				char *operator);
+static void	expand_homedir_special_char(t_shell *shell, char **str);
 
 /*
 (Main FN) Initializes 'shell->cmds_lst':
@@ -86,11 +90,13 @@ static int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 Initializes 'new_cmdnode->args' with 'argument':
 	- adds 'argument' and a tailing NULL to 2d array
 */
-static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument, size_t *arg_count)
+static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument,
+		size_t *arg_count)
 {
 	(*arg_count)++;
-	new_cmdnode->args = ft_recalloc(new_cmdnode->args, sizeof(*new_cmdnode->args)
-			* (*arg_count + 1), sizeof(*new_cmdnode->args) * (*arg_count));
+	new_cmdnode->args = ft_recalloc(new_cmdnode->args,
+			sizeof(*new_cmdnode->args) * (*arg_count + 1),
+			sizeof(*new_cmdnode->args) * (*arg_count));
 	if (!new_cmdnode->args)
 	{
 		free(argument);
@@ -108,7 +114,8 @@ Initializes 'new_cmdnode' with redirection targets:
 	into 'new_cmdnode' as redirection target
 	- does syntax check for redirection operators
 */
-static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator, size_t * index_cmd)
+static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
+		size_t * index_cmd)
 {
 	char	*redir_target;
 	char	**cmdnode_filept;
@@ -143,7 +150,8 @@ Returns pointer to heredoc delimiter pointer:
 	- attaches new node to end of linked list
 	- returns reference to 'key' var of new node
 */
-static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *operator)
+static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode,
+		char *operator)
 {
 	t_lst_str	*heredoc_node;
 
@@ -157,27 +165,29 @@ static char	**get_heredoc_del_pt(t_shell *shell, t_cmds *new_cmdnode, char *oper
 	return (&heredoc_node->key);
 }
 
-static void expand_homedir_special_char(t_shell *shell, char **str)
+static void	expand_homedir_special_char(t_shell *shell, char **str)
 {
-	t_lst_str *oldpwd_node;
-	char *new_str;
-	size_t oldpwd_len;
-	size_t str_len;
-	
-	if (!str || !*str || (!compare_strings("~", *str, 1) && !compare_strings("~/", *str, 0)))
+	t_lst_str	*lst_node;
+	size_t		index;
+	char		*new_str;
+
+	new_str = NULL;
+	if (compare_strings("~", *str, 1) || compare_strings("~/", *str, 0))
+		lst_node = ft_find_node(shell->variables, "HOME", 0, 1);
+	else if (compare_strings("~+", *str, 1) || compare_strings("~+/", *str, 0))
+		lst_node = ft_find_node(shell->variables, "PWD", 0, 1);
+	else if (compare_strings("~-", *str, 1) || compare_strings("~-/", *str, 0))
+		lst_node = ft_find_node(shell->variables, "OLDPWD", 0, 1);
+	else
 		return ;
-	oldpwd_node = ft_find_node(shell->variables, "HOME", 0, 1);
-	oldpwd_len = ft_strlen2(oldpwd_node->val);
-	str_len = ft_strlen2(*str) - 1;
-	new_str = ft_calloc(oldpwd_len + str_len + 1, sizeof(*new_str));
-	if (!new_str)
+	if (!lst_node || !lst_node->val)
+		return ;
+	index = 1;
+	while ((*str)[index] && (*str)[index] != '/')
+		index++;
+	if (append_to_str(&new_str, lst_node->val) || append_to_str(&new_str,
+			&(*str)[index]))
 		exit_early(shell, NULL, ERRMSG_MALLOC);
-	ft_strlcpy2(new_str, oldpwd_node->val, oldpwd_len + 1);
-	if (str_len)
-	{
-		printf("passed\n");
-		ft_strlcat(new_str, &((*str)[1]), oldpwd_len + str_len + 1);
-	}
 	free(*str);
 	*str = new_str;
 }
