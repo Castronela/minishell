@@ -9,6 +9,11 @@ void test_new_tokenizer(t_shell *shl, char **envp);
 void test_var_exp(char **envp);
 void test_remove_quotes(void);
 
+void test_print_envariables(t_shell *shell)
+{
+	for(t_lst_str *node = shell->variables; node; node = node->next)
+		printf("%s=%s\n", node->key, node->val);	
+}
 
 void test_print_cmdlst(t_shell *shell, int spacing)
 {

@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   var_expansion.c                                    :+:      :+:    :+:   */
+/*   expansions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:44:18 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/27 16:33:12 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*expand_var(t_shell *shell, char *str, size_t *index);
+static char	*repl_var_w_value(t_shell *shell, char *str, size_t *index);
 static char	*get_var_name(t_shell *shell, const char *str, size_t index);
 static char	*get_var_value(t_shell *shell, char *var_name);
 
@@ -39,7 +39,7 @@ void	var_expansion(t_shell *shell, char **str)
 		{
 			if ((*str)[index + 1] == '_' || ft_isalpha((*str)[index + 1])
 				|| is_special_param(*str, index + 1))
-				*str = expand_var(shell, *str, &index);
+				*str = repl_var_w_value(shell, *str, &index);
 		}
 		index++;
 	}
@@ -59,36 +59,35 @@ Substitues the first variable in string with the variable's value
 	- frees original string and returns new string
 Note: only call when 'str' at 'index' is a '$'
 */
-static char	*expand_var(t_shell *shell, char *str, size_t *index)
+static char	*repl_var_w_value(t_shell *shell, char *str, size_t *index)
 {
 	char	*str_expanded;
 	char	*name_value[2];
-	size_t	str_len;
 	size_t	var_val_len[2];
 
 	name_value[0] = get_var_name(shell, str, *index);
-	name_value[1] = get_var_value(shell, name_value[0]);
 	var_val_len[0] = ft_strlen2(name_value[0]);
+	name_value[1] = get_var_value(shell, name_value[0]);
 	var_val_len[1] = ft_strlen2(name_value[1]);
-	str_len = ft_strlen2(str);
 	str_expanded = NULL;
 	if (append_to_str(&str_expanded, str, *index)
 		|| append_to_str(&str_expanded, name_value[1], -1)
 		|| append_to_str(&str_expanded, &str[(*index) + var_val_len[0]], -1))
 	{
-		free(name_value[0]);
 		free(name_value[1]);
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
-	(*index) += var_val_len[1] - 1;
+	free(name_value[1]);
 	free(str);
+	(*index) += var_val_len[1] - 1;
 	return (str_expanded);
 }
 
 /*
 Retrieves variable name, starting from $
-	- reads and returns string after '$', untill a character is
-	NOT alphanumeric or underscore
+	- reads and returns string after '$'
+	- the string must contain either one single special character or
+	an array of alphanumeric and underscore characters
 */
 static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 {
@@ -96,16 +95,12 @@ static char	*get_var_name(t_shell *shell, const char *str, size_t index)
 	char	*var_name;
 
 	start_index = index++;
-	while (str[index])
-	{
-		if (is_special_param(str, start_index + 1))
-		{
-			index++;
-			break ;
-		}
-		if (!ft_isalnum(str[index]) && str[index] != '_')
-			break ;
+	if (is_special_param(str, start_index + 1))
 		index++;
+	else
+	{
+		while (ft_isalnum(str[index]) || str[index] == '_')
+			index++;
 	}
 	var_name = ft_substr(str, start_index, index - start_index);
 	if (!var_name)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 19:09:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/27 16:13:37 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		new_cwd = *(cmd->args + 1);
 	if (chdir(new_cwd) < 0)
 	{
-		perror("Chdir error");
+		printf("%s %s: %s\n", ERRMSG_CD, new_cwd, strerror(errno));
 		shl->exit_code = errno;
 	}
 	new_cwd = getcwd(NULL, 0);

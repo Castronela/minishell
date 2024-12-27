@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:57:07 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/27 15:53:05 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,10 @@
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
 # define ERRMSG_DUP2 "Error dupe2"
+
+// ---- Built-in Error Message -----------------------------------------------------------
+
+# define ERRMSG_CD "minishell: cd:"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -314,6 +318,7 @@ void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
+void 		test_print_envariables(t_shell *shell);
 
 /* ======================== End Function Prototypes ======================== */
 
