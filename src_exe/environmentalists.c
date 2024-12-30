@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/30 13:23:38 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 18:47:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd)
 	printf("	env_lst[0]->key:	%s\n", env_lst[0]->key);
 	printf("	env_lst[0]->val:	%s\n", env_lst[0]->val);
 	env_lst[1] = ft_lst_new("_", cmd->args[count_pointers(cmd->args) - 1]);
-	ft_replace_node(env_lst[0], env_lst[1]);
+	ft_replace_node(&(env_lst[0]), env_lst[1]);
 }
 
 /*
@@ -60,7 +60,7 @@ void	update_cwd(t_shell *shl, char *new_cwd)
 		free(env_node[1]);
 		exit_early(shl, NULL, "new_env_node malloc failed");
 	}
-	ft_replace_node(var_node[0], var_node[1]);
+	ft_replace_node(&(var_node[0]), var_node[1]);
 	free(shl->cur_wd);
 	shl->cur_wd = ft_strdup(new_cwd);
 }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/30 11:55:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 20:43:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,7 @@ void	copy_environ_variables(t_shell *shl, char **envp)
 			exit_early(shl, split, "Could not malloc t_lst_str new_node");
 		ft_lst_addback(&shl->variables, new_node);
 		ft_free2d(split);
-		printf("i = %d\n", i);
 	}
-	printf("Finished counting envp. Final i at exit: %d\n", i);
 	copy_environ(shl, envp, i);
 }
 
@@ -88,9 +86,7 @@ static void	copy_environ(t_shell *shl, char **envp, int size)
 {
 	int i;
 	
-	printf("i received by static copy_environ() as size: %d\n", size);
 	shl->environ = malloc((size + 1) * sizeof(char *));
-	printf("malloced size: %d + 1 = %d\n", size, size + 1);
 	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	i = -1;
@@ -100,10 +96,7 @@ static void	copy_environ(t_shell *shl, char **envp, int size)
 		if (!shl->environ[i])
 			exit_early(shl, NULL, ERRMSG_MALLOC);
 	}
-	printf("Final element of char ** shl->environ[%d]:	%s\n", i-1, shl->environ[i-1]);
 	shl->environ[i] = NULL;
-	printf("i at which pointer is NULL: %d\n", i);
-	printf("Null element of char ** shl->environ[%d]:	%s\n", i, shl->environ[i]);
 }
 
 /*
@@ -178,10 +171,20 @@ void	update_shlvl(t_shell *shl)
 	free(shl->environ[i]);
 	shl->environ[i] = shlvl;
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	printf("var_node[0]->key (before):	%s\n", var_node[0]->key);
+	printf("var_node[0]->val (before):	%s\n", var_node[0]->val);
 	var_node[1] = ft_lst_new("SHLVL", ft_itoa(shl->shlvl));
 	if (!var_node[1])
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	ft_replace_node(var_node[0], var_node[1]);
+	printf("var_node[1]->key (new):		%s\n", var_node[1]->key);
+	printf("var_node[1]->val (new):		%s\n", var_node[1]->val);
+	ft_replace_node(&(var_node[0]), var_node[1]);
+	// ft_replace_node_old((var_node[0]), var_node[1]);
+	printf("var_node[0]->key (after):	%s\n", var_node[0]->key);
+	printf("var_node[0]->val (after):	%s\n", var_node[0]->val);
+	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	printf("var_node[0]->key (after):	%s\n", var_node[0]->key);
+	printf("var_node[0]->val (after):	%s\n", var_node[0]->val);
 }
 
 /*
