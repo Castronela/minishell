@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/22 17:55:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/27 10:34:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,10 @@ void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode)
 	}
 }
 
+/*
+
+!!! Segmentation fault being encountered repeatedly while using ft_free2d
+*/
 void	lst_cmds_freelst(t_shell *shell)
 {
 	t_cmds *cmd_node = shell->cmds_lst;

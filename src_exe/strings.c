@@ -6,15 +6,15 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 19:54:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 12:50:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int		compare_strings(const char *str, const char *field, int exact);
-char	*find_string_ptr(char **dp, char *str, int	n);
-int		update_var_str(char *var_pointer, char *var_name, char *new_val);
+char	**find_string_ptr(char **dp, char *str, int	n);
+int		update_var_str(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
 
 /*
@@ -56,7 +56,7 @@ Funcito returns the pointer to a string in a double pointer that matches the
 provided string
   - 'n' is the number of characters to match while finding the pointer
 */
-char	*find_string_ptr(char **dp, char *str, int	n)
+char	**find_string_ptr(char **dp, char *str, int	n)
 {
 	int	i;
 	
@@ -64,7 +64,7 @@ char	*find_string_ptr(char **dp, char *str, int	n)
 	while (dp[++i])
 	{
 		if (ft_strncmp(dp[i], str, n) == 0)
-			return (dp[i]);
+			return (&dp[i]);
 	}
 	return (NULL);
 }
@@ -90,7 +90,7 @@ int	count_pointers(char **dp)
 /*
 Funciton to replace the last char * in the shl->environ list with new last-arg
 */
-int	update_var_str(char *var_pointer, char *var_name, char *new_val)
+int	update_var_str(char **var_ptr_addr, char *var_name, char *new_val)
 {
 	char	*new;
 	char	*tmp;
@@ -99,10 +99,10 @@ int	update_var_str(char *var_pointer, char *var_name, char *new_val)
 	if (!tmp)
 		return (-1);
 	new = ft_strjoin(var_name, tmp);
-	if (!new)
-		return (free(tmp), -1);
 	free(tmp);
-	free(var_pointer);
-	var_pointer = new;
+	if (!new)
+		return (-1);
+	free(*var_ptr_addr);
+	*var_ptr_addr = new;
 	return (0);
 }

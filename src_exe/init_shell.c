@@ -6,14 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:36:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 11:55:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void 		init_shell(t_shell *shl, char **envp);
-void		copy_env(t_shell *shl, char **envp);
+void		copy_environ_variables(t_shell *shl, char **envp);
 static void	copy_environ(t_shell *shl, char **envp, int size);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
@@ -36,11 +36,12 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->environ = NULL;
 	shl->variables = NULL;
 	shl->env_paths = NULL;
+	shl->shlvl = 1;
 	shl->cur_wd = NULL;
 	shl->prompt = NULL;
-	copy_env(shl, envp);
+	copy_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
-	// update_shlvl(shl);				// ommited for valgrind check
+	update_shlvl(shl);				// ommited for valgrind check
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
@@ -57,7 +58,7 @@ Copies the environment variables to the shell struct
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
 */
-void	copy_env(t_shell *shl, char **envp)
+void	copy_environ_variables(t_shell *shl, char **envp)
 {
 	int 		i;
 	t_lst_str	*new_node;
@@ -74,28 +75,35 @@ void	copy_env(t_shell *shl, char **envp)
 			exit_early(shl, split, "Could not malloc t_lst_str new_node");
 		ft_lst_addback(&shl->variables, new_node);
 		ft_free2d(split);
+		printf("i = %d\n", i);
 	}
-	copy_environ(shl, envp, i + 1);
+	printf("Finished counting envp. Final i at exit: %d\n", i);
+	copy_environ(shl, envp, i);
 }
 
 /*
-Function to copy envp variables as double char pointers for execve
+Function to copy envp variables as double char pointers, as required by execve
 */
 static void	copy_environ(t_shell *shl, char **envp, int size)
 {
 	int i;
 	
-	i = -1;
+	printf("i received by static copy_environ() as size: %d\n", size);
 	shl->environ = malloc((size + 1) * sizeof(char *));
+	printf("malloced size: %d + 1 = %d\n", size, size + 1);
 	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
+	i = -1;
 	while (envp[++i])
 	{
 		shl->environ[i] = ft_strdup(envp[i]);
 		if (!shl->environ[i])
 			exit_early(shl, NULL, ERRMSG_MALLOC);
 	}
+	printf("Final element of char ** shl->environ[%d]:	%s\n", i-1, shl->environ[i-1]);
 	shl->environ[i] = NULL;
+	printf("i at which pointer is NULL: %d\n", i);
+	printf("Null element of char ** shl->environ[%d]:	%s\n", i, shl->environ[i]);
 }
 
 /*
@@ -144,39 +152,41 @@ Updates the SHLVL environment variable
   - Frees the new value of SHLVL
   - Frees the new
 
-!!! Correction required:
-  - This function will fail when the shlvl goes into two digits because, while
-	the shlvl is malloc'd correctly for any case including for two digits, the
-	env and variables elements of shl are only updated with assignment at a single
-	char address by dereferencing shlvl instead of replacing the allocation itself
-  - Also, has memory leaks
+!!! Note:
+  - Although this fn has been rebuilt, needs to be checked with valgrind for 
+  	memory leaks
 */
 void	update_shlvl(t_shell *shl)
 {
-	t_lst_str	*new_node[2];
 	char		*shlvl;
-	// char		shlvl;
-
-	new_node[1] = shl->variables;
-	while (new_node[0])
+	int			i;
+	t_lst_str	*var_node[2];
+	
+	i = -1;
+	while (shl->environ[++i])
 	{
-		if (ft_strncmp(new_node[0]->key, "SHLVL=", 6) == 0)
+		if (compare_strings("SHLVL=", shl->environ[i], 0))
 		{
-			shl->shlvl = ft_atoi(new_node[0]->key + 6) + 1;
-			// shlvl = ft_strdup(ft_itoa(shl->shlvl));
-			shlvl = ft_itoa(shl->shlvl);
-			if (!shlvl)
-				exit_early(shl, NULL, "itoa failed");
-			*(new_node[0]->key + 6) = *shlvl;										// Correction required
-			*(new_node[1]->key + 6) = *shlvl;										// Correction required
-			free(shlvl);
+			shlvl = shl->environ[i] + 6;
 			break ;
 		}
-		new_node[0] = new_node[0]->next;
-		new_node[1] = new_node[1]->next;
 	}
+	shl->shlvl += ft_atoi(shlvl);
+	shlvl = ft_strjoin("SHLVL=", ft_itoa(shl->shlvl));
+	if (!shlvl)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	free(shl->environ[i]);
+	shl->environ[i] = shlvl;
+	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	var_node[1] = ft_lst_new("SHLVL", ft_itoa(shl->shlvl));
+	if (!var_node[1])
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	ft_replace_node(var_node[0], var_node[1]);
 }
 
+/*
+Function to set-up the prompt of minishell
+*/
 void	set_prompt(t_shell *shl, char *prefix, char *separator)
 {
 	char	**split;

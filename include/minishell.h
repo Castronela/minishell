@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:37:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 12:39:16 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ void		mini_exit(t_shell *shl);
 /* -------------------------- src_exe/init_shell.c -------------------------- */
 
 void 		init_shell(t_shell *shl, char **envp);
-void		copy_env(t_shell *shl, char **envp);
+void		copy_environ_variables(t_shell *shl, char **envp);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
@@ -231,8 +231,8 @@ void		add_to_environment(t_shell *shl, t_cmds *cmd);
 /* -------------------------------- stirngs.c -------------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
-char		*find_string_ptr(char **dp, char *str, int	n);
-int			update_var_str(char *var_pointer, char *var_name, char *new_val);
+char		**find_string_ptr(char **dp, char *str, int	n);
+int			update_var_str(char **var_ptr_addr, char *var_name, char *new_val);
 int			count_pointers(char **dp);
 
 /* ------------------------------ utilities.c ------------------------------ */

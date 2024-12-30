@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:29:20 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/30 13:23:38 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,17 @@ Function to update value of $_ variable in all places
 */
 void	update_env_var(t_shell *shl, t_cmds *cmd)
 {
-	char		*env;
+	char		**env;
 	t_lst_str	*env_lst[2];
 
 	env = find_string_ptr(shl->environ, "_=", 2);
 	if (update_var_str(env, "_=", cmd->bin_path) == -1)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 
-	env_lst[0] = ft_find_node(shl->variables, "_", 1, 1);
+	env_lst[0] = ft_find_node(shl->variables, "_", 0, 1);
+	printf("Found node:\n");
+	printf("	env_lst[0]->key:	%s\n", env_lst[0]->key);
+	printf("	env_lst[0]->val:	%s\n", env_lst[0]->val);
 	env_lst[1] = ft_lst_new("_", cmd->args[count_pointers(cmd->args) - 1]);
 	ft_replace_node(env_lst[0], env_lst[1]);
 }

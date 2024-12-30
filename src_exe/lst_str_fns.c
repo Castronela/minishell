@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_str_fns.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/18 01:13:49 by david            ###   ########.fr       */
+/*   Updated: 2024/12/30 13:36:12 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,13 +233,15 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 	{
 		if (searchfield == 0)
 		{
+			printf("Searching for node->key\n");
 			if (compare_strings(str, list->key, mod))
-				return (list);
+				return (printf("Found this zero:	%s\n", list->key), list);
 		}
 		else if (searchfield == 1)
 		{
+			printf("Searching for node->val\n");
 			if (compare_strings(str, list->val, mod))
-				return (list);	
+				return (printf("Found this one:	%s\n", list->val), list);	
 		}
 		list = list->next;
 	}
