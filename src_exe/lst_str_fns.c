@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/30 20:51:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 14:16:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
-void		ft_replace_node(t_lst_str **old, t_lst_str *new);
-void		ft_replace_node_old(t_lst_str *old, t_lst_str *new);
+void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_del_node(t_lst_str **node);
 void		ft_remove_node(t_lst_str **root, t_lst_str *node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
@@ -154,32 +153,29 @@ of the old node
 		for the mere sake of passing the pointer on by reference, this fn will
 		also require to receive the original address of the old node.
 */
-void	ft_replace_node(t_lst_str **old, t_lst_str *new)
+void	ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new)
 {
-	t_lst_str	*front;
-	t_lst_str	*back;
-
-	front = (*old)->prev;
-	back = (*old)->next;
-	front->next = new;
-	new->prev = front;
-	new->next = back;
-	back->prev = new;
+	if (!(*old)->prev && !(*old)->next)		// Case 1: is first & last node
+		shl->variables = new;
+	else if (!(*old)->prev && (*old)->next)	// Case 2: first node of many
+	{
+		shl->variables = new;
+		(*old)->next->prev = new;
+		new->next = (*old)->next;
+	}
+	else if ((*old)->prev && !(*old)->next)	// Case 2: is last node of many
+	{
+		(*old)->prev->next = new;
+		new->prev = (*old)->prev;
+	}
+	else									// Case 3: is middle node
+	{
+		(*old)->prev->next = new;
+		(*old)->next->prev = new;
+		new->prev = (*old)->prev;
+		new->next = (*old)->next;
+	}
 	ft_del_node(old);
-}
-
-void	ft_replace_node_old(t_lst_str *old, t_lst_str *new)
-{
-	t_lst_str	*front;
-	t_lst_str	*back;
-
-	front = old->prev;
-	back = old->next;                                        
-	front->next = new;
-	new->prev = front;
-	new->next = back;
-	back->prev = new;
-	ft_del_node(&old);
 }
 
 /*
@@ -270,15 +266,13 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 	{
 		if (searchfield == 0)
 		{
-			printf("Searching for node->key\n");
 			if (compare_strings(str, list->key, mod))
-				return (printf("Found this zero:	%s\n", list->key), list);
+				return (/*printf("Found this zero:	%s\n", list->key), */list);
 		}
 		else if (searchfield == 1)
 		{
-			printf("Searching for node->val\n");
 			if (compare_strings(str, list->val, mod))
-				return (printf("Found this one:	%s\n", list->val), list);	
+				return (/*printf("Found this one:	%s\n", list->val), */list);	
 		}
 		list = list->next;
 	}

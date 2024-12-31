@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/30 20:43:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 14:13:07 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,10 +178,7 @@ void	update_shlvl(t_shell *shl)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	printf("var_node[1]->key (new):		%s\n", var_node[1]->key);
 	printf("var_node[1]->val (new):		%s\n", var_node[1]->val);
-	ft_replace_node(&(var_node[0]), var_node[1]);
-	// ft_replace_node_old((var_node[0]), var_node[1]);
-	printf("var_node[0]->key (after):	%s\n", var_node[0]->key);
-	printf("var_node[0]->val (after):	%s\n", var_node[0]->val);
+	ft_replace_node(shl, &(var_node[0]), var_node[1]);
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
 	printf("var_node[0]->key (after):	%s\n", var_node[0]->key);
 	printf("var_node[0]->val (after):	%s\n", var_node[0]->val);
