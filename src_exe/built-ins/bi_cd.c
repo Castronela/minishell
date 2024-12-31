@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 16:48:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 14:52:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		new_cwd = *(cmd->args + 1);
 	if (chdir(new_cwd) < 0)
 	{
-		perror("Chdir error");
+		printf("%s %s: %s\n", ERRMSG_CD, new_cwd, strerror(errno));
 		shl->exit_code = errno;
 	}
 	new_cwd = getcwd(NULL, 0);

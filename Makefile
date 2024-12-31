@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2024/12/31 00:38:30 by pamatya          ###   ########.fr        #
+#    Updated: 2024/12/31 14:55:19 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,11 +31,18 @@ D_OBJ		=	obj
 
 # ----------------- Source, Object and Dependency files ----------------- #
 
-SRC_MAIN	=	main.c
-SRC_PARSE	= 	utils_1.c lst_cmds_fns.c tokenizer.c remove_quotes.c pipes.c signal.c \
-				parse_cmdline.c syntax_validation.c heredoc.c var_expansion.c \
-				test_fn.c
-SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c environmentalists.c strings.c\
+SRC_MAIN	=	main.c test_fn.c
+SRC_PARSE	= 	parser_1.c parser_2.c \
+				tokenizer.c \
+				syntax_validation.c \
+				heredoc_1.c heredoc_2.c \
+				expansions.c \
+				remove_quotes.c \
+				pipes.c \
+				cmds_lst_utils.c \
+				signal.c \
+				utils_1.c utils_2.c
+SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
 				built_ins.c bi_cd.c bi_echo.c bi_env.c bi_exit.c bi_export.c bi_pwd.c bi_unset.c \
 				tests.c
 # SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c test_main.c \

@@ -6,13 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:27:38 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 14:52:54 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 int		mini_export(t_shell *shl, t_cmds *cmd);
+void	add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 
 /*
 Function for built-in export function

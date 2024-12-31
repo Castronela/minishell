@@ -6,11 +6,11 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/23 19:44:54 by dstinghe         ###   ########.fr       */
+/*   Updated: 2024/12/26 20:22:34 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 bool	is_valid_quotation(t_shell *shell);
 bool	is_valid_control(t_shell *shell);
@@ -39,22 +39,25 @@ Returns true if control operator is followed by a valid command
 */
 bool	is_valid_control(t_shell *shell)
 {
-	t_cmds *cmd_node;
+	t_cmds	*cmd_node;
 
 	cmd_node = shell->cmds_lst;
 	while (cmd_node)
 	{
 		if (cmd_node->ctl_operator && cmd_node->next == NULL)
 		{
-			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR, cmd_node->ctl_operator);
+			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR,
+				cmd_node->ctl_operator);
 			shell->exit_code = ERRCODE_SYNTAX;
-			return (false) ;
+			return (false);
 		}
-		if (cmd_node->ctl_operator && !cmd_node->args && !cmd_node->file_in && !cmd_node->file_out && !cmd_node->heredocs_lst)
+		if (cmd_node->ctl_operator && !cmd_node->args && !cmd_node->file_in
+			&& !cmd_node->file_out && !cmd_node->heredocs_lst)
 		{
-			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR, cmd_node->ctl_operator);
+			printf("%s `%s'\n", ERRMSG_INCOMPLETE_CONTROL_OPERATOR,
+				cmd_node->ctl_operator);
 			shell->exit_code = ERRCODE_SYNTAX;
-			return (false) ;
+			return (false);
 		}
 		cmd_node = cmd_node->next;
 	}

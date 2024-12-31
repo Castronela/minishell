@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/31 13:46:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 15:07:33 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,10 @@
 # define ERRMSG_WAITPID "Error waitpid"
 # define ERRMSG_DUP2 "Error dupe2"
 
+// ---- Built-in Error Message -----------------------------------------------------------
+
+# define ERRMSG_CD "minishell: cd:"
+
 // ---- Syntax Error Message -------------------------------------------------------------
 
 # define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
@@ -131,6 +135,7 @@ typedef struct s_cmds
 	int				fd_out;			// Defaults to STDOUTFILENO
 	int				apend;			// If >> is present, this will be set to 1, else 0
 	char			*file_in;		// Name of infile if < is present, else NULL
+	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
 	struct s_cmds	*next;
@@ -173,6 +178,7 @@ void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_echo(t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
+void		add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 void		mini_cd(t_shell *shl, t_cmds *cmd);
@@ -246,6 +252,7 @@ void		ft_print_lst(t_lst_str *root);
 /* ============================= src_parse/... ============================= */
 
 int			parser(t_shell *shell);
+int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
@@ -260,6 +267,9 @@ bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 /* -------------------------------- Heredoc -------------------------------- */
 
 int 		heredoc(t_shell *shell);
+int			heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
+void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
+				int flag_expand_vars);
 
 /* -------------------------- Cmds list functions -------------------------- */
 
@@ -269,14 +279,13 @@ void 		lst_cmds_freelst(t_shell *shell);
 
 /* -------------------------- Remove closed quotes -------------------------- */
 
-void		remove_args_closed_quotes(t_shell *shell, t_cmds *cmd_node);
 void		remove_closed_quotes(t_shell *shell, char **str);
 size_t		count_closed_quotes(char *str);
 
 /* --------------------------- Variable expansion --------------------------- */
 
-void 		var_expand_args(t_shell *shell, t_cmds *cmd_node);
 void 		var_expansion(t_shell *shell, char **str);
+void		expand_homedir_special_char(t_shell *shell, char **str);
 
 /* ------------------------------- Pipe Setup ------------------------------- */
 
@@ -297,7 +306,7 @@ bool 		is_special_param(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
-int			append_to_str(char **str, char *append);
+int			append_to_str(char **str, char *append, int append_len);
 
 /* ----------------------------- Test functions ----------------------------- */
 
@@ -307,6 +316,7 @@ void 		test_print_cmdlst(t_shell *shell, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
+void 		test_print_envariables(t_shell *shell);
 
 /* ======================== End Function Prototypes ======================== */
 

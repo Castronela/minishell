@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lst_cmds_fns.c                                     :+:      :+:    :+:   */
+/*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/27 10:34:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/31 14:53:50 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void	lst_cmds_freelst(t_shell *shell);
+void	reset_cmd_vars(t_shell *shell, int free_before);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -32,6 +33,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd->fd_out = STDOUT_FILENO;
 	new_cmd->apend = 0;
 	new_cmd->file_in = NULL;
+	new_cmd->toggle_heredoc = 0;
 	new_cmd->file_out = NULL;
 	new_cmd->ctl_operator = NULL;
 	new_cmd->next = NULL;
@@ -53,15 +55,12 @@ void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode)
 	}
 }
 
-/*
-
-!!! Segmentation fault being encountered repeatedly while using ft_free2d
-*/
 void	lst_cmds_freelst(t_shell *shell)
 {
-	t_cmds *cmd_node = shell->cmds_lst;
-	t_cmds *cmd_node_free;
+	t_cmds	*cmd_node;
+	t_cmds	*cmd_node_free;
 
+	cmd_node = shell->cmds_lst;
 	while (cmd_node)
 	{
 		if (cmd_node->bin_path)
@@ -80,4 +79,26 @@ void	lst_cmds_freelst(t_shell *shell)
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);
 	}
+}
+
+/*
+Nullifies all command variables
+	- if 'free_before' > 0 then frees command variables
+	before nullifying them
+*/
+void	reset_cmd_vars(t_shell *shell, int free_before)
+{
+	if (free_before)
+	{
+		if (shell->pid)
+			free(shell->pid);
+		if (shell->cmdline)
+			free(shell->cmdline);
+		if (shell->cmds_lst)
+			lst_cmds_freelst(shell);
+	}
+	shell->pid = NULL;
+	shell->cmdline = NULL;
+	shell->cmds_lst = NULL;
+	shell->open_qt = 0;
 }

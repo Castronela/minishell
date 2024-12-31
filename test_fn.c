@@ -9,6 +9,11 @@ void test_new_tokenizer(t_shell *shl, char **envp);
 void test_var_exp(char **envp);
 void test_remove_quotes(void);
 
+void test_print_envariables(t_shell *shell)
+{
+	for(t_lst_str *node = shell->variables; node; node = node->next)
+		printf("%s=%s\n", node->key, node->val);	
+}
 
 void test_print_cmdlst(t_shell *shell, int spacing)
 {
@@ -32,6 +37,7 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		}
 		printf("\n\n%*s%d", spacing, "fd_in : ", cmd_node->fd_in);
 		printf("\n%*s%s", spacing, "file_in : ", cmd_node->file_in ? cmd_node->file_in : "");
+		printf("\n%*s%d", spacing, "toggle heredoc : ", cmd_node->toggle_heredoc);
 		printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
 		printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
 		printf("\n%*s%d", spacing, "append : ", cmd_node->apend);

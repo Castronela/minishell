@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/23 20:25:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2024/12/26 20:22:19 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void	init_pipes(t_shell *shell);
 
 /*
 Initializes file desccriptors for piped commands
-    - initializes fd_out of left command with the writing pipe
-    - initializes fd_in of right command with the reading pipe
+	- initializes fd_out of left command with the writing pipe
+	- initializes fd_in of right command with the reading pipe
 */
 void	init_pipes(t_shell *shell)
 {
