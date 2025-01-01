@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/27 15:53:05 by david            ###   ########.fr       */
+/*   Updated: 2025/01/01 21:17:52 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,9 @@
 // ---- Control Operators ----------------------------------------------------------------
 
 # define CT_PIPE "|"			// pipe control
+# define CT_SMICOL ";"
 
-# define CONTROL_OPERATORS CT_PIPE
+# define CONTROL_OPERATORS CT_PIPE, CT_SMICOL
 
 // ---- Special Parameters ---------------------------------------------------------------
 
