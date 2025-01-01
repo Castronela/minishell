@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2024/12/31 14:55:19 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/01 15:14:46 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ SRC_PARSE	= 	parser_1.c parser_2.c \
 				utils_1.c utils_2.c
 SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
 				built_ins.c bi_cd.c bi_echo.c bi_env.c bi_exit.c bi_export.c bi_pwd.c bi_unset.c \
+				environmentalists.c strings.c \
 				tests.c
 # SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c test_main.c \
 # 				built_ins.c
@@ -77,10 +78,10 @@ LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library f
 
 # Readline for Linux
 READLINE		=	libreadline.a
-# READLINE_DIR	=	/usr/local/lib
-# READLINE_HED	=	/usr/local/include
-READLINE_DIR	=	/opt/homebrew/opt/readline/lib
-READLINE_HED	=	/opt/homebrew/opt/readline/include
+READLINE_DIR	=	/usr/local/lib
+READLINE_HED	=	/usr/local/include
+# READLINE_DIR	=	/opt/homebrew/opt/readline/lib
+# READLINE_HED	=	/opt/homebrew/opt/readline/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
 VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \

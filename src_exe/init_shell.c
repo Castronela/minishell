@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/31 14:13:07 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/01 18:35:03 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Initializes the elements of the shell struct "t_shell"
   - Frees all malloc's and exits the program if any of the above steps fail
 
 !!! Need to look into update_shlvl for leaks and other potential problems
+-->>	Potentially totally fixed. Haven't checked with valgrind yet.
 */
 void	init_shell(t_shell *shl, char **envp)
 {
@@ -41,7 +42,7 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->prompt = NULL;
 	copy_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
-	update_shlvl(shl);				// ommited for valgrind check
+	update_shlvl(shl);
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");

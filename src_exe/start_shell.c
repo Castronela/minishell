@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 19:54:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/01 19:05:43 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	mini_execute(t_shell *shl)
 			exec_built_in(shl, cmd);
 		else
 		{
+			update_env_var(shl, cmd, "_", NULL);
 			exec_external(shl, cmd, p_index);
 			// printf("I am here\n");
 			p_index++;
@@ -89,17 +90,11 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 	ec = 0;
 	if ((*(shl->pid + p_index) = fork()) < 0)
 		exit_early(shl, NULL, ERRMSG_FORK);
-	// printf("Now, I am here\n");
 	if (shl->pid[p_index] == 0)
 	{
-		// if (open_file_fds(cmd) < 0)
-		// 	exit_early(shl, NULL, ERRMSG_OPEN);
-		// printf("No no, I am here now\n");
 		if (set_redirections(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_DUP2);
-		// printf("No no no, I am here now\n");
 		execve(cmd->bin_path, cmd->args, shl->environ);
-		// printf("Now, I am actually here\n");
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
 	close_fds(cmd);

@@ -6,36 +6,52 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/31 14:16:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/01 19:48:06 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void	update_env_var(t_shell *shl, t_cmds *cmd);
+void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
 void	update_cwd(t_shell *shl, char *new_cwd);
 void	store_variable(t_shell *shl, char *str);
-void	add_to_environment(t_shell *shl, t_cmds *cmd);
 
 /*
-Function to update value of $_ variable in all places
-  - shl->environ
-  - shl->variables
+Function to update a variable in both shl->environ and shl->variables
+  - cmd is the command that invokes the fn call
+  -	var_name is the name of the variable to update
+  -	'val' is the value of the variable to update to; if it is set to NULL, it is
+  	the set to the last argument of the previous command. This option is for
+	generalizing the fn and making it more able to taylor to each calling fn.
+  -	If there is a custom value that the variables list needs to be updated to,
+	then it should be specified with this argument 'val.
+  -	Setting the 'val' argument only affects shl->variables. The value of the
+	variable in shl->environ will still be updated to the cmd->bin_path.
+  -	This function is made to be invoked upon the execution of every cmd in the
+	case of updating $_ variable.
 */
-void	update_env_var(t_shell *shl, t_cmds *cmd)
+void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 {
-	char		**env;
+	char		*tmp;
+	char		*var_val;
 	t_lst_str	*env_lst[2];
 
-	env = find_string_ptr(shl->environ, "_=", 2);
-	if (update_var_str(env, "_=", cmd->bin_path) == -1)
+	tmp = ft_strjoin(var_name, "=");
+	if (!tmp)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-
-	env_lst[0] = ft_find_node(shl->variables, "_", 0, 1);
-	printf("Found node:\n");
-	printf("	env_lst[0]->key:	%s\n", env_lst[0]->key);
-	printf("	env_lst[0]->val:	%s\n", env_lst[0]->val);
-	env_lst[1] = ft_lst_new("_", cmd->args[count_pointers(cmd->args) - 1]);
+	if (update_var_str(find_string_ptr(shl, tmp, ft_strlen(tmp)), tmp,
+			cmd->bin_path) == -1)
+	{
+		free(tmp);
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	}
+	free(tmp);
+	if (val == NULL)
+		var_val = cmd->args[count_pointers(cmd->args) - 1];
+	else
+		var_val = val;
+	env_lst[0] = ft_find_node(shl->variables, var_name, 0, 1);
+	env_lst[1] = ft_lst_new(var_name, var_val);
 	ft_replace_node(shl, &(env_lst[0]), env_lst[1]);
 }
 
@@ -79,24 +95,10 @@ void	store_variable(t_shell *shl, char *str)
 
 	split = ft_split(str, '=');
 	if (!split)
-		exit_early(shl, NULL, "Could not split new variable string");
+		exit_early(shl, NULL, ERRMSG_MALLOC);
 	new_var =ft_lst_new(*split, *(split + 1));
 	if (!new_var)
 		exit_early(shl, split, "Could not malloc new variable list node");
 	ft_lst_addback(&shl->variables, new_var);
 	ft_free2d(split);
-}
-
-/*
-Origin file: bi_export.c
-*/
-void	add_to_environment(t_shell *shl, t_cmds *cmd)
-{
-	size_t		dp_len;
-	
-	dp_len = count_pointers(shl->environ);
-	shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
-			sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
-	shl->environ[dp_len] = *(cmd->args + 1);
-	shl->environ[dp_len + 1] = NULL;
 }
