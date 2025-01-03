@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:14 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:03:17 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 18:26:20 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ void	mini_env(t_shell *shl, t_cmds *cmd)
 {
 	int	i;
 
-	i = -1;
-	while (shl->environ[++i])
-		printf("Before:		%s\n", shl->environ[i]);
-	printf("\n\n");
-	
+	// i = -1;
+	// while (shl->environ[++i])
+	// 	printf("Before:		%s\n", shl->environ[i]);
+	// printf("\n\n");
+
 	update_env_var(shl, cmd, UNDERSCORE, NULL);
 
 	i = -1;

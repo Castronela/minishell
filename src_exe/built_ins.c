@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 19:32:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:38:02 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ int	is_built_in(char *cmd)
 
 void	exec_built_in(t_shell *shl, t_cmds *cmd)
 {
+	if (set_redirections(shl, cmd) < 0)
+		exit_early(shl, NULL, ERRMSG_DUP2);
 	if (compare_strings(*cmd->args, "echo", 1))
 		mini_echo(cmd);
 	else if (compare_strings(*cmd->args, "cd", 1))
@@ -63,4 +65,7 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 		mini_env(shl, cmd);
 	else if (compare_strings(*cmd->args, "exit", 1))
 		mini_exit(shl);
+	ft_close_cmd_pipe(shl, cmd, 0);
+	ft_close_cmd_pipe(shl, cmd, 1);
+	restore_std_fds(shl);
 }

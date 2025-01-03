@@ -6,12 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:58:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:28:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
 
 // # include "../lib/Libft/include/libft.h"
 # include "../lib/includes/libft.h"
@@ -105,6 +106,7 @@
 # define ERRMSG_READ "Error read"
 # define ERRMSG_WRITE "Error write"
 # define ERRMSG_OPEN "Error open"
+# define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
 # define ERRMSG_DUP2 "Error dupe2"
@@ -153,11 +155,13 @@ typedef struct s_cmds
 	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
+	int				fd_cls;
 	struct s_cmds	*next;
 }	t_cmds;
 
 typedef struct s_shell
 {
+	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
@@ -175,6 +179,15 @@ typedef struct s_shell
 }	t_shell;
 
 
+
+int			ft_close(int fd);
+int 		ft_close2(int fd);
+int 		ft_pipe(int pipefd[2]);
+pid_t 		ft_fork();
+void 		test_printf_fds(void);
+void 		test_std_fds(t_shell *shl);
+
+
 //--------------------------------------------------------------------------------------//
 //                                 Function Prototypes                                  //
 //--------------------------------------------------------------------------------------//
@@ -182,9 +195,6 @@ typedef struct s_shell
 int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
-/* ----------------------------- start_shell.c ----------------------------- */
-
-void		start_shell(t_shell *shl);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -234,12 +244,13 @@ void		create_pids(t_shell *shl);
 void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
+void		restore_std_fds(t_shell *shl);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
 int			open_file_fds(t_cmds *cmd);
-int			set_redirections(t_cmds *cmd);
-void		close_fds(t_cmds *cmd);
+int			set_redirections(t_shell *shl, t_cmds *cmd);
+void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 
 /* --------------------------- environmentalists.c --------------------------- */
 
@@ -283,7 +294,7 @@ bool		is_redir_target_valid(t_shell *shell, char *redir_target);
 
 int 		heredoc(t_shell *shell);
 int			heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
-void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
+void		heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 				int flag_expand_vars);
 
 /* -------------------------- Cmds list functions -------------------------- */
@@ -305,6 +316,7 @@ void		expand_homedir_special_char(t_shell *shell, char **str);
 /* ------------------------------- Pipe Setup ------------------------------- */
 
 void 		init_pipes(t_shell *shell);
+void		init_cmd_pipe(t_shell *shell, t_cmds *cmd);
 
 /* -------------------------------- Signals -------------------------------- */
 
@@ -328,12 +340,19 @@ int			append_to_str(char **str, char *append, int append_len);
 void		test_by_print(t_shell *shl);
 
 void 		test_print_cmdlst(t_shell *shell, int spacing);
+void		 test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
 void 		test_print_envariables(t_shell *shell);
 
 /* ======================== End Function Prototypes ======================== */
+
+void test_printf_fds(void);
+pid_t ft_fork();
+int ft_pipe(int pipefd[2]);
+int ft_close(int fd);
+
 
 #endif
 

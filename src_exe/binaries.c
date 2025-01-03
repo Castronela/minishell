@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:45:06 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 15:46:50 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	get_binaries(t_shell *shl)
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
-		cmd->bin_path = get_binary_path(shl, cmd);
+		if (cmd->args)
+			cmd->bin_path = get_binary_path(shl, cmd);
 		if (!cmd->bin_path)
 			exit_early(shl, NULL, "Path malloc failed");
 		if (remove_path(cmd) == -1)
@@ -51,7 +52,7 @@ char	*get_binary_path(t_shell *shl, t_cmds *cmd)
 	paths = shl->env_paths;
 	if (!(tmp[0] = ft_strdup(*(cmd->args))))
 			return (perror("ft_strdup-malloc failed:"), NULL);
-	if (access(tmp[0], F_OK) == 0)
+	if ((access(tmp[0], F_OK) == 0 && tmp[0][0] == '/'))
 		return (tmp[0]);
 	while (paths)
 	{

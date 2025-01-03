@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:24:33 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/31 14:54:17 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 18:52:54 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
 		else if (append_to_str(&heredoc_node->val, input, -1))
 		{
 			free(input);
-			close(hd_pipe[0]);
+			ft_close(hd_pipe[0]);
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 		}
 		free(input);
 	}
 	if (input)
 		free(input);
-	close(hd_pipe[0]);
+	ft_close(hd_pipe[0]);
 	return (0);
 }
 
@@ -63,15 +63,15 @@ static int	heredoc_prep_prompt(t_shell *shell, int (*hd_pipe)[2])
 	{
 		signal(SIGINT, SIG_IGN);
 		wait4(pid, &exit_code, 0, NULL);
-		close((*hd_pipe)[1]);
+		ft_close((*hd_pipe)[1]);
 		if (WEXITSTATUS(exit_code))
 		{
-			close((*hd_pipe)[0]);
+			ft_close((*hd_pipe)[0]);
 			exit_early(shell, NULL, NULL);
 		}
 		if (WIFSIGNALED(exit_code))
 		{
-			close((*hd_pipe)[0]);
+			ft_close((*hd_pipe)[0]);
 			return (1);
 		}
 	}
@@ -94,7 +94,7 @@ static void	heredoc_prompt(t_shell *shell, int fd_pipe[])
 	reset_cmd_vars(shell, 1);
 	signal(SIGINT, SIG_DFL);
 	exit_status = 0;
-	close(fd_pipe[0]);
+	ft_close(fd_pipe[0]);
 	input = readline(PS2);
 	if (input)
 	{
@@ -106,7 +106,7 @@ static void	heredoc_prompt(t_shell *shell, int fd_pipe[])
 		}
 		free(input);
 	}
-	close(fd_pipe[1]);
+	ft_close(fd_pipe[1]);
 	exit(exit_status);
 }
 
@@ -161,7 +161,7 @@ static char	*heredoc_read_pipe(t_shell *shell, int fd_read)
 		if (append_to_str(&final_str, input, -1))
 			break ;
 	}
-	close(fd_read);
+	ft_close(fd_read);
 	if (bytes_read < 0)
 		exit_early(shell, NULL, ERRMSG_READ);
 	if (!final_str && bytes_read)
