@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:22:19 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/03 20:47:31 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ void	init_pipes(t_shell *shell)
 			if (pipe(pipe_fds) < 0)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
+			cmd_node->close_fd[0] = pipe_fds[0];
+			
 			cmd_node->next->fd_in = pipe_fds[0];
+			cmd_node->next->close_fd[1] = pipe_fds[1];
 		}
 		cmd_node = cmd_node->next;
 	}

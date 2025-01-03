@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/31 14:53:50 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 20:53:38 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd->file_out = NULL;
 	new_cmd->ctl_operator = NULL;
 	new_cmd->next = NULL;
+	new_cmd->close_fd[0] = -1;
+	new_cmd->close_fd[1] = -1;
 	return (new_cmd);
 }
 

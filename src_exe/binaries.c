@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:45:06 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 15:48:34 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*get_binary_path(t_shell *shl, t_cmds *cmd)
 	paths = shl->env_paths;
 	if (!(tmp[0] = ft_strdup(*(cmd->args))))
 			return (perror("ft_strdup-malloc failed:"), NULL);
-	if (access(tmp[0], F_OK) == 0)
+	if ((access(tmp[0], F_OK) == 0 && tmp[0][0] == '/'))
 		return (tmp[0]);
 	while (paths)
 	{

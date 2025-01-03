@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:58:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 21:03:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@
 # define ERRMSG_READ "Error read"
 # define ERRMSG_WRITE "Error write"
 # define ERRMSG_OPEN "Error open"
+# define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
 # define ERRMSG_DUP2 "Error dupe2"
@@ -153,11 +154,13 @@ typedef struct s_cmds
 	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
+	int				close_fd[2];
 	struct s_cmds	*next;
 }	t_cmds;
 
 typedef struct s_shell
 {
+	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
@@ -182,9 +185,6 @@ typedef struct s_shell
 int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
-/* ----------------------------- start_shell.c ----------------------------- */
-
-void		start_shell(t_shell *shl);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -234,12 +234,13 @@ void		create_pids(t_shell *shl);
 void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
+void		restore_stdfds(t_shell *shl);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
 int			open_file_fds(t_cmds *cmd);
-int			set_redirections(t_cmds *cmd);
-void		close_fds(t_cmds *cmd);
+int			set_redirections(t_shell *shl, t_cmds *cmd);
+int			close_fds(t_cmds *cmd);
 
 /* --------------------------- environmentalists.c --------------------------- */
 

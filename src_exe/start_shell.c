@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:03:00 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 21:05:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
 static void	set_prev_exitcode(t_shell *shell);
+void		restore_stdfds(t_shell *shl);
 
 // static void	print_env(t_shell *shl);
 // static void	print_shlvl(t_shell *shl);
@@ -60,25 +61,29 @@ void	mini_execute(t_shell *shl)
 	int		p_index;
 	t_cmds	*cmd;
 
-	// printf("I am here\n");
 	p_index = 0;
 	create_pids(shl);
 	cmd = shl->cmds_lst;
-	// printf("I am here\n");
 	while (cmd)
 	{
 		if (open_file_fds(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_OPEN);
-		// printf("I am here\n");
 		if (cmd->exc_index == 0)
+		{
+			// if (set_redirections(shl, cmd) < 0)
+			// 	exit_early(shl, NULL, ERRMSG_DUP2);
+			update_env_var(shl, cmd, UNDERSCORE, NULL);
 			exec_built_in(shl, cmd);
+			// close_fds(cmd);
+		}
 		else
 		{
 			update_env_var(shl, cmd, UNDERSCORE, NULL);
-			exec_external(shl, cmd, p_index);
-			// printf("I am here\n");
+			exec_external(shl, cmd, p_index);	
 			p_index++;
+			// close_fds(cmd);
 		}
+		close_fds(cmd);
 		cmd = cmd->next;
 	}
 }
@@ -92,16 +97,29 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		exit_early(shl, NULL, ERRMSG_FORK);
 	if (shl->pid[p_index] == 0)
 	{
-		if (set_redirections(cmd) < 0)
+		if (cmd->close_fd[0] != -1)
+		{
+			if (close(cmd->close_fd[0]))
+				perror("1");
+		}
+		if (cmd->close_fd[1] != -1)
+		{
+			if (close(cmd->close_fd[1]))
+				perror("2");
+		}
+		if (set_redirections(shl, cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_DUP2);
+		close_fds(cmd);
 		execve(cmd->bin_path, cmd->args, shl->environ);
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
-	close_fds(cmd);
+	if (close_fds(cmd) == -1)
+		perror("-555");
 	if ((waitpid(*(shl->pid + p_index), &ec, 0)) == -1)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFEXITED(ec))
 		shl->exit_code = WEXITSTATUS(ec);
+	// close_fds(cmd);
 }
 
 /*/
@@ -174,4 +192,15 @@ static void set_prev_exitcode(t_shell *shell)
 {
 	shell->exit_code_prev = shell->exit_code;
 	shell->exit_code = 0;	
+}
+
+/*
+Function to restore the STDIN_FILENO and STDOUT_FILENO to point to the terminal
+*/
+void	restore_stdfds(t_shell *shl)
+{
+	if ((dup2(STDIN_FILENO, shl->stdio[0])) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+	if ((dup2(STDOUT_FILENO, shl->stdio[1])) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
 }
