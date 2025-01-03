@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 16:39:15 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 01:51:00 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 int		compare_strings(const char *str, const char *field, int exact);
 char	**find_string_ptr(t_shell *shl, char *str, int	n);
-int		update_var_str(char **var_ptr_addr, char *var_name, char *new_val);
+int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
+size_t	var_name_length(char *str);
 
 /*
 The function is meant to compare two strings, and return 1 if they are same;
@@ -64,7 +65,7 @@ char	**find_string_ptr(t_shell *shl, char *str, int	n)
 	while (shl->environ[++i])
 	{
 		if (ft_strncmp(shl->environ[i], str, n) == 0)
-			return (&shl->environ[i]);
+			return (&(shl->environ[i]));
 	}
 	return (NULL);
 }
@@ -88,9 +89,9 @@ int	count_pointers(char **dp)
 }
 
 /*
-Funciton to replace the last char * in the shl->environ list with new last-arg
+Funciton to replace the last char * in the shl->environ with new last-arg
 */
-int	update_var_str(char **var_ptr_addr, char *var_name, char *new_val)
+int	update_environ(char **var_ptr_addr, char *var_name, char *new_val)
 {
 	char	*new;
 	char	*tmp;
@@ -105,4 +106,23 @@ int	update_var_str(char **var_ptr_addr, char *var_name, char *new_val)
 	free(*var_ptr_addr);
 	*var_ptr_addr = new;
 	return (0);
+}
+
+// Function to get the length of the variable name upto '=' or '\0', whichever
+// occurs first, including the '=' character if it occurs within 'str'.
+size_t	var_name_length(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	while (*str && *str != '=')
+	{
+		i++;
+		str++;
+	}
+	if (*str == '=')
+		i++;
+	return (i);
 }

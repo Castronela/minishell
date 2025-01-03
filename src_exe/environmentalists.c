@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 19:48:06 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 02:12:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 	tmp = ft_strjoin(var_name, "=");
 	if (!tmp)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	if (update_var_str(find_string_ptr(shl, tmp, ft_strlen(tmp)), tmp,
+	if (update_environ(find_string_ptr(shl, tmp, ft_strlen(tmp)), tmp,
 			cmd->bin_path) == -1)
 	{
 		free(tmp);
@@ -90,15 +90,29 @@ Function to add a new varaible to the minishell memory but not to shl->env
 */
 void	store_variable(t_shell *shl, char *str)
 {
-	t_lst_str	*new_var;
+	t_lst_str	*var;
 	char		**split;
+	size_t		var_len;
 
+	var_len = var_name_length(str);
 	split = ft_split(str, '=');
 	if (!split)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	new_var =ft_lst_new(*split, *(split + 1));
-	if (!new_var)
-		exit_early(shl, split, "Could not malloc new variable list node");
-	ft_lst_addback(&shl->variables, new_var);
+	var = ft_find_node(shl->variables, *split, 0, 1);
+	if (var == NULL)
+	{
+		var = ft_lst_new(*split, (str + var_len));
+		if (!var)
+			exit_early(shl, split, "Could not malloc new variable list node");
+		ft_lst_addback(&shl->variables, var);
+	}
+	else
+	{
+		free(var->val);
+		var->val = ft_strdup((str + var_len));
+		if (!var->val)
+			exit_early(shl, split, ERRMSG_MALLOC);
+	}
 	ft_free2d(split);
 }
+

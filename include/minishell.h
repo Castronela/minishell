@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 19:33:07 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 01:58:25 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@
 # define DQ '\"'
 
 # define PS2 ">"
+# define UNDERSCORE "_"
 
 // ---- Redirection Operators ------------------------------------------------------------
 
@@ -76,6 +77,20 @@
 # define POUND "#"
 
 # define SPECIAL_OPERATORS DOLLAR, QUESTION_MARK, POUND
+
+// ---- Reserved Bash Characters ---------------------------------------------------------
+
+# define BT '`'
+# define BN '!'
+# define DL '$'
+# define AD '&'
+# define SC ';'
+# define PO '('
+# define PC ')'
+# define BS '\\'
+# define PP '|'
+
+# define RESERVED_BASH_CHARS BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP
 
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
@@ -231,14 +246,15 @@ void		close_fds(t_cmds *cmd);
 void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
 void		update_cwd(t_shell *shl, char *new_cwd);
 void		store_variable(t_shell *shl, char *str);
-void		add_to_environ(t_shell *shl, t_cmds *cmd);
+void		add_to_environ(t_shell *shl, char *var);
 
 /* -------------------------------- stirngs.c -------------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
 char		**find_string_ptr(t_shell *shl, char *str, int	n);
-int			update_var_str(char **var_ptr_addr, char *var_name, char *new_val);
+int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int			count_pointers(char **dp);
+size_t		var_name_length(char *str);
 
 /* ------------------------------ utilities.c ------------------------------ */
 

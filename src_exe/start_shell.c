@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 19:05:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 01:03:00 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void	start_shell(t_shell *shl)
 		init_pipes(shl);
 		get_binaries(shl);
 		// test_by_print(shl);
+        test_print_cmdlst(shl, 30);
 		mini_execute(shl);
-        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
 }
@@ -74,7 +74,7 @@ void	mini_execute(t_shell *shl)
 			exec_built_in(shl, cmd);
 		else
 		{
-			update_env_var(shl, cmd, "_", NULL);
+			update_env_var(shl, cmd, UNDERSCORE, NULL);
 			exec_external(shl, cmd, p_index);
 			// printf("I am here\n");
 			p_index++;
