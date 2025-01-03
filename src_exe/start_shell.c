@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:03:00 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:46:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
 static void	set_prev_exitcode(t_shell *shell);
+void		restore_std_fds(t_shell *shl);
 
 // static void	print_env(t_shell *shl);
 // static void	print_shlvl(t_shell *shl);
@@ -32,6 +33,7 @@ void	start_shell(t_shell *shl)
 		set_signal(shl);
 		set_prev_exitcode(shl);
 		shl->cmdline = readline(shl->prompt);
+		// shl->cmdline = ft_strdup("ls | grep s | grep src");
 		if (!shl->cmdline)
 			break ;
 		// if (!(ft_strncmp(shl->cmdline, "exit", 4)))
@@ -43,11 +45,13 @@ void	start_shell(t_shell *shl)
 			continue ;
 		}
 		index_cmds(shl);
-		init_pipes(shl);
+		// init_pipes(shl);
 		get_binaries(shl);
 		// test_by_print(shl);
-        test_print_cmdlst(shl, 30);
+		// test_std_fds(shl);
 		mini_execute(shl);
+		test_printf_fds();
+        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
 }
@@ -60,25 +64,27 @@ void	mini_execute(t_shell *shl)
 	int		p_index;
 	t_cmds	*cmd;
 
-	// printf("I am here\n");
 	p_index = 0;
 	create_pids(shl);
 	cmd = shl->cmds_lst;
-	// printf("I am here\n");
 	while (cmd)
 	{
+		init_cmd_pipe(shl, cmd);
+		// test_print_1cmd(shl, cmd, 30);
 		if (open_file_fds(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_OPEN);
-		// printf("I am here\n");
-		if (cmd->exc_index == 0)
+		if (cmd->args && cmd->exc_index == 0)
+		{
+			update_env_var(shl, cmd, UNDERSCORE, NULL);
 			exec_built_in(shl, cmd);
-		else
+		}
+		else if (cmd->args)
 		{
 			update_env_var(shl, cmd, UNDERSCORE, NULL);
 			exec_external(shl, cmd, p_index);
-			// printf("I am here\n");
 			p_index++;
 		}
+		// ft_close_cmd_pipe(shl, cmd, 2);
 		cmd = cmd->next;
 	}
 }
@@ -88,20 +94,35 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 	int	ec;
 
 	ec = 0;
-	if ((*(shl->pid + p_index) = fork()) < 0)
+	if ((*(shl->pid + p_index) = ft_fork()) < 0)
 		exit_early(shl, NULL, ERRMSG_FORK);
+	if (shl->pid[p_index] != 0)
+		ft_close_cmd_pipe(shl, cmd, 0);
 	if (shl->pid[p_index] == 0)
 	{
-		if (set_redirections(cmd) < 0)
+		ft_close_cmd_pipe(shl, cmd, 2);
+		if (set_redirections(shl, cmd) < 0)
+		{
+			// printf("cmd: %s\n", *cmd->args);
 			exit_early(shl, NULL, ERRMSG_DUP2);
+		}
+		ft_close_cmd_pipe(shl, cmd, 0);
+		ft_close_cmd_pipe(shl, cmd, 1);
+		// printf("This is from the child:\n");
+		// test_printf_fds();
 		execve(cmd->bin_path, cmd->args, shl->environ);
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
-	close_fds(cmd);
+	printf("\nAfter fork: main");
+	test_printf_fds();
+	ft_close_cmd_pipe(shl, cmd, 0);
+	ft_close_cmd_pipe(shl, cmd, 1);
 	if ((waitpid(*(shl->pid + p_index), &ec, 0)) == -1)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFEXITED(ec))
 		shl->exit_code = WEXITSTATUS(ec);
+	printf("\nBefore exit: main");
+	test_printf_fds();
 }
 
 /*/
@@ -120,7 +141,7 @@ void	index_cmds(t_shell *shl)
 	while (cmds)
 	{
 		cmds->cmd_index = total++;
-		if (!is_built_in(*(cmds->args)))
+		if (cmds->args && !is_built_in(*(cmds->args)))
 			cmds->exc_index = ext++;
 		cmds = cmds->next;
 	}
@@ -174,4 +195,15 @@ static void set_prev_exitcode(t_shell *shell)
 {
 	shell->exit_code_prev = shell->exit_code;
 	shell->exit_code = 0;	
+}
+
+/*
+Function to restore the STDIN_FILENO and STDOUT_FILENO to point to the terminal
+*/
+void	restore_std_fds(t_shell *shl)
+{
+	if ((dup2(shl->stdio[0], STDIN_FILENO)) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+	if ((dup2(shl->stdio[1], STDOUT_FILENO)) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
 }

@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/02 23:26:11 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/04 15:31:05 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,10 +79,10 @@ LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library f
 
 # Readline for Linux
 READLINE		=	libreadline.a
-# READLINE_DIR	=	/usr/local/lib
-# READLINE_HED	=	/usr/local/include
-READLINE_DIR	=	/opt/homebrew/opt/readline/lib
-READLINE_HED	=	/opt/homebrew/opt/readline/include
+READLINE_DIR	=	/usr/local/lib
+READLINE_HED	=	/usr/local/include
+# READLINE_DIR	=	/opt/homebrew/opt/readline/lib
+# READLINE_HED	=	/opt/homebrew/opt/readline/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
 VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \

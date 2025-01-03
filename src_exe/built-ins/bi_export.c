@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 02:25:05 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/03 18:29:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,12 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 		checks[2] = 0;
 		checks[0] = is_valid_name(*arguments, &i);
 		checks[1] = is_valid_val(*arguments, &i);
+		if (checks[0] < 0)
+		{
+			write(2, "minishell: export: `", ft_strlen("minishell: export: `"));
+			write(2, *arguments, ft_strlen(*arguments));
+			write(2, "': not a valid identifier\n", ft_strlen("': not a valid identifier\n"));
+		}
 		if (checks[0] == 1 && checks[1] == 1)
 		{
 			checks[2] = 1;
@@ -57,7 +63,6 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 			upd_str = get_var_component(shl, *arguments, 0);
 	}
 	update_env_var(shl, cmd, UNDERSCORE, upd_str);
-	// printf("upd_str:	%s\n", upd_str);
 	if (checks[2] == 1)
 		free(upd_str);
 	return (0);

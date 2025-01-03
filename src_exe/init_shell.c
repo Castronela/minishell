@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 18:35:03 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 15:30:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ Initializes the elements of the shell struct "t_shell"
 */
 void	init_shell(t_shell *shl, char **envp)
 {
+	shl->stdio[0] = dup(STDIN_FILENO);
+	shl->stdio[1] = dup(STDOUT_FILENO);
 	shl->environ = NULL;
 	shl->variables = NULL;
 	shl->env_paths = NULL;
@@ -172,17 +174,12 @@ void	update_shlvl(t_shell *shl)
 	free(shl->environ[i]);
 	shl->environ[i] = shlvl;
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
-	printf("var_node[0]->key (before):	%s\n", var_node[0]->key);
-	printf("var_node[0]->val (before):	%s\n", var_node[0]->val);
 	var_node[1] = ft_lst_new("SHLVL", ft_itoa(shl->shlvl));
 	if (!var_node[1])
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	printf("var_node[1]->key (new):		%s\n", var_node[1]->key);
-	printf("var_node[1]->val (new):		%s\n", var_node[1]->val);
 	ft_replace_node(shl, &(var_node[0]), var_node[1]);
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
-	printf("var_node[0]->key (after):	%s\n", var_node[0]->key);
-	printf("var_node[0]->val (after):	%s\n", var_node[0]->val);
+	printf("%s:	%s\n", var_node[0]->key, var_node[0]->val);
 }
 
 /*

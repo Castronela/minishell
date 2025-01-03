@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/31 14:54:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 18:53:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,18 +52,18 @@ void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 {
 	if (pipe_fd)
 	{
-		if (pipe(*pipe_fd) < 0)
+		if (ft_pipe(*pipe_fd) < 0)
 			exit_early(shell, NULL, ERRMSG_PIPE);
 	}
 	if (pid)
 	{
-		*pid = fork();
+		*pid = ft_fork();
 		if (*pid < 0)
 		{
 			if (pipe_fd)
 			{
-				close((*pipe_fd)[0]);
-				close((*pipe_fd)[1]);
+				ft_close((*pipe_fd)[0]);
+				ft_close((*pipe_fd)[1]);
 			}
 			exit_early(shell, NULL, ERRMSG_FORK);
 		}
