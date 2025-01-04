@@ -6,13 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/03 20:47:31 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 18:53:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 void	init_pipes(t_shell *shell);
+void	init_cmd_pipe(t_shell *shell, t_cmds *cmd);
 
 /*
 Initializes file desccriptors for piped commands
@@ -30,13 +31,36 @@ void	init_pipes(t_shell *shell)
 		if (cmd_node->ctl_operator && !ft_strncmp(cmd_node->ctl_operator,
 				CT_PIPE, ft_strlen(CT_PIPE) + 1))
 		{
-			if (pipe(pipe_fds) < 0)
+			if (ft_pipe(pipe_fds) < 0)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
-			cmd_node->close_fd[0] = pipe_fds[0];
+			cmd_node->fd_cls[0] = pipe_fds[0];
 			
 			cmd_node->next->fd_in = pipe_fds[0];
-			cmd_node->next->close_fd[1] = pipe_fds[1];
+			cmd_node->next->fd_cls[1] = pipe_fds[1];
+		}
+		cmd_node = cmd_node->next;
+	}
+}
+
+void	init_cmd_pipe(t_shell *shell, t_cmds *cmd)
+{
+	t_cmds	*cmd_node;
+	int		pipe_fds[2];
+
+	cmd_node = cmd;
+	if (cmd_node)
+	{
+		if (cmd_node->ctl_operator && !ft_strncmp(cmd_node->ctl_operator,
+				CT_PIPE, ft_strlen(CT_PIPE) + 1))
+		{
+			if (ft_pipe(pipe_fds) < 0)
+				exit_early(shell, NULL, ERRMSG_PIPE);
+			cmd_node->fd_out = pipe_fds[1];
+			cmd_node->fd_cls[0] = pipe_fds[0];
+			
+			cmd_node->next->fd_in = pipe_fds[0];
+			cmd_node->next->fd_cls[1] = pipe_fds[1];
 		}
 		cmd_node = cmd_node->next;
 	}
