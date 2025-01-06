@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:59:37 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 20:27:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:41:12 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int ft_close(int fd)
 	{
 		if (fd_write[i] == fd && fd_write[i] != -1)
 		{
-			printf("closing fd: %d\n", fd);
+			// printf("closing fd: %d\n", fd);
 			fd_write[i] = -1;
 			break ;
 		}
@@ -30,7 +30,7 @@ int ft_close(int fd)
 	{
 		if (fd_read[i] == fd && fd_read[i] != -1)
 		{
-			printf("closing fd: %d\n", fd);
+			// printf("closing fd: %d\n", fd);
 			fd_read[i] = -1;
 			break ;
 		}
@@ -44,7 +44,7 @@ int ft_close2(int fd)
 	{
 		if (fd_write[i] == fd && fd_write[i] != -1)
 		{
-			printf("child closing fd: %d\n", fd);
+			// printf("child closing fd: %d\n", fd);
 			fd_write[i] = -1;
 			break ;
 		}
@@ -53,7 +53,7 @@ int ft_close2(int fd)
 	{
 		if (fd_read[i] == fd && fd_read[i] != -1)
 		{
-			printf("child closing fd: %d\n", fd);
+			// printf("child closing fd: %d\n", fd);
 			fd_read[i] = -1;
 			break ;
 		}
@@ -81,8 +81,8 @@ int ft_pipe(int pipefd[2])
 			break ;
 		}
 	}
-	printf("opened fd: %d\n", pipefd[0]);
-	printf("opened fd: %d\n", pipefd[1]);
+	// printf("opened fd: %d\n", pipefd[0]);
+	// printf("opened fd: %d\n", pipefd[1]);
 	return ret;
 }
 

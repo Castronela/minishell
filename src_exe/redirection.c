@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 20:21:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:33:33 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,28 +92,22 @@ Function to close pipes associated to a command
 */
 void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 {
-	if ((cmd->fd_in != 0 && cmd->fd_in != -1) && (mod == 0 || mod == 4))
+	if (cmd->fd_in != 0 && cmd->fd_in != -1 && mod == 0)
 	{
 		if (ft_close(cmd->fd_in) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_in = -1;
 	}
-	if ((cmd->fd_out != 1 && cmd->fd_out != -1) && (mod == 1 || mod == 4))
+	if (cmd->fd_out != 1 && cmd->fd_out != -1 && mod == 1)
 	{
 		if (ft_close(cmd->fd_out) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_out = -1;
 	}
-	if (((cmd->fd_cls[0] != 0 && cmd->fd_cls[0] != 1) && cmd->fd_cls[0] != -1 && (mod == 2 || mod == 4)))
+	if (cmd->fd_cls > 1 && mod == 2)
 	{
-		if (ft_close(cmd->fd_cls[0]) < 0)
+		if (ft_close(cmd->fd_cls) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_cls[0] = -1;
-	}
-	if (((cmd->fd_cls[1] != 0 && cmd->fd_cls[1] != 1) && cmd->fd_cls[1] != -1) && (mod == 3 || mod == 4))
-	{
-		if (ft_close(cmd->fd_cls[1]) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_cls[1] = -1;
+		cmd->fd_cls = -1;
 	}
 }

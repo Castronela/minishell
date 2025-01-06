@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/04 18:53:14 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:33:20 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,9 @@ void	init_pipes(t_shell *shell)
 			if (ft_pipe(pipe_fds) < 0)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
-			cmd_node->fd_cls[0] = pipe_fds[0];
+			cmd_node->fd_cls = pipe_fds[0];
 			
 			cmd_node->next->fd_in = pipe_fds[0];
-			cmd_node->next->fd_cls[1] = pipe_fds[1];
 		}
 		cmd_node = cmd_node->next;
 	}
@@ -57,10 +56,9 @@ void	init_cmd_pipe(t_shell *shell, t_cmds *cmd)
 			if (ft_pipe(pipe_fds) < 0)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
-			cmd_node->fd_cls[0] = pipe_fds[0];
+			cmd_node->fd_cls = pipe_fds[0];
 			
 			cmd_node->next->fd_in = pipe_fds[0];
-			cmd_node->next->fd_cls[1] = pipe_fds[1];
 		}
 		cmd_node = cmd_node->next;
 	}

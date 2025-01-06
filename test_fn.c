@@ -71,8 +71,6 @@ void test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing)
 	printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
 	printf("\n%*s%d", spacing, "append : ", cmd_node->apend);
 	printf("\n\n%*s%s\n\n", spacing, "ctl_operator : ", cmd_node->ctl_operator ? cmd_node->ctl_operator : "");
-	printf("\n\n%*s%d", spacing, "fd_cls[0] : ", cmd_node->fd_cls[0]);
-	printf("\n%*s%d", spacing, "fd_cls[1] : ", cmd_node->fd_cls[1]);
 	printf("\n");
 }
 

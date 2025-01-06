@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 20:12:31 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:28:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ typedef struct s_cmds
 	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
-	int				fd_cls[2];
+	int				fd_cls;
 	struct s_cmds	*next;
 }	t_cmds;
 

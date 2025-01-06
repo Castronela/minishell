@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 20:39:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:46:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	start_shell(t_shell *shl)
 	{
 		set_signal(shl);
 		set_prev_exitcode(shl);
-		// shl->cmdline = readline(shl->prompt);
-		shl->cmdline = ft_strdup("ls | grep s | grep src");
+		shl->cmdline = readline(shl->prompt);
+		// shl->cmdline = ft_strdup("ls | grep s | grep src");
 		if (!shl->cmdline)
 			break ;
 		// if (!(ft_strncmp(shl->cmdline, "exit", 4)))
@@ -48,9 +48,9 @@ void	start_shell(t_shell *shl)
 		// init_pipes(shl);
 		get_binaries(shl);
 		// test_by_print(shl);
-		test_std_fds(shl);
-		test_printf_fds();
+		// test_std_fds(shl);
 		mini_execute(shl);
+		test_printf_fds();
         // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
@@ -70,7 +70,7 @@ void	mini_execute(t_shell *shl)
 	while (cmd)
 	{
 		init_cmd_pipe(shl, cmd);
-		test_print_1cmd(shl, cmd, 30);
+		// test_print_1cmd(shl, cmd, 30);
 		if (open_file_fds(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_OPEN);
 		if (cmd->args && cmd->exc_index == 0)
@@ -89,34 +89,6 @@ void	mini_execute(t_shell *shl)
 	}
 }
 
-void	ft_close_cmd_pipe2(t_shell *shl, t_cmds *cmd, int mod)
-{
-	if ((cmd->fd_in != 0 && cmd->fd_in != -1) && (mod == 0 || mod == 4))
-	{
-		if (ft_close2(cmd->fd_in) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_in = -1;
-	}
-	if ((cmd->fd_out != 1 && cmd->fd_out != -1) && (mod == 1 || mod == 4))
-	{
-		if (ft_close2(cmd->fd_out) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_out = -1;
-	}
-	if (((cmd->fd_cls[0] != 0 && cmd->fd_cls[0] != 1) && cmd->fd_cls[0] != -1 && (mod == 2 || mod == 4)))
-	{
-		if (ft_close2(cmd->fd_cls[0]) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_cls[0] = -1;
-	}
-	if (((cmd->fd_cls[1] != 0 && cmd->fd_cls[1] != 1) && cmd->fd_cls[1] != -1) && (mod == 3 || mod == 4))
-	{
-		if (ft_close2(cmd->fd_cls[1]) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
-		cmd->fd_cls[1] = -1;
-	}
-}
-
 void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 {
 	int	ec;
@@ -128,33 +100,30 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		ft_close_cmd_pipe(shl, cmd, 0);
 	if (shl->pid[p_index] == 0)
 	{
-		ft_close_cmd_pipe2(shl, cmd, 2);
-		ft_close_cmd_pipe2(shl, cmd, 3);
+		ft_close_cmd_pipe(shl, cmd, 2);
 		if (set_redirections(shl, cmd) < 0)
 		{
-			printf("cmd: %s\n", *cmd->args);
+			// printf("cmd: %s\n", *cmd->args);
 			exit_early(shl, NULL, ERRMSG_DUP2);
 		}
-		ft_close_cmd_pipe2(shl, cmd, 0);
-		ft_close_cmd_pipe2(shl, cmd, 1);
-		printf("This is from the child:\n");
-		test_printf_fds();
+		ft_close_cmd_pipe(shl, cmd, 0);
+		ft_close_cmd_pipe(shl, cmd, 1);
+		// printf("This is from the child:\n");
+		// test_printf_fds();
 		execve(cmd->bin_path, cmd->args, shl->environ);
 		exit_early(shl, NULL, ERRMSG_EXECVE);
 	}
 	printf("\nAfter fork: main");
 	test_printf_fds();
+	ft_close_cmd_pipe(shl, cmd, 0);
+	ft_close_cmd_pipe(shl, cmd, 1);
 	if ((waitpid(*(shl->pid + p_index), &ec, 0)) == -1)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFEXITED(ec))
 		shl->exit_code = WEXITSTATUS(ec);
-	ft_close_cmd_pipe(shl, cmd, 3);
-	ft_close_cmd_pipe(shl, cmd, 1);
 	printf("\nBefore exit: main");
 	test_printf_fds();
 }
-
-
 
 /*/
 Function that indexes all commands as well as all external commands from 1 to n
