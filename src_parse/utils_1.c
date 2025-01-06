@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/04 16:56:46 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 18:31:47 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 bool	is_quote(const char c);
 void	skip_whitespaces(const char *str, size_t *index);
-void	skip_quoted_str(t_shell *shell, const char *str, size_t *index);
-void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
 int		append_to_str(char **str, char *append, int append_len);
+int		ft_fprintf_str(const int fd, const char *str[]);
+int		cursor_mv_back(const int fd);
 
 bool	is_quote(const char c)
 {
@@ -30,52 +30,8 @@ void	skip_whitespaces(const char *str, size_t *index)
 }
 
 /*
-Modifies 'index' to point to closing quote or null terminator,
-	if no closing quote found
-	- stores opening quote char in 'shell->open_qt',
-		to be used later for syntax check
-Note: call ONLY when 'str' at 'index' is an opening quote char
-*/
-void	skip_quoted_str(t_shell *shell, const char *str, size_t *index)
-{
-	if (!is_quote(str[*index]) && !shell->open_qt)
-		return ;
-	if (!shell->open_qt)
-		shell->open_qt = str[(*index)++];
-	while (str[*index] && str[*index] != shell->open_qt)
-		(*index)++;
-	if (str[*index] == shell->open_qt)
-		shell->open_qt = 0;
-}
-
-/*
-Initializes a pipe and/or a fork if 'pipe_fd' and 'pid' are not NULL
-*/
-void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
-{
-	if (pipe_fd)
-	{
-		if (pipe(*pipe_fd) < 0)
-			exit_early(shell, NULL, ERRMSG_PIPE);
-	}
-	if (pid)
-	{
-		*pid = fork();
-		if (*pid < 0)
-		{
-			if (pipe_fd)
-			{
-				close((*pipe_fd)[0]);
-				close((*pipe_fd)[1]);
-			}
-			exit_early(shell, NULL, ERRMSG_FORK);
-		}
-	}
-}
-
-/*
 Function to append a string to another;
-Set 'append_len' to -1 to append whole string 'append', 
+Set 'append_len' to -1 to append whole string 'append',
 otherwise will append 'append_len' number of chars;
 Return codes:
 0 - normal exit
@@ -94,5 +50,32 @@ int	append_to_str(char **str, char *append, int append_len)
 	if (!(*str))
 		return (1);
 	ft_strlcat(*str, append, total_len + 1);
+	return (0);
+}
+
+/*
+Return codes:
+0 - exit success
+1 - write function failed
+*/
+int	ft_fprintf_str(const int fd, const char *str[])
+{
+	size_t	index;
+
+	index = 0;
+	while (str[index])
+	{
+		if (ft_putstr_fd(str[index], fd) < 0)
+			return (1);
+		index++;
+	}
+	return (0);
+}
+
+int	cursor_mv_back(const int fd)
+{
+	if (write(fd, MV_CURSOR_BACK_PREV_LINE, 4) < 0 || write(fd, MV_CURSOR_RIGHT,
+			5) < 0)
+		return (1);
 	return (0);
 }

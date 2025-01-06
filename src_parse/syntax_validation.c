@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 15:58:03 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 19:48:47 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,20 @@ Returns true if all open quotes from cmdline are closed
 */
 bool	is_valid_quotation(t_shell *shell)
 {
+	char open_qt[2];
+
+	open_qt[1] = 0;
 	if (shell->open_qt)
 	{
-		printf("%s\n", ERRMSG_UNEXP_EOF);
+		open_qt[0] = shell->open_qt;
+		if (cursor_mv_back(STDERR_FILENO))
+			exit_early(shell, NULL, ERRMSG_WRITE);
+		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+				SYNTX_UNEXP_EOF_MATCH, open_qt, "'\n", NULL}))
+			exit_early(shell, NULL, ERRMSG_WRITE);
+		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+				SYNTX_UNEXP_EOF, "\n", NULL}))
+			exit_early(shell, NULL, ERRMSG_WRITE);
 		shell->exit_code = ERRCODE_SYNTAX;
 		return (false);
 	}
@@ -49,8 +60,10 @@ bool	is_valid_control_1(t_shell *shell)
 			if (!cmd_node->args && !cmd_node->file_in && !cmd_node->file_out
 				&& !cmd_node->heredocs_lst)
 			{
-				printf("%s `%s'\n", ERRMSG_UNEXP_TOKEN,
-					cmd_node->cmd_separator);
+				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+						SYNTX_UNEXP_TOKEN, cmd_node->cmd_separator, "'\n",
+						NULL}))
+					exit_early(shell, NULL, ERRMSG_WRITE);
 				shell->exit_code = ERRCODE_SYNTAX;
 				return (false);
 			}
@@ -75,7 +88,11 @@ bool	is_valid_control_2(t_shell *shell)
 		{
 			if (!cmd_node->next)
 			{
-				printf("%s\n", ERRMSG_UNEXP_EOF);
+				if (cursor_mv_back(STDERR_FILENO))
+					exit_early(shell, NULL, ERRMSG_WRITE);
+				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+						SYNTX_UNEXP_EOF, "\n", NULL}))
+					exit_early(shell, NULL, ERRMSG_WRITE);
 				shell->exit_code = ERRCODE_SYNTAX;
 				return (false);
 			}
@@ -94,13 +111,18 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 {
 	if (!redir_target)
 	{
-		printf("%s `%s'\n", ERRMSG_UNEXP_TOKEN, "newline");
+		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+				SYNTX_UNEXP_TOKEN, "newline'\n", NULL}))
+			exit_early(shell, NULL, ERRMSG_WRITE);
 		shell->exit_code = ERRCODE_SYNTAX;
 		return (false);
 	}
-	else if (is_control(redir_target, 0) || is_redir(redir_target, 0))
+	else if (is_control(redir_target, 0) || is_redir(redir_target, 0)
+		|| is_command_sep(redir_target, 0))
 	{
-		printf("%s `%s'\n", ERRMSG_UNEXP_TOKEN, redir_target);
+		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+				SYNTX_UNEXP_TOKEN, redir_target, "'\n", NULL}))
+			exit_early(shell, NULL, ERRMSG_WRITE);
 		shell->exit_code = ERRCODE_SYNTAX;
 		return (false);
 	}

@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 15:17:57 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 18:38:47 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 		return (1);
 	if (cmdnode_filept && *cmdnode_filept)
 		free(*cmdnode_filept);
-	expand_homedir_special_char(shell, &redir_target);
+	if (redir_target)
+		expand_homedir_special_char(shell, &redir_target);
 	*cmdnode_filept = redir_target;
 	if (is_redir_target_valid(shell, redir_target) == false)
 		return (1);

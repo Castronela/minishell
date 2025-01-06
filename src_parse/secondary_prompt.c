@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/04 17:02:11 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 18:02:37 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ int			prep_prompt(t_shell *shell, int (*hd_pipe)[2],
 char		*prompt_read(t_shell *shell, int fd_read);
 
 static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl);
+static void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
 
 /*
 Function to prompt user for additional input, using prompt string 'PS2';
@@ -100,12 +101,8 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	input = readline(PS2);
 	if (input)
 	{
-		if (write(fd_pipe[1], input, ft_strlen(input)) < 0)
-		{
-			perror(ERRMSG_WRITE);
-			exit_status = 1;
-		}
-		if (append_nl && write(fd_pipe[1], "\n", 1) < 0)
+		if (write(fd_pipe[1], input, ft_strlen(input)) < 0 || (append_nl
+				&& write(fd_pipe[1], "\n", 1) < 0))
 		{
 			perror(ERRMSG_WRITE);
 			exit_status = 1;
@@ -141,4 +138,29 @@ char	*prompt_read(t_shell *shell, int fd_read)
 	if (!final_str && bytes_read)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	return (final_str);
+}
+
+/*
+Initializes a pipe and/or a fork if 'pipe_fd' and 'pid' are not NULL
+*/
+static void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
+{
+	if (pipe_fd)
+	{
+		if (pipe(*pipe_fd) < 0)
+			exit_early(shell, NULL, ERRMSG_PIPE);
+	}
+	if (pid)
+	{
+		*pid = fork();
+		if (*pid < 0)
+		{
+			if (pipe_fd)
+			{
+				close((*pipe_fd)[0]);
+				close((*pipe_fd)[1]);
+			}
+			exit_early(shell, NULL, ERRMSG_FORK);
+		}
+	}
 }

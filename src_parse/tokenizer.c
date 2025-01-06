@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/04 17:33:26 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 17:03:58 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int				get_next_token(t_shell *shell, size_t *index_cmd, char **token);
 
 static int		get_argument_end_index(t_shell *shell, size_t *index_cmd);
+static void		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 static size_t	operator_length_at_index(const char *str, const size_t index);
 
 /*
@@ -66,10 +67,7 @@ static int	get_argument_end_index(t_shell *shell, size_t *index_cmd)
 		{
 			ret_value = secondary_prompt(shell, 1);
 			if (ret_value == 1)
-			{
-				printf("%s `%c'\n", ERRMSG_UNEXP_EOF_MATCH, shell->open_qt);
 				return (0);
-			}
 			else if (ret_value == 2)
 				return (1);
 		}
@@ -80,6 +78,25 @@ static int	get_argument_end_index(t_shell *shell, size_t *index_cmd)
 		(*index_cmd)++;
 	}
 	return (0);
+}
+
+/*
+Modifies 'index' to point to closing quote or null terminator,
+	if no closing quote found
+	- stores opening quote char in 'shell->open_qt',
+		to be used later for syntax check
+Note: call ONLY when 'str' at 'index' is an opening quote char
+*/
+static void	skip_quoted_str(t_shell *shell, const char *str, size_t *index)
+{
+	if (!is_quote(str[*index]) && !shell->open_qt)
+		return ;
+	if (!shell->open_qt)
+		shell->open_qt = str[(*index)++];
+	while (str[*index] && str[*index] != shell->open_qt)
+		(*index)++;
+	if (str[*index] == shell->open_qt)
+		shell->open_qt = 0;
 }
 
 /*

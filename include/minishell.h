@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 15:52:40 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 18:32:29 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@
 # define DQ '\"'
 
 # define PS2 "> "
+# define MV_CURSOR_BACK_PREV_LINE "\033[A"
+# define MV_CURSOR_RIGHT "\033[2C"
 
 // ---- Redirection Operators ------------------------------------------------------------
 
@@ -88,6 +90,8 @@
 //                                    Error Messages                                    //
 //--------------------------------------------------------------------------------------//
 
+# define ERSHL C_RED "minishell: " BG_RESET
+
 // ---- Function Error Message -----------------------------------------------------------
 
 # define ERRMSG_MALLOC "Error malloc"
@@ -99,19 +103,17 @@
 # define ERRMSG_OPEN "Error open"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
-# define ERRMSG_DUP2 "Error dupe2"
+# define ERRMSG_DUP2 "Error dup2"
 
 // ---- Built-in Error Message -----------------------------------------------------------
 
-# define ERRMSG_CD "minishell: cd:"
+# define ERRMSG_CD "cd:"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
-# define ERRMSG_UNEXP_EOF "minishell: syntax error: unexpected end of file"
-# define ERRMSG_UNEXP_EOF_MATCH "minishell: unexpected EOF while looking for matching"
-# define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
-# define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
-
+# define SYNTX_UNEXP_EOF "syntax error: unexpected end of file"
+# define SYNTX_UNEXP_EOF_MATCH "unexpected EOF while looking for matching `"
+# define SYNTX_UNEXP_TOKEN "syntax error near unexpected token `"
 
 //--------------------------------------------------------------------------------------//
 //                                     Error Codes                                      //
@@ -312,15 +314,15 @@ void 		set_signal(t_shell *shell, const int handler_no);
 /* --------------------------------- Utils ---------------------------------- */
 
 bool	 	is_quote(const char c);
+int			ft_fprintf_str(const int fd, const char *str[]);
+int			cursor_mv_back(const int fd);
 void 		skip_whitespaces(const char *str, size_t *index);
-void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 bool 		is_special_param(const char *str, const size_t index);
 bool		is_command_sep(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
-void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
 int			append_to_str(char **str, char *append, int append_len);
 
 /* ----------------------------- Test functions ----------------------------- */
