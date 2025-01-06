@@ -6,13 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/31 14:52:17 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 20:20:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void	mini_cd(t_shell *shl, t_cmds *cmd);
+void	update_wdirs(t_shell *shl, char *new_cwd);
 // int		path_is_dir(char *path);
 
 /*
@@ -23,13 +24,16 @@ Built-in cd function
 
 !!! Oldpwd should only be added once the cd function is executed, otherwise it
 	should be empty
+
+!!! Replace the printf and ft_fprintf() fns here with ft_fprintf_str() fn
 */
 void	mini_cd(t_shell *shl, t_cmds *cmd)
 {
 	char		*new_cwd;
 	t_lst_str	*node;
 
-	if (*(cmd->args + 1) == NULL)
+	update_env_var(shl, cmd, UNDERSCORE, NULL);
+	if (*(cmd->args + 1) == NULL || compare_strings(*(cmd->args + 1), "--", 1))
 	{
 		node = ft_find_node(shl->variables, "HOME", 0, 1);
 		new_cwd = node->val;
@@ -37,7 +41,13 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 	else if (compare_strings(*(cmd->args + 1), "-", 1))
 	{
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
-		new_cwd = node->val;
+		if (!node)
+		{
+			ft_fprintf(STDERR_FILENO, "minishell: cd: OLDPWD not set\n");
+			return ;	
+		}
+		else
+			new_cwd = node->val;
 	}
 	else
 		new_cwd = *(cmd->args + 1);
@@ -47,7 +57,41 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		shl->exit_code = errno;
 	}
 	new_cwd = getcwd(NULL, 0);
-	update_cwd(shl, new_cwd);
+	update_wdirs(shl, new_cwd);
+}
+
+/*
+Function to update the current working directory
+  - Updates 
+
+!!! Potential leak: eg. in case of fn store_as_variable(); if there is an
+	internal error like failed malloc inside this function when called from a
+	funciton that sends another locally malloc'd object as argument to
+	to it (here: new_pwd), store_as_variable() will exit by calling exit_early()
+	fn which is not able to free the new_pwd pointer. In this case, such fns
+	that may receive malloc'd objects as argument but call exit_early need to
+	be modified to return an exit code so that the calling function gets a
+	chance to free its allocated objects before calling exit_early.
+	This potential leak should be checked through the entire program code. 
+*/
+void	update_wdirs(t_shell *shl, char *new_cwd)
+{
+	char		*old_pwd;
+	char		*new_pwd;
+
+	old_pwd = ft_strjoin("OLDPWD=", shl->cur_wd);
+	if (!old_pwd)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	add_to_environ(shl, old_pwd);
+	store_as_variable(shl, old_pwd);
+	free(old_pwd);
+	new_pwd = ft_strjoin("PWD=", new_cwd);
+	if (!new_pwd)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	add_to_environ(shl, new_pwd);
+	store_as_variable(shl, new_pwd);
+	free(new_pwd);
+	shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
 	set_prompt(shl, "<< ", " >> % ");
 }
 

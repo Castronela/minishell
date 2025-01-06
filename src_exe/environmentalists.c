@@ -6,15 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 15:30:57 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 19:15:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void	update_cwd(t_shell *shl, char *new_cwd);
-void	store_variable(t_shell *shl, char *str);
+void	store_as_variable(t_shell *shl, char *var);
 
 /*
 Function to update a variable in both shl->environ and shl->variables
@@ -56,63 +55,42 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 }
 
 /*
-Function to update the current working directory
-  - Updates 
-
-
-!!! Potential leaks when not freeing the pointer returned by ft_strjoin
-*/
-void	update_cwd(t_shell *shl, char *new_cwd)
-{
-	t_lst_str	*env_node[4];
-	t_lst_str	*var_node[4];
-	// char		*old_pwd;
-
-	var_node[0] = ft_find_node(shl->variables, "PWD", 0, 1);
-	var_node[1] = ft_lst_new("PWD", new_cwd);
-	if (!var_node[1])
-	{
-		free(env_node[1]);
-		exit_early(shl, NULL, "new_env_node malloc failed");
-	}
-	ft_replace_node(shl, &(var_node[0]), var_node[1]);
-	free(shl->cur_wd);
-	shl->cur_wd = ft_strdup(new_cwd);
-}
-
-/*
 Function to add a new varaible to the minishell memory but not to shl->env
   - The parameter 'str' is split against '=' and ported intoft_lst_new fn
   - One variable is added upon per fn call
   - Does not write the variable to shl->env, this is only possible using the
     mini_export function
   - If malloc fails at any time, exit_early function is used to exit safely
+
+Note:	var_node = ft_lst_new(*split, (var + var_len)) is used instead of
+		var_node = ft_lst_new(*split, *(split + 1)) ; for cases of arguments
+		with multiple '=' character which would also be splitted by ft_split().
+		eg.: abc=456=oiu54
 */
-void	store_variable(t_shell *shl, char *str)
+void	store_as_variable(t_shell *shl, char *var)
 {
-	t_lst_str	*var;
+	t_lst_str	*var_node;
 	char		**split;
 	size_t		var_len;
 
-	var_len = var_name_length(str);
-	split = ft_split(str, '=');
+	var_len = var_name_length(var);
+	split = ft_split(var, '=');
 	if (!split)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	var = ft_find_node(shl->variables, *split, 0, 1);
-	if (var == NULL)
+	var_node = ft_find_node(shl->variables, *split, 0, 1);
+	if (var_node == NULL)
 	{
-		var = ft_lst_new(*split, (str + var_len));
-		if (!var)
+		var_node = ft_lst_new(*split, (var + var_len));
+		if (!var_node)
 			exit_early(shl, split, "Could not malloc new variable list node");
-		ft_lst_addback(&shl->variables, var);
+		ft_lst_addback(&shl->variables, var_node);
 	}
 	else
 	{
-		free(var->val);
-		var->val = ft_strdup((str + var_len));
-		if (!var->val)
+		free(var_node->val);
+		var_node->val = ft_strdup((var + var_len));
+		if (!var_node->val)
 			exit_early(shl, split, ERRMSG_MALLOC);
 	}
 	ft_free2d(split);
 }
-
