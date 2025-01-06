@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 15:33:33 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 16:31:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ int	open_file_fds(t_cmds *cmd)
 	return (0);
 }
 
+/*
+Function to dup2 the STDIN_FILENO and STDOUT_FILENO when fd_in and fd_out are
+not already 0 and 1
+*/
 int	set_redirections(t_shell *shl, t_cmds *cmd)
 {
 	(void)shl;
@@ -61,25 +65,6 @@ int	set_redirections(t_shell *shl, t_cmds *cmd)
 	}
 	return (0);
 }
-
-// int	set_redirections(t_shell *shl, t_cmds *cmd)
-// {
-// 	if (cmd->fd_in != STDIN_FILENO)
-// 	{
-// 		if ((dup2(cmd->fd_in, STDIN_FILENO)) == -1)
-// 			return (-1);
-// 		if (ft_close(cmd->fd_in) < 0)
-// 			return (-2);
-// 	}
-// 	if (cmd->fd_out != STDOUT_FILENO)
-// 	{
-// 		if ((dup2(cmd->fd_out, STDOUT_FILENO)) == -1)
-// 			return (-1);
-// 		if (ft_close(cmd->fd_out) < 0)
-// 			return (-2);
-// 	}
-// 	return (0);
-// }
 
 /*
 Function to close pipes associated to a command

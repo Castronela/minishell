@@ -6,14 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 15:30:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 19:50:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void 		init_shell(t_shell *shl, char **envp);
-void		copy_environ_variables(t_shell *shl, char **envp);
+void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		init_environ_variables(t_shell *shl, char **envp);
 static void	copy_environ(t_shell *shl, char **envp, int size);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
@@ -32,8 +32,10 @@ Initializes the elements of the shell struct "t_shell"
 !!! Need to look into update_shlvl for leaks and other potential problems
 -->>	Potentially totally fixed. Haven't checked with valgrind yet.
 */
-void	init_shell(t_shell *shl, char **envp)
+void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 {
+	shl->ac = ac;
+	shl->av = av;
 	shl->stdio[0] = dup(STDIN_FILENO);
 	shl->stdio[1] = dup(STDOUT_FILENO);
 	shl->environ = NULL;
@@ -42,10 +44,10 @@ void	init_shell(t_shell *shl, char **envp)
 	shl->shlvl = 1;
 	shl->cur_wd = NULL;
 	shl->prompt = NULL;
-	copy_environ_variables(shl, envp);
+	init_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
 	update_shlvl(shl);
-	shl->cur_wd = getcwd(NULL, 0);
+	shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
@@ -61,7 +63,7 @@ Copies the environment variables to the shell struct
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
 */
-void	copy_environ_variables(t_shell *shl, char **envp)
+void	init_environ_variables(t_shell *shl, char **envp)
 {
 	int 		i;
 	t_lst_str	*new_node;
@@ -70,36 +72,45 @@ void	copy_environ_variables(t_shell *shl, char **envp)
 	i = -1;
 	while (envp[++i])
 	{
-		split = ft_split(envp[i], '=');
-		if (!split)
-			exit_early(shl, NULL, "Could not split for new variable");
-		new_node =ft_lst_new(split[0], split[1]);
-		if (!new_node)
-			exit_early(shl, split, "Could not malloc t_lst_str new_node");
-		ft_lst_addback(&shl->variables, new_node);
-		ft_free2d(split);
+		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+		{
+			split = ft_split(envp[i], '=');
+			if (!split)
+				exit_early(shl, NULL, "Could not split for new variable");
+			new_node =ft_lst_new(split[0], split[1]);
+			if (!new_node)
+				exit_early(shl, split, "Could not malloc t_lst_str new_node");
+			ft_lst_addback(&shl->variables, new_node);
+			ft_free2d(split);
+		}
 	}
-	copy_environ(shl, envp, i);
+	copy_environ(shl, envp, i - 1);
 }
 
 /*
-Function to copy envp variables as double char pointers, as required by execve
+Function to copy envp variables as double char pointers (as required by execve)
 */
 static void	copy_environ(t_shell *shl, char **envp, int size)
 {
 	int i;
+	int	j;
 	
 	shl->environ = malloc((size + 1) * sizeof(char *));
 	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	i = -1;
+	j = 0;
 	while (envp[++i])
 	{
-		shl->environ[i] = ft_strdup(envp[i]);
-		if (!shl->environ[i])
-			exit_early(shl, NULL, ERRMSG_MALLOC);
+		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+		{
+			shl->environ[j] = ft_strdup(envp[i]);
+			if (!shl->environ[j])
+				exit_early(shl, NULL, ERRMSG_MALLOC);
+			j++;
+		}
 	}
-	shl->environ[i] = NULL;
+	shl->environ[j] = NULL;
 }
 
 /*

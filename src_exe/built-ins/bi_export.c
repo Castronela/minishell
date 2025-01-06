@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 18:29:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 18:34:15 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,20 @@ static int	is_valid_val(char *arg, int *i);
 int			is_bash_reserved(char c);
 char		*get_var_component(t_shell *shl, char *arg, int what);
 
-// /*
-// Function for built-in export function
-//   - Adds the exported variable to the shl->env
-//   - Also adds the variable as key-val pair to the variables list
+/*
+Function for built-in export function
+  - Adds the exported variable to the shl->env
+  - Also adds the variable as key-val pair to the variables list
 
 
-// !!! This fn doesn't yet store env variables in the shl->environ (char **)
+!!! This fn doesn't yet store env variables in the shl->environ (char **)
+-->>	Now it does.
 
-// !!! Consider adding functionality for aliases with a simple file or just by
-// 	adding a list
-// */
+!!! Consider adding functionality for aliases with a simple file or just by
+	adding a list
+
+!!! Use the new ft_fprintf_str() fn instead of multiples writes here.
+*/
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
 	int		i;
@@ -55,7 +58,7 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 		{
 			checks[2] = 1;
 			add_to_environ(shl, *arguments);
-			store_variable(shl, *arguments);
+			store_as_variable(shl, *arguments);
 		}
 		if (checks[0] == 2)
 			checks[2] = 1;

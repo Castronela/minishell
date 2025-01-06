@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 15:28:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 20:26:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,8 @@ typedef struct s_cmds
 
 typedef struct s_shell
 {
+	int			ac;
+	char		**av;
 	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
@@ -211,8 +213,8 @@ void		mini_exit(t_shell *shl);
 
 /* -------------------------- src_exe/init_shell.c -------------------------- */
 
-void 		init_shell(t_shell *shl, char **envp);
-void		copy_environ_variables(t_shell *shl, char **envp);
+void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		init_environ_variables(t_shell *shl, char **envp);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
@@ -255,8 +257,8 @@ void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 /* --------------------------- environmentalists.c --------------------------- */
 
 void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void		update_cwd(t_shell *shl, char *new_cwd);
-void		store_variable(t_shell *shl, char *str);
+void		update_wdirs(t_shell *shl, char *new_cwd);
+void		store_as_variable(t_shell *shl, char *var);
 void		add_to_environ(t_shell *shl, char *var);
 
 /* -------------------------------- stirngs.c -------------------------------- */

@@ -128,7 +128,7 @@ void test_var_exp(char **envp)
 	t_shell shell;
 	char *str;
 	char *good;
-	init_shell(&shell, envp);
+	init_shell(&shell, 1, NULL, envp);
 	t_lst_str *new = malloc(sizeof(*new));
 	new->key = ft_strdup("VAR");
 	new->val = ft_strdup("there");
