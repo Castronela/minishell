@@ -41,7 +41,7 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
 		printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
 		printf("\n%*s%d", spacing, "append : ", cmd_node->apend);
-		printf("\n\n%*s%s\n\n", spacing, "ctl_operator : ", cmd_node->ctl_operator ? cmd_node->ctl_operator : "");
+		printf("\n\n%*s%s\n\n", spacing, "cmd_separator : ", cmd_node->cmd_separator ? cmd_node->cmd_separator : "");
 		
 		cmd_node = cmd_node->next;
 	}
@@ -64,8 +64,8 @@ void test_free_cmds(t_shell *shell)
 			free(cmd_node->file_in);
 		if (cmd_node->file_out)
 			free(cmd_node->file_out);
-		if (cmd_node->ctl_operator)
-			free(cmd_node->ctl_operator);
+		if (cmd_node->cmd_separator)
+			free(cmd_node->cmd_separator);
 		cmd_node_free = cmd_node;
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);

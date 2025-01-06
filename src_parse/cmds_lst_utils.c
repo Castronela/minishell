@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lst_cmds_fns.c                                     :+:      :+:    :+:   */
+/*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:42:27 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:17:57 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd->file_in = NULL;
 	new_cmd->toggle_heredoc = 0;
 	new_cmd->file_out = NULL;
-	new_cmd->ctl_operator = NULL;
+	new_cmd->cmd_separator = NULL;
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
@@ -73,8 +73,8 @@ void	lst_cmds_freelst(t_shell *shell)
 			free(cmd_node->file_in);
 		if (cmd_node->file_out)
 			free(cmd_node->file_out);
-		if (cmd_node->ctl_operator)
-			free(cmd_node->ctl_operator);
+		if (cmd_node->cmd_separator)
+			free(cmd_node->cmd_separator);
 		cmd_node_free = cmd_node;
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);

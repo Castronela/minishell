@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/01 21:17:52 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:52:40 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@
 # define SQ '\''
 # define DQ '\"'
 
-# define PS2 ">"
+# define PS2 "> "
 
 // ---- Redirection Operators ------------------------------------------------------------
 
@@ -66,9 +66,15 @@
 // ---- Control Operators ----------------------------------------------------------------
 
 # define CT_PIPE "|"			// pipe control
-# define CT_SMICOL ";"
 
-# define CONTROL_OPERATORS CT_PIPE, CT_SMICOL
+# define CONTROL_OPERATORS CT_PIPE
+
+// ---- Command Separators ---------------------------------------------------------------
+
+# define CS_SMICOL ";"
+# define CS_NEWLNE "\n"
+
+# define COMMAND_SEPARATORS CS_SMICOL, CS_NEWLNE
 
 // ---- Special Parameters ---------------------------------------------------------------
 
@@ -101,8 +107,9 @@
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
+# define ERRMSG_UNEXP_EOF "minishell: syntax error: unexpected end of file"
+# define ERRMSG_UNEXP_EOF_MATCH "minishell: unexpected EOF while looking for matching"
 # define ERRMSG_UNEXP_TOKEN "minishell: syntax error near unexpected token"
-# define ERRMSG_OPEN_QUOTE "minishell: syntax error: unclosed quotes"
 # define ERRMSG_INCOMPLETE_CONTROL_OPERATOR "minishell: syntax error: incomplete control operator"
 
 
@@ -138,7 +145,7 @@ typedef struct s_cmds
 	char			*file_in;		// Name of infile if < is present, else NULL
 	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
-	char			*ctl_operator;	// Control operator (specifies interaction between current and succeeding command)
+	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	struct s_cmds	*next;
 }	t_cmds;
 
@@ -259,20 +266,24 @@ int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
-char		*get_next_token(t_shell *shell, size_t *index_cmd);
+int			get_next_token(t_shell *shell, size_t *index_cmd, char **token);
+
+/* -------------------------- Secondary prompting -------------------------- */
+
+int			secondary_prompt(t_shell *shell, const bool prepend_nl);
+int			prep_prompt(t_shell *shell, int (*hd_pipe)[2], const bool append_nl);
+char		*prompt_read(t_shell *shell, int fd_read);
 
 /* ---------------------------- Syntax Checker ---------------------------- */
 
 bool		is_valid_quotation(t_shell *shell);
-bool		is_valid_control(t_shell *shell);
-bool		is_redir_target_valid(t_shell *shell, char *redir_target);
+bool		is_valid_control_1(t_shell *shell);
+bool		is_valid_control_2(t_shell *shell);
+bool		is_redir_target_valid(t_shell *shell, const char *redir_target);
 
 /* -------------------------------- Heredoc -------------------------------- */
 
 int 		heredoc(t_shell *shell);
-int			heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
-void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
-				int flag_expand_vars);
 
 /* -------------------------- Cmds list functions -------------------------- */
 
@@ -296,7 +307,7 @@ void 		init_pipes(t_shell *shell);
 
 /* -------------------------------- Signals -------------------------------- */
 
-void 		set_signal(t_shell *shell);
+void 		set_signal(t_shell *shell, const int handler_no);
 
 /* --------------------------------- Utils ---------------------------------- */
 
@@ -306,6 +317,7 @@ void 		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 bool 		is_special_param(const char *str, const size_t index);
+bool		is_command_sep(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
 void		reset_cmd_vars(t_shell *shell, int free_before);
 void 		init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid);
@@ -320,6 +332,7 @@ void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
 void 		test_print_envariables(t_shell *shell);
+
 
 /* ======================== End Function Prototypes ======================== */
 

@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:55:50 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:17:57 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 	size_t	arg_count;
 
 	arg_count = 0;
-	token = get_next_token(shell, index_cmd);
+	if (get_next_token(shell, index_cmd, &token))
+		return (1);
 	while (token)
 	{
 		if (is_redir(token, 0))
@@ -41,14 +42,15 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 			if (init_redirs(shell, new_cmdnode, token, index_cmd))
 				return (1);
 		}
-		else if (is_control(token, 0))
+		else if (is_control(token, 0) || is_command_sep(token, 0))
 		{
-			new_cmdnode->ctl_operator = token;
+			new_cmdnode->cmd_separator = token;
 			break ;
 		}
 		else
 			init_args(shell, new_cmdnode, token, &arg_count);
-		token = get_next_token(shell, index_cmd);
+		if (get_next_token(shell, index_cmd, &token))
+			return (1);
 	}
 	return (0);
 }
@@ -91,7 +93,8 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 
 	cmdnode_filept = get_redir_pt(shell, new_cmdnode, operator);
 	free(operator);
-	redir_target = get_next_token(shell, index_cmd);
+	if (get_next_token(shell, index_cmd, &redir_target))
+		return (1);
 	if (cmdnode_filept && *cmdnode_filept)
 		free(*cmdnode_filept);
 	expand_homedir_special_char(shell, &redir_target);

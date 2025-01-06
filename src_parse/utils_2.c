@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:35:34 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:47:37 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/04 17:32:34 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 bool	is_redir(const char *str, const size_t index);
 bool	is_control(const char *str, const size_t index);
 bool	is_special_param(const char *str, const size_t index);
+bool	is_command_sep(const char *str, const size_t index);
 size_t	find_longest_match_length(const char *str, const char *pattern[]);
 
 bool	is_redir(const char *str, const size_t index)
@@ -35,8 +36,14 @@ bool	is_special_param(const char *str, const size_t index)
 			(const char *[]){SPECIAL_OPERATORS, NULL}));
 }
 
+bool	is_command_sep(const char *str, const size_t index)
+{
+	return (find_longest_match_length(&str[index],
+			(const char *[]){COMMAND_SEPARATORS, NULL}));
+}
+
 /*
-Returns length of longest 'pattern' that matches 'str' 
+Returns length of longest 'pattern' that matches 'str'
 	(w/o null terminator) or 0,	if no matches found
 */
 size_t	find_longest_match_length(const char *str, const char *pattern[])

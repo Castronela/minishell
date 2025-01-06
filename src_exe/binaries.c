@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binaries.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/21 17:47:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 15:51:39 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,14 @@ int	get_binaries(t_shell *shl)
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
-		cmd->bin_path = get_binary_path(shl, cmd);
-		if (!cmd->bin_path)
-			exit_early(shl, NULL, "Path malloc failed");
-		if (remove_path(cmd) == -1)
-			exit_early(shl, NULL, "Remove path malloc failed");
+		if (cmd->args)
+		{
+			cmd->bin_path = get_binary_path(shl, cmd);
+			if (!cmd->bin_path)
+				exit_early(shl, NULL, "Path malloc failed");
+			if (remove_path(cmd) == -1)
+				exit_early(shl, NULL, "Remove path malloc failed");
+		}
 		cmd = cmd->next;
 	}
 	return (0);
@@ -40,7 +43,7 @@ char	*get_binary_path(t_shell *shl, t_cmds *cmd)
 
 	paths = shl->env_paths;
 	if (!(tmp[0] = ft_strdup(*(cmd->args))))
-			return (perror("ft_strdup-malloc failed:"), NULL);
+		return (perror("ft_strdup-malloc failed:"), NULL);
 	if (access(tmp[0], F_OK) == 0)
 		return (tmp[0]);
 	while (paths)

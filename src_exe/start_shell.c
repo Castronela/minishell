@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 14:15:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 15:14:21 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,25 +29,28 @@ void	start_shell(t_shell *shl)
 {
 	while (1)
 	{
-		set_signal(shl);
+		set_signal(shl, 1);
 		set_prev_exitcode(shl);
 		shl->cmdline = readline(shl->prompt);
 		if (!shl->cmdline)
 			break ;
 		// if (!(ft_strncmp(shl->cmdline, "exit", 4)))
 		// 	break ;
-		add_history(shl->cmdline);
-		if (parser(shl) || heredoc(shl))
+		if (parser(shl))
 		{
+			add_history(shl->cmdline);
+        	// test_print_cmdlst(shl, 30);
 			reset_cmd_vars(shl, 1);
 			continue ;
 		}
+		set_signal(shl, 2);
+        // test_print_cmdlst(shl, 30);
+		add_history(shl->cmdline);
 		index_cmds(shl);
 		init_pipes(shl);
 		get_binaries(shl);
 		// test_by_print(shl);
 		mini_execute(shl);
-        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
 }
@@ -70,9 +73,9 @@ void	mini_execute(t_shell *shl)
 		if (open_file_fds(cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_OPEN);
 		// printf("I am here\n");
-		if (cmd->exc_index == 0)
+		if (cmd->args && cmd->exc_index == 0)
 			exec_built_in(shl, cmd);
-		else
+		else if (cmd->args)
 		{
 			exec_external(shl, cmd, p_index);
 			// printf("I am here\n");
@@ -125,7 +128,7 @@ void	index_cmds(t_shell *shl)
 	while (cmds)
 	{
 		cmds->cmd_index = total++;
-		if (!is_built_in(*(cmds->args)))
+		if (cmds->args && !is_built_in(*(cmds->args)))
 			cmds->exc_index = ext++;
 		cmds = cmds->next;
 	}

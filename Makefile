@@ -6,7 +6,7 @@
 #    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2024/12/26 21:02:35 by dstinghe         ###   ########.fr        #
+#    Updated: 2025/01/04 14:42:39 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,8 +34,9 @@ D_OBJ		=	obj
 SRC_MAIN	=	main.c test_fn.c
 SRC_PARSE	= 	parser_1.c parser_2.c \
 				tokenizer.c \
+				secondary_prompt.c \
 				syntax_validation.c \
-				heredoc_1.c heredoc_2.c \
+				heredoc.c \
 				expansions.c \
 				remove_quotes.c \
 				pipes.c \

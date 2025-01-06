@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/26 20:22:19 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/06 15:17:57 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	init_pipes(t_shell *shell)
 	cmd_node = shell->cmds_lst;
 	while (cmd_node)
 	{
-		if (cmd_node->ctl_operator && !ft_strncmp(cmd_node->ctl_operator,
+		if (cmd_node->cmd_separator && !ft_strncmp(cmd_node->cmd_separator,
 				CT_PIPE, ft_strlen(CT_PIPE) + 1))
 		{
 			if (pipe(pipe_fds) < 0)
@@ -63,7 +63,7 @@ void	init_pipes(t_shell *shell)
 // 	i = 0;
 // 	while (cmd_node)
 // 	{
-// 		if (cmd_node->ctl_operator && !ft_strncmp(cmd_node->ctl_operator,
+// 		if (cmd_node->cmd_separator && !ft_strncmp(cmd_node->cmd_separator,
 // 				CT_PIPE, ft_strlen(CT_PIPE) + 1))
 // 		{
 // 			shell->pipe_fds[i] = malloc(2 * sizeof(int));

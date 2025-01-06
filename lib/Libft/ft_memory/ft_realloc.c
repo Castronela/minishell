@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 17:14:57 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 18:43:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/04 17:02:18 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	*ft_realloc(void *ptr, size_t size)
 /*
 Modified realloc function
 	- allocates and nulls (\0) new string
-	- if 'ptr' is double pointer, set 'old_size' to number of single pointers
+	- if 'ptr' is type char**,
+		set 'old_size' to number of single pointers times sizeof(char *)
 	- if 'ptr' is type char*, set 'old_size' to 0
 */
 void	*ft_recalloc(void *ptr, size_t size, size_t old_size)

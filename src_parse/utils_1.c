@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2024/12/26 20:40:30 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/04 16:56:46 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,10 @@ Note: call ONLY when 'str' at 'index' is an opening quote char
 */
 void	skip_quoted_str(t_shell *shell, const char *str, size_t *index)
 {
-	shell->open_qt = str[(*index)++];
+	if (!is_quote(str[*index]) && !shell->open_qt)
+		return ;
+	if (!shell->open_qt)
+		shell->open_qt = str[(*index)++];
 	while (str[*index] && str[*index] != shell->open_qt)
 		(*index)++;
 	if (str[*index] == shell->open_qt)
@@ -70,6 +73,14 @@ void	init_pipe_or_fork(t_shell *shell, int (*pipe_fd)[2], pid_t *pid)
 	}
 }
 
+/*
+Function to append a string to another;
+Set 'append_len' to -1 to append whole string 'append', 
+otherwise will append 'append_len' number of chars;
+Return codes:
+0 - normal exit
+1 - memory allocation failed
+*/
 int	append_to_str(char **str, char *append, int append_len)
 {
 	int	total_len;
