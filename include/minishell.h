@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 20:26:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 02:21:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_del_node(t_lst_str **node);
-void		ft_remove_node(t_lst_str **root, t_lst_str *node);
+void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /* ----------------------------- start_shell.c ----------------------------- */
@@ -264,6 +264,7 @@ void		add_to_environ(t_shell *shl, char *var);
 /* -------------------------------- stirngs.c -------------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
+int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
 char		**find_string_ptr(t_shell *shl, char *str, int	n);
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int			count_pointers(char **dp);
