@@ -6,13 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/03 01:51:00 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 01:41:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int		compare_strings(const char *str, const char *field, int exact);
+int		cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
 char	**find_string_ptr(t_shell *shl, char *str, int	n);
 int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
@@ -46,6 +47,40 @@ int	compare_strings(const char *str, const char *field, int exact)
 		if (*s[0]++ != *s[1]++)
 			return (0);
 	}
+	if (exact)
+		if (*s[0] != *s[1])
+			return (0);
+	return (1);
+}
+
+/*
+Function same as compare_strings() fn, with an additional option to match the
+case while comparing the strings.
+  - If toggle 'cased' is 1, then case is also matched
+  - If toggle 'cased' is 0, then case is disregarded
+*/
+int	cmp_cstr(const char *ndl, const char *hstack, int exact, int cased)
+{
+	unsigned char	*s[5];
+
+	if (!ndl || !hstack)
+		return (-1);
+	s[1] = (unsigned char *)hstack;
+	s[2] = (unsigned char *)ndl;
+	s[3] = malloc((ft_strlen(ndl) + 1) * sizeof(unsigned char));
+	if (cased == 1)
+	{
+		s[4] = s[3];
+		while (*s[2])
+			*(s[3])++ = ft_tolower(*(s[2])++);
+		*s[3] = '\0';
+		s[0] = s[4];
+	}
+	else
+		s[0] = s[2];
+	while (*s[0])
+		if (*s[0]++ != *s[1]++)
+			return (0);
 	if (exact)
 		if (*s[0] != *s[1])
 			return (0);
