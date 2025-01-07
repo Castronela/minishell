@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 19:21:20 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 00:53:43 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ static void set_echo_flag(const char *str, int *new_line, int *arg_index, int sk
 // #include <string.h>
 // #include <stdlib.h>
 
-// int	compare_strings(const char *str, const char *field, int exact)
+// int	compare_strings(const char *ndl, const char *stk, int exact, int match_case)
 // {
 // 	unsigned char	*s[2];
 

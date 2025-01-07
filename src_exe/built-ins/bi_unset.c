@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:21:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 02:22:23 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 
 	// Add same functionality for shl->environ
 	
-	
-	del_node = ft_find_node(shl->variables, var_str, 1, 1);
-	ft_remove_node(&shl->variables, del_node);
+	del_node = ft_find_node(shl->variables, var_str, 0, 1);
+	ft_remove_node(&shl->variables, &del_node);
 	return (0);
 }

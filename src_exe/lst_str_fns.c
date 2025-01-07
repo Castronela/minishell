@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/31 14:16:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 02:22:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_del_node(t_lst_str **node);
-void		ft_remove_node(t_lst_str **root, t_lst_str *node);
+void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /*
@@ -221,27 +221,27 @@ Function to remove a certain node from the list and reconnect the severed pieces
   - Connects the nodes before and after to each other
   - Deletes the node by freeing it using ft_del_node fn
 */
-void	ft_remove_node(t_lst_str **root, t_lst_str *node)
+void	ft_remove_node(t_lst_str **root, t_lst_str **node)
 {
 	if (!root || !*root || !node)
 		return ;
-	if (!node->prev && !node->next)			// Case 1: is first & only node
+	if (!(*node)->prev && !(*node)->next)			// Case 1: is first & only node
 		ft_lst_free(root);
 	else
 	{
-		if (!node->prev && node->next)		// Case 2: first node of many
+		if (!(*node)->prev && (*node)->next)		// Case 2: first node of many
 		{
-			node->next->prev = NULL;
-			*root = node->next;
+			(*node)->next->prev = NULL;
+			*root = (*node)->next;
 		}
-		else if (node->prev && !node->next)	// Case 2: is last node
-			node->prev->next = NULL;
-		else								// Case 3: is middle node
+		else if ((*node)->prev && !(*node)->next)	// Case 2: is last node
+			(*node)->prev->next = NULL;
+		else										// Case 3: is middle node
 		{
-			node->prev->next = node->next;
-			node->next->prev = node->prev;
+			(*node)->prev->next = (*node)->next;
+			(*node)->next->prev = (*node)->prev;
 		}
-		ft_del_node(&node);
+		ft_del_node(node);
 	}
 }
 
