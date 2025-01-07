@@ -6,15 +6,15 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/25 17:48:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/06 19:50:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void 		init_shell(t_shell *shl, char **envp);
-void		copy_env(t_shell *shl, char **envp);
-static void	copy_env_str(t_shell *shl, char **envp, int size);
+void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		init_environ_variables(t_shell *shl, char **envp);
+static void	copy_environ(t_shell *shl, char **envp, int size);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
@@ -30,19 +30,24 @@ Initializes the elements of the shell struct "t_shell"
   - Frees all malloc's and exits the program if any of the above steps fail
 
 !!! Need to look into update_shlvl for leaks and other potential problems
+-->>	Potentially totally fixed. Haven't checked with valgrind yet.
 */
-void	init_shell(t_shell *shl, char **envp)
+void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 {
-	shl->env_str = NULL;
-	shl->env = NULL;
+	shl->ac = ac;
+	shl->av = av;
+	shl->stdio[0] = dup(STDIN_FILENO);
+	shl->stdio[1] = dup(STDOUT_FILENO);
+	shl->environ = NULL;
 	shl->variables = NULL;
 	shl->env_paths = NULL;
+	shl->shlvl = 1;
 	shl->cur_wd = NULL;
 	shl->prompt = NULL;
-	copy_env(shl, envp);
+	init_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
-	// update_shlvl(shl);				// ommited for valgrind check
-	shl->cur_wd = getcwd(NULL, 0);
+	update_shlvl(shl);
+	shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
@@ -58,7 +63,7 @@ Copies the environment variables to the shell struct
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
 */
-void	copy_env(t_shell *shl, char **envp)
+void	init_environ_variables(t_shell *shl, char **envp)
 {
 	int 		i;
 	t_lst_str	*new_node;
@@ -67,40 +72,45 @@ void	copy_env(t_shell *shl, char **envp)
 	i = -1;
 	while (envp[++i])
 	{
-		new_node = ft_lst_new(envp[i], NULL);
-		if (!new_node)
-			exit_early(shl, NULL, "Could not malloc t_lst_str node");
-		ft_lst_addback(&shl->env, new_node);
-		split = ft_split(envp[i], '=');
-		if (!split)
-			exit_early(shl, NULL, "Could not split for new variable");
-		new_node =ft_lst_new(split[0], split[1]);
-		if (!new_node)
-			exit_early(shl, split, "Could not malloc t_lst_str new_node");
-		ft_lst_addback(&shl->variables, new_node);
-		ft_free2d(split);
+		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+		{
+			split = ft_split(envp[i], '=');
+			if (!split)
+				exit_early(shl, NULL, "Could not split for new variable");
+			new_node =ft_lst_new(split[0], split[1]);
+			if (!new_node)
+				exit_early(shl, split, "Could not malloc t_lst_str new_node");
+			ft_lst_addback(&shl->variables, new_node);
+			ft_free2d(split);
+		}
 	}
-	copy_env_str(shl, envp, i);
+	copy_environ(shl, envp, i - 1);
 }
 
 /*
-Function to copy envp variables as double char pointers for execve
+Function to copy envp variables as double char pointers (as required by execve)
 */
-static void	copy_env_str(t_shell *shl, char **envp, int size)
+static void	copy_environ(t_shell *shl, char **envp, int size)
 {
 	int i;
+	int	j;
 	
-	i = -1;
-	shl->env_str = malloc((size + 1) * sizeof(char *));
-	if (!shl->env_str)
+	shl->environ = malloc((size + 1) * sizeof(char *));
+	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
+	i = -1;
+	j = 0;
 	while (envp[++i])
 	{
-		shl->env_str[i] = ft_strdup(envp[i]);
-		if (!shl->env_str[i])
-			exit_early(shl, NULL, ERRMSG_MALLOC);
+		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+		{
+			shl->environ[j] = ft_strdup(envp[i]);
+			if (!shl->environ[j])
+				exit_early(shl, NULL, ERRMSG_MALLOC);
+			j++;
+		}
 	}
-	shl->env_str[i] = NULL;
+	shl->environ[j] = NULL;
 }
 
 /*
@@ -149,39 +159,43 @@ Updates the SHLVL environment variable
   - Frees the new value of SHLVL
   - Frees the new
 
-!! Correction required:
-  - This function will fail when the shlvl goes into two digits because, while
-	the shlvl is malloc'd correctly for any case including for two digits, the
-	env and variables elements of shl are only updated with assignment at a single
-	char address by dereferencing shlvl instead of replacing the allocation itself
+!!! Note:
+  - Although this fn has been rebuilt, needs to be checked with valgrind for 
+  	memory leaks
 */
 void	update_shlvl(t_shell *shl)
 {
-	t_lst_str	*new_node[2];
 	char		*shlvl;
-	// char		shlvl;
-
-	new_node[0] = shl->env;
-	new_node[1] = shl->variables;
-	while (new_node[0])
+	int			i;
+	t_lst_str	*var_node[2];
+	
+	i = -1;
+	while (shl->environ[++i])
 	{
-		if (ft_strncmp(new_node[0]->key, "SHLVL=", 6) == 0)
+		if (compare_strings("SHLVL=", shl->environ[i], 0))
 		{
-			shl->shlvl = ft_atoi(new_node[0]->key + 6) + 1;
-			// shlvl = ft_strdup(ft_itoa(shl->shlvl));
-			shlvl = ft_itoa(shl->shlvl);
-			if (!shlvl)
-				exit_early(shl, NULL, "itoa failed");
-			*(new_node[0]->key + 6) = *shlvl;										// Correction required
-			*(new_node[1]->key + 6) = *shlvl;										// Correction required
-			free(shlvl);
+			shlvl = shl->environ[i] + 6;
 			break ;
 		}
-		new_node[0] = new_node[0]->next;
-		new_node[1] = new_node[1]->next;
 	}
+	shl->shlvl += ft_atoi(shlvl);
+	shlvl = ft_strjoin("SHLVL=", ft_itoa(shl->shlvl));
+	if (!shlvl)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	free(shl->environ[i]);
+	shl->environ[i] = shlvl;
+	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	var_node[1] = ft_lst_new("SHLVL", ft_itoa(shl->shlvl));
+	if (!var_node[1])
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	ft_replace_node(shl, &(var_node[0]), var_node[1]);
+	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	printf("%s:	%s\n", var_node[0]->key, var_node[0]->val);
 }
 
+/*
+Function to set-up the prompt of minishell
+*/
 void	set_prompt(t_shell *shl, char *prefix, char *separator)
 {
 	char	**split;

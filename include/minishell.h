@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 18:32:29 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/07 18:47:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
 
 // # include "../lib/Libft/include/libft.h"
 # include "../lib/includes/libft.h"
@@ -55,6 +56,7 @@
 # define PS2 "> "
 # define MV_CURSOR_BACK_PREV_LINE "\033[A"
 # define MV_CURSOR_RIGHT "\033[2C"
+# define UNDERSCORE "_"
 
 // ---- Redirection Operators ------------------------------------------------------------
 
@@ -86,6 +88,20 @@
 
 # define SPECIAL_OPERATORS DOLLAR, QUESTION_MARK, POUND
 
+// ---- Reserved Bash Characters ---------------------------------------------------------
+
+# define BT '`'
+# define BN '!'
+# define DL '$'
+# define AD '&'
+# define SC ';'
+# define PO '('
+# define PC ')'
+# define BS '\\'
+# define PP '|'
+
+# define RESERVED_BASH_CHARS BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP
+
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
 //--------------------------------------------------------------------------------------//
@@ -101,6 +117,7 @@
 # define ERRMSG_READ "Error read"
 # define ERRMSG_WRITE "Error write"
 # define ERRMSG_OPEN "Error open"
+# define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
 # define ERRMSG_DUP2 "Error dup2"
@@ -148,13 +165,16 @@ typedef struct s_cmds
 	int				toggle_heredoc;
 	char			*file_out;		// Name of outfile if > is present, else NULL
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
+	int				fd_cls;
 	struct s_cmds	*next;
 }	t_cmds;
 
 typedef struct s_shell
 {
-	char		**env_str;			// Copy of **envp, as required by execve fn
-	t_lst_str	*env;				// Stores env variables from the calling shell
+	int			ac;
+	char		**av;
+	int			stdio[2];
+	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
 	int			shlvl;				// Stores the current shell level
@@ -172,20 +192,21 @@ typedef struct s_shell
 
 
 
-
+int			ft_close(int fd);
+int 		ft_close2(int fd);
+int 		ft_pipe(int pipefd[2]);
+pid_t 		ft_fork();
+void 		test_printf_fds(void);
+void 		test_std_fds(t_shell *shl);
 
 
 //--------------------------------------------------------------------------------------//
 //                                 Function Prototypes                                  //
 //--------------------------------------------------------------------------------------//
 
-
 int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
-/* ----------------------------- start_shell.c ----------------------------- */
-
-void		start_shell(t_shell *shl);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -194,25 +215,16 @@ void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_echo(t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
-void		add_str_to_double_ptr(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
-
 void		mini_cd(t_shell *shl, t_cmds *cmd);
-int			path_is_dir(char *path);
-void		update_cwd(t_shell *shl, char *new_cwd);
-
 void		mini_env(t_shell *shl, t_cmds *cmd);
-void		update_last_var(t_shell *shl, t_cmds *cmd);
-int			update_var_str(char *var_pointer, char *var_name, char *new_val);
-int			count_pointers(char **dp);
-
 void		mini_exit(t_shell *shl);
 
 /* -------------------------- src_exe/init_shell.c -------------------------- */
 
-void 		init_shell(t_shell *shl, char **envp);
-void		copy_env(t_shell *shl, char **envp);
+void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		init_environ_variables(t_shell *shl, char **envp);
 void		copy_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
@@ -225,9 +237,9 @@ t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
-void		ft_replace_node(t_lst_str *old, t_lst_str *new);
-void		ft_del_node(t_lst_str *node);
-void		ft_remove_node(t_lst_str **root, t_lst_str *node);
+void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
+void		ft_del_node(t_lst_str **node);
+void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 
 /* ----------------------------- start_shell.c ----------------------------- */
@@ -244,17 +256,32 @@ void		create_pids(t_shell *shl);
 void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
+void		restore_std_fds(t_shell *shl);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
 int			open_file_fds(t_cmds *cmd);
-int			set_redirections(t_cmds *cmd);
-void		close_fds(t_cmds *cmd);
+int			set_redirections(t_shell *shl, t_cmds *cmd);
+void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+
+/* --------------------------- environmentalists.c --------------------------- */
+
+void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
+void		update_wdirs(t_shell *shl, char *new_cwd);
+void		store_as_variable(t_shell *shl, char *var);
+void		add_to_environ(t_shell *shl, char *var);
+
+/* -------------------------------- stirngs.c -------------------------------- */
+
+int			compare_strings(const char *str, const char *field, int exact);
+int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
+char		**find_string_ptr(t_shell *shl, char *str, int	n);
+int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
+int			count_pointers(char **dp);
+size_t		var_name_length(char *str);
 
 /* ------------------------------ utilities.c ------------------------------ */
 
-int			compare_strings(const char *str, const char *field, int exact);
-void		store_variable(t_shell *shl, char *str);
 void		arg_error(char **av);
 void		ft_free2dint(int **memory);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);
@@ -306,6 +333,7 @@ void		expand_homedir_special_char(t_shell *shell, char **str);
 /* ------------------------------- Pipe Setup ------------------------------- */
 
 void 		init_pipes(t_shell *shell);
+void		init_cmd_pipe(t_shell *shell, t_cmds *cmd);
 
 /* -------------------------------- Signals -------------------------------- */
 
@@ -330,6 +358,7 @@ int			append_to_str(char **str, char *append, int append_len);
 void		test_by_print(t_shell *shl);
 
 void 		test_print_cmdlst(t_shell *shell, int spacing);
+void		 test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
@@ -337,6 +366,12 @@ void 		test_print_envariables(t_shell *shell);
 
 
 /* ======================== End Function Prototypes ======================== */
+
+void test_printf_fds(void);
+pid_t ft_fork();
+int ft_pipe(int pipefd[2]);
+int ft_close(int fd);
+
 
 #endif
 

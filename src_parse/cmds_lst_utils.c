@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 15:17:57 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/07 18:56:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd->file_out = NULL;
 	new_cmd->cmd_separator = NULL;
 	new_cmd->next = NULL;
+	new_cmd->fd_cls = -1;
 	return (new_cmd);
 }
 

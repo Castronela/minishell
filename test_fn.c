@@ -3,6 +3,7 @@
 // TEST FUNCTIONS
 
 void test_print_cmdlst(t_shell *shell, int spacing);
+void test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
 void test_free_cmds(t_shell *shell);
 // void test_new_tokenizer(char **envp);
 void test_new_tokenizer(t_shell *shl, char **envp);
@@ -45,6 +46,32 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		
 		cmd_node = cmd_node->next;
 	}
+}
+
+void test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing)
+{
+	printf("\n%*s%s\n", spacing, "COMMANDLINE : ", shell->cmdline);
+
+	printf("Command nr. %d\n", cmd_node->cmd_index);
+	printf("\n%*s%d", spacing, "cmd_index : ", cmd_node->cmd_index);
+	printf("\n%*s%d", spacing, "exc_index : ", cmd_node->exc_index);
+	printf("\n\n%*s%s", spacing, "bin path : ", cmd_node->bin_path ? cmd_node->bin_path : "");
+	printf("\n%*s", spacing, "args : ");
+	for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
+		printf("(%s) ", cmd_node->args[j]);
+	for (t_lst_str *node = cmd_node->heredocs_lst; node; node = node->next)
+	{
+		printf("\n\n%*s%s", spacing, "HereDoc delimiter : ", node->key ? node->key : "");
+		printf("\n%*s%s", spacing, "HereDoc body : ", node->val ? node->val : "");
+	}
+	printf("\n\n%*s%d", spacing, "fd_in : ", cmd_node->fd_in);
+	printf("\n%*s%s", spacing, "file_in : ", cmd_node->file_in ? cmd_node->file_in : "");
+	printf("\n%*s%d", spacing, "toggle heredoc : ", cmd_node->toggle_heredoc);
+	printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
+	printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
+	printf("\n%*s%d", spacing, "append : ", cmd_node->apend);
+	printf("\n\n%*s%s\n\n", spacing, "ctl_operator : ", cmd_node->ctl_operator ? cmd_node->ctl_operator : "");
+	printf("\n");
 }
 
 void test_free_cmds(t_shell *shell)
@@ -101,7 +128,7 @@ void test_var_exp(char **envp)
 	t_shell shell;
 	char *str;
 	char *good;
-	init_shell(&shell, envp);
+	init_shell(&shell, 1, NULL, envp);
 	t_lst_str *new = malloc(sizeof(*new));
 	new->key = ft_strdup("VAR");
 	new->val = ft_strdup("there");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:34 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/24 19:51:38 by david            ###   ########.fr       */
+/*   Updated: 2025/01/06 17:00:12 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	mini_pwd(t_shell *shl, t_cmds *cmd)
 {
 	size_t	len;
 
+	update_env_var(shl, cmd, UNDERSCORE, NULL);
 	if (!shl->cur_wd)
 		return (-1);
 	len = ft_strlen(shl->cur_wd);
