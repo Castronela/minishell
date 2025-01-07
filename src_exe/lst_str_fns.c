@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lst_str_fns.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 02:22:09 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 20:38:19 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,9 +128,14 @@ void	ft_lst_free(t_lst_str **root)
 	{
 		free_node = del_node;
 		del_node = del_node->next;
-		free(free_node->key);
-		free(free_node->val);
+		if (free_node->key)
+			free(free_node->key);
+		if (free_node->val)
+			free(free_node->val);
+		free_node->key = NULL;
+		free_node->val = NULL;
 		free(free_node);
+		free_node = NULL;
 	}
 	*root = NULL;
 }

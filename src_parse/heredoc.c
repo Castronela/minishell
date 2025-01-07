@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/04 17:13:47 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/07 20:22:30 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,12 +117,13 @@ static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 	if (!new_hd_body)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	new_hd_body[0] = '\"';
-	new_hd_body[hd_body_len] = '\"';
-	ft_strlcpy2(&new_hd_body[1], heredoc_node->val, hd_body_len);
+	ft_strlcpy2(&new_hd_body[1], heredoc_node->val, hd_body_len + 1);
+	new_hd_body[hd_body_len + 1] = '\"';
 	var_expansion(shell, &new_hd_body);
 	hd_body_len = ft_strlen2(new_hd_body);
-	new_hd_body = ft_memmove(new_hd_body, &new_hd_body[1], hd_body_len);
-	new_hd_body = ft_recalloc(new_hd_body, hd_body_len + 1, 0);
+	new_hd_body = ft_memmove(new_hd_body, &new_hd_body[1], hd_body_len - 1);
+	new_hd_body = ft_recalloc(new_hd_body, hd_body_len - 1, 0);
+	new_hd_body[hd_body_len - 2] = 0;
 	if (!new_hd_body)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	free(heredoc_node->val);

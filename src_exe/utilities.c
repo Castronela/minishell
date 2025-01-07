@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/26 20:40:20 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 20:35:06 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,22 @@ Function to free any allocated memory during the minishell session and return
 */
 void	clearout(t_shell *shl)
 {
-	if (shl->environ!= NULL)
-		ft_free2d(shl->environ);
+	// if (shl->environ != NULL)
+	// 	ft_free2d(shl->environ);
+	if (shl->environ != NULL)
+		ft_free2d_safe(&shl->environ);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
 	if (shl->env_paths != NULL)
 		ft_lst_free(&shl->env_paths);
 	if (shl->cur_wd != NULL)
-		free(shl->cur_wd);
+		ft_free_safe((void **)(&(shl->cur_wd)));
 	if (shl->prompt != NULL)
-		free(shl->prompt);
+		ft_free_safe((void **)(&(shl->prompt)));
+	// if (shl->cur_wd != NULL)
+	// 	free(shl->cur_wd);
+	// if (shl->prompt != NULL)
+	// 	free(shl->prompt);
 	rl_clear_history();
 }
 

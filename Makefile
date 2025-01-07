@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/07 18:41:40 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/07 19:27:43 by dstinghe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,10 +80,10 @@ LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library f
 
 # Readline for Linux
 READLINE		=	libreadline.a
-# READLINE_DIR	=	/usr/local/lib
-# READLINE_HED	=	/usr/local/include
-READLINE_DIR	=	/opt/homebrew/opt/readline/lib
-READLINE_HED	=	/opt/homebrew/opt/readline/include
+READLINE_DIR	=	/usr/local/lib
+READLINE_HED	=	/usr/local/include
+#READLINE_DIR	=	/opt/homebrew/opt/readline/lib
+#READLINE_HED	=	/opt/homebrew/opt/readline/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
 VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 18:47:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 20:23:37 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@
 // ---- Control Operators ----------------------------------------------------------------
 
 # define CT_PIPE "|"			// pipe control
+# define CT_AND "&&"			// pipe control
 
-# define CONTROL_OPERATORS CT_PIPE
+# define CONTROL_OPERATORS CT_PIPE, CT_AND
 
 // ---- Command Separators ---------------------------------------------------------------
 

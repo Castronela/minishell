@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 16:31:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/07 20:45:11 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,23 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 
 int	open_file_fds(t_cmds *cmd)
 {
-	if (cmd->file_in != NULL)
+	int fds[2];
+	t_lst_str *node;
+	
+	if (cmd->file_in != NULL && !cmd->toggle_heredoc)
 	{
 		if (cmd->fd_in != 0)
 			ft_close(cmd->fd_in);
 		if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
 			return (-1);
+	}
+	else if (cmd->toggle_heredoc)
+	{
+		pipe(fds);
+		node = ft_lst_last(cmd->heredocs_lst);
+		write(fds[1], node->val, ft_strlen2(node->val));
+		close(fds[1]);
+		cmd->fd_in = fds[0];
 	}
 	if (cmd->file_out != NULL)
 	{

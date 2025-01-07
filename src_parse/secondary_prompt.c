@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 18:02:37 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/07 20:02:15 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,12 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	input = readline(PS2);
 	if (input)
 	{
-		if (write(fd_pipe[1], input, ft_strlen(input)) < 0 || (append_nl
-				&& write(fd_pipe[1], "\n", 1) < 0))
+		if (write(fd_pipe[1], input, ft_strlen(input)) < 0)
+		{
+			perror(ERRMSG_WRITE);
+			exit_status = 1;
+		}
+		if (append_nl && write(fd_pipe[1], "\n", 1) < 0)
 		{
 			perror(ERRMSG_WRITE);
 			exit_status = 1;

@@ -1,9 +1,9 @@
 services:
-  minishell:
-    image: minishell
-    container_name: minishell
+  valgrind:
+    image: valgrind
+    container_name: valgrind
     build: .
     volumes:
-      - .:/minishell
+      - .:/project
     environment:
       - USER=${USER}

@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /minishell
+WORKDIR /project
 RUN apt-get update && apt-get install -y \
 valgrind \
 libreadline-dev \
