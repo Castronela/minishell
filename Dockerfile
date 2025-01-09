@@ -5,5 +5,7 @@ RUN apt-get update && apt-get install -y \
 valgrind \
 libreadline-dev \
 nano \
+lldb \
 build-essential \
-&& cp -R /usr/include/readline /usr/local/include/readline
+&& cp -R /usr/include/readline /usr/local/include/readline \
+&& echo "settings set target.disable-aslr false" >> ~/.lldbinit

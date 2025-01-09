@@ -3,42 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 20:45:11 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/09 20:00:43 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int		open_file_fds(t_cmds *cmd);
-int		set_redirections(t_shell *shl, t_cmds *cmd);
-void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void		open_file_fds(t_shell *shl, t_cmds *cmd);
+int			set_redirections(t_shell *shl, t_cmds *cmd);
+void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+
+static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
 
 // data.pipe_fd[0]	-	read end of the pipe, i.e. to read from the pipe
 // data.pipe_fd[1]	-	write end of the pipe, i.e. to write to the pipe
 
-int	open_file_fds(t_cmds *cmd)
+void	open_file_fds(t_shell *shl, t_cmds *cmd)
 {
-	int fds[2];
-	t_lst_str *node;
-	
 	if (cmd->file_in != NULL && !cmd->toggle_heredoc)
 	{
 		if (cmd->fd_in != 0)
 			ft_close(cmd->fd_in);
 		if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
-			return (-1);
+			exit_early(shl, NULL, ERRMSG_OPEN);
 	}
 	else if (cmd->toggle_heredoc)
-	{
-		pipe(fds);
-		node = ft_lst_last(cmd->heredocs_lst);
-		write(fds[1], node->val, ft_strlen2(node->val));
-		close(fds[1]);
-		cmd->fd_in = fds[0];
-	}
+		heredoc_redirections(shl, cmd);
 	if (cmd->file_out != NULL)
 	{
 		if (cmd->fd_out != 1)
@@ -51,10 +44,24 @@ int	open_file_fds(t_cmds *cmd)
 		{
 			if (cmd->fd_in != 0)
 				ft_close(cmd->fd_in);
-			return (-1);
+			exit_early(shl, NULL, ERRMSG_OPEN);
 		}
 	}
-	return (0);
+}
+
+static void heredoc_redirections(t_shell *shl, t_cmds *cmd)
+{
+	t_lst_str *node;
+	int fds[2];
+	
+	if (pipe(fds) < 0)
+		exit_early(shl, NULL, ERRMSG_PIPE);;
+	node = ft_lst_last(cmd->heredocs_lst);
+	if (write(fds[1], node->val, ft_strlen2(node->val)) < 0)
+		exit_early(shl, NULL, ERRMSG_WRITE);
+	if (close(fds[1]) < 0)
+		exit_early(shl, NULL, ERRMSG_CLOSE);
+	cmd->fd_in = fds[0];
 }
 
 /*

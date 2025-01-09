@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 16:22:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 20:03:12 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,16 @@ void	start_shell(t_shell *shl)
 			continue ;
 		}
 		set_signal(shl, 2);
-        // test_print_cmdlst(shl, 30);
 		add_history(shl->cmdline);
+        test_print_cmdlst(shl, 30);
 		index_cmds(shl);
+        test_print_cmdlst(shl, 30);
 		get_binaries(shl);
+        test_print_cmdlst(shl, 30);
 		// test_by_print(shl);
 		// test_std_fds(shl);
 		mini_execute(shl);
+        test_print_cmdlst(shl, 30);
 		// test_printf_fds();
         // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
@@ -74,8 +77,7 @@ void	mini_execute(t_shell *shl)
 	while (cmd)
 	{
 		init_cmd_pipe(shl, cmd);
-		if (open_file_fds(cmd) < 0)
-			exit_early(shl, NULL, ERRMSG_OPEN);
+		open_file_fds(shl, cmd);
 		if (cmd->args && cmd->exc_index == 0)
 		{
 			update_env_var(shl, cmd, UNDERSCORE, NULL);
@@ -131,9 +133,13 @@ void	index_cmds(t_shell *shl)
 	total = 1;
 	ext = 1;
 	cmds = shl->cmds_lst;
+	printf("I am here inside index_cmds before the loop\n");
 	while (cmds)
 	{
+		printf("I am here inside index_cmds loop\n");
+		printf("%d\n", cmds->cmd_index);
 		cmds->cmd_index = total++;
+		printf("%d\n", cmds->cmd_index);
 		if (cmds->args && !is_built_in(*(cmds->args)))
 			cmds->exc_index = ext++;
 		cmds = cmds->next;

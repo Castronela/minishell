@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 14:27:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 19:59:54 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,7 @@ void		restore_std_fds(t_shell *shl);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
-int			open_file_fds(t_cmds *cmd);
+void		open_file_fds(t_shell *shl, t_cmds *cmd);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 
@@ -283,7 +283,7 @@ void		add_to_environ(t_shell *shl, char *var);
 /* -------------------------------- stirngs.c -------------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
-int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
+// int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
 char		**find_string_addr(t_shell *shl, char *str, int	n);
 int			find_dptr_index(t_shell *shl, char *str, int n);
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
