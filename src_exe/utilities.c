@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 20:35:06 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:21:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,10 @@ Function for an early exit if there is some internal failure eg. malloc errors
 */
 void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 {
-	clearout(shl);
-	reset_cmd_vars(shl, 1);
-	lst_cmds_freelst(shl);
 	if (double_ptr)
 		ft_free2d(double_ptr);
+	reset_cmd_vars(shl, 1);
+	clearout(shl);
 	if (msg && *msg)
 		perror(msg);
 	exit(errno);
@@ -91,12 +90,8 @@ void	clearout(t_shell *shl)
 		ft_lst_free(&shl->variables);
 	if (shl->env_paths != NULL)
 		ft_lst_free(&shl->env_paths);
-	if (shl->cur_wd != NULL)
-		ft_free_safe((void **)(&(shl->cur_wd)));
 	if (shl->prompt != NULL)
 		ft_free_safe((void **)(&(shl->prompt)));
-	// if (shl->cur_wd != NULL)
-	// 	free(shl->cur_wd);
 	// if (shl->prompt != NULL)
 	// 	free(shl->prompt);
 	rl_clear_history();

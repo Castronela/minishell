@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 00:53:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/08 03:23:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	mini_echo(t_cmds *cmd)
 	arg_index = 1;
 	skip = 1;
 	str = *(cmd->args + arg_index);
-	while (*str == '-' && *(str + 1) == 'n')
+	while (str && *str == '-' && *(str + 1) == 'n')
 	{
 		if (*(str + 2) != '\0' && *(str + 2) != 'n')
 			break;

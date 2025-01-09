@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 01:41:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 15:30:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 int		compare_strings(const char *str, const char *field, int exact);
 int		cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
-char	**find_string_ptr(t_shell *shl, char *str, int	n);
+char	**find_string_addr(t_shell *shl, char *str, int	n);
+int		find_dptr_index(t_shell *shl, char *str, int n);
 int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
-size_t	var_name_length(char *str);
+size_t	offset_to_env_value(char *str);
 
 /*
 The function is meant to compare two strings, and return 1 if they are same;
@@ -41,7 +42,6 @@ int	compare_strings(const char *str, const char *field, int exact)
 		return (-1);
 	s[0] = (unsigned char *)str;
 	s[1] = (unsigned char *)field;
-	
 	while (*s[0])
 	{
 		if (*s[0]++ != *s[1]++)
@@ -80,19 +80,19 @@ int	cmp_cstr(const char *ndl, const char *hstack, int exact, int cased)
 		s[0] = s[2];
 	while (*s[0])
 		if (*s[0]++ != *s[1]++)
-			return (0);
+			return (free(s[3]), 0);
 	if (exact)
 		if (*s[0] != *s[1])
-			return (0);
-	return (1);
+			return (free(s[3]), 0);
+	return (free(s[3]), 1);
 }
 
 /*
-Funcito returns the pointer to a string in a double pointer that matches the 
+Function to return the pointer to a string in a double pointer that matches the 
 provided string
   - 'n' is the number of characters to match while finding the pointer
 */
-char	**find_string_ptr(t_shell *shl, char *str, int	n)
+char	**find_string_addr(t_shell *shl, char *str, int	n)
 {
 	int	i;
 	
@@ -104,6 +104,31 @@ char	**find_string_ptr(t_shell *shl, char *str, int	n)
 	}
 	return (NULL);
 }
+
+/*
+Function to return the address of the double pointer that holds the pointer to 
+the string being searched in the double pointer, that matches the string 'str'
+  - 'n' is the number of characters to match while finding the pointer
+*/
+int	find_dptr_index(t_shell *shl, char *str, int n)
+{
+	int		i;
+	
+	i = -1;
+	while (shl->environ[++i])
+	{
+		if (ft_strncmp(shl->environ[i], str, n) == 0)
+			return (i);
+	}
+	return (-1);
+}
+
+/*
+Function to return the address of the double pointer that holds the pointer to 
+the string being searched in the double pointer, that matches the string 'str'
+  - 'n' is the number of characters to match while finding the pointer
+*/
+// int	find_dptr_index(t_shell *shl, char *str, int n);
 
 /*
 Function to count the number of char pointers contained in a double char pointer
@@ -145,7 +170,7 @@ int	update_environ(char **var_ptr_addr, char *var_name, char *new_val)
 
 // Function to get the length of the variable name upto '=' or '\0', whichever
 // occurs first, including the '=' character if it occurs within 'str'.
-size_t	var_name_length(char *str)
+size_t	offset_to_env_value(char *str)
 {
 	int	i;
 

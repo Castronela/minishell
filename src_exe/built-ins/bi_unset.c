@@ -6,15 +6,22 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 02:22:23 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 16:45:48 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+int			mini_unset(t_shell *shl, t_cmds *cmd);
+static int	is_valid_name(char *arg, int *i);
+static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks);
+void		remove_from_environ(t_shell *shl, char *var_name);
+void		remove_variable(t_shell *shl, char *arg);
 
 /*
 Function that mimics the built-in unset command in shell
 
+Note:	Here, the upd_str is only freed if checks[2] == 1 which indicates that
+		it is a malloc'd string, otherwise it is simply a borrowed pointer
 
 !!! Needs to be checked for cases when the return code is not zero and also
 	figure out how to handle returning that.
@@ -23,16 +30,153 @@ Function that mimics the built-in unset command in shell
 	unset $(env | awk -F= '{print $1}')
 	Caution: it deletes all env variables
 */
-int	mini_unset(t_shell *shl, t_cmds *cmd)
+int	mini_unset_old(t_shell *shl, t_cmds *cmd)
 {
-	t_lst_str	*del_node;
+	// t_lst_str	*del_node;
 	char		*var_str;
 
 	var_str = *(cmd->args + 1);
-
-	// Add same functionality for shl->environ
-	
-	del_node = ft_find_node(shl->variables, var_str, 0, 1);
-	ft_remove_node(&shl->variables, &del_node);
+	printf("I am here\n");
+	remove_from_environ(shl, var_str);
+	remove_variable(shl, var_str);
 	return (0);
 }
+
+int	mini_unset(t_shell *shl, t_cmds *cmd)
+{
+	char	**arguments;
+	int		checks[3];
+	int		ret;
+	char	*upd_str;
+
+	upd_str = NULL;
+	ret = 0;
+	arguments = cmd->args;
+	if (*(cmd->args + 1) == NULL)
+		return (write(STDOUT_FILENO, "\n", 1), 0);
+	while (*(++arguments))
+	{
+		upd_str = *arguments;
+		check_and_unset_arg(shl, *arguments, checks);
+		if (*(arguments + 1) == NULL && checks[2] == 1)
+			upd_str = get_var_component(shl, *arguments, 0);
+		if (checks[0] < 1)
+			ret = 1;
+	}
+	update_env_var(shl, cmd, UNDERSCORE, upd_str);
+	if (upd_str && checks[2] == 1)
+		free(upd_str);
+	return (ret);	
+}
+
+/*
+Static sub-function for export checks and execution if checks pass
+*/
+static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
+{
+	int	i;
+	
+	i = 0;
+	checks[0] = is_valid_name(arg, &i);
+	printf("checks[0] = %d\n", checks[0]);
+	checks[1] = 0;
+	checks[2] = 0;
+	if (checks[0] < 0)
+	{
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
+				"export: `", arg, "\': not a valid identifier\n", NULL})) < 0)
+			exit_early(shl, NULL, ERRMSG_WRITE);
+	}
+	if (checks[0] == 1)
+	{
+		printf("This time, I am here\n");
+		remove_from_environ(shl, arg);
+		remove_variable(shl, arg);
+		checks[2] = 1;
+	}
+	if (checks[0] == 2)
+		checks[2] = 1;
+}
+
+static int	is_valid_name(char *arg, int *i)
+{
+	if (arg[0] == '=')
+		return (-1);
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
+		return (-1);
+	if (arg[0] == '_' && arg[1] == '\0')
+		return (2);
+	while (arg[++(*i)])
+	{
+		if (arg[*i] == '=')
+			return (++(*i), -1);
+		if (!ft_isalnum(arg[*i]) && arg[*i] != '_')
+			return (-1 * (*i));
+	}
+	return (1);
+}
+
+/*
+Origin file: bi_export.c
+*/
+void	remove_from_environ(t_shell *shl, char *var_name)
+{
+	int		dp_index;
+	size_t	dp_len;
+	size_t	var_len;
+	char	**envar;
+
+	dp_len = count_pointers(shl->environ);
+	envar = shl->environ;
+	var_len = offset_to_env_value(var_name);
+	dp_index = find_dptr_index(shl, var_name, var_len);
+	// if ((envar + dp_index) && envar[dp_index])
+	// 	free(envar[dp_index]);
+	// if ((envar + dp_index))
+	free(envar[dp_index]);
+	// envar[dp_index] = NULL;
+	while (envar[dp_index + 1])
+	{
+		*(envar + dp_index) = *(envar + dp_index + 1);
+		dp_index++;
+	}
+	shl->environ = ft_recalloc(shl->environ, dp_len * sizeof(*shl->environ), 
+			(dp_len + 1) * sizeof(*shl->environ));
+	shl->environ[dp_len - 1] = NULL;
+}
+
+void	remove_variable(t_shell *shl, char *arg)
+{
+	t_lst_str	*del_node;
+	
+	del_node = ft_find_node(shl->variables, arg, 0, 1);
+	ft_remove_node(&shl->variables, &del_node);
+}
+
+
+// void	add_to_environ(t_shell *shl, char *var)
+// {
+// 	char	**dp;
+// 	size_t	dp_len;
+// 	size_t	var_len;
+
+// 	var_len = offset_to_env_value(var);
+// 	dp = find_string_addr(shl, var, var_len);
+// 	if (dp == NULL)
+// 	{
+// 		dp_len = count_pointers(shl->environ);
+// 		shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
+// 				sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
+// 		shl->environ[dp_len] = ft_strdup(var);
+// 		if (!shl->environ[dp_len])
+// 			exit_early(shl, NULL, ERRMSG_MALLOC);
+// 		shl->environ[dp_len + 1] = NULL;
+// 	}
+// 	else
+// 	{
+// 		free(*dp);
+// 		*dp = ft_strdup((var));
+// 		if (!*dp)
+// 			exit_early(shl, NULL, ERRMSG_MALLOC);
+// 	}
+// }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 00:36:12 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 15:58:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,11 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		}
 		new_cwd = getcwd(NULL, 0);
 		update_wdirs(shl, new_cwd);
+		free(new_cwd);
 		if (compare_strings(*(cmd->args + 1), "-", 1))
 			printf("%s\n", shl->cur_wd);
-		set_prompt(shl, "<< ", " >> % ");		
+		free(shl->prompt);
+		set_prompt(shl, "<< ", " >> % ");
 	}
 	shl->exit_code = 0;
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/07 19:27:43 by dstinghe         ###   ########.fr        #
+#    Updated: 2025/01/09 16:56:37 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,11 @@ D_BIN		=	bin
 D_INC		=	include
 D_LIB		=	lib
 D_OBJ		=	obj
+
+# ----------------- Docker files ----------------- #
+
+DK_FILE		=	Dockerfile
+DK_COMP		=	docker-compose.yml
 
 # ----------------- Source, Object and Dependency files ----------------- #
 
@@ -80,10 +85,10 @@ LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library f
 
 # Readline for Linux
 READLINE		=	libreadline.a
-READLINE_DIR	=	/usr/local/lib
-READLINE_HED	=	/usr/local/include
-#READLINE_DIR	=	/opt/homebrew/opt/readline/lib
-#READLINE_HED	=	/opt/homebrew/opt/readline/include
+# READLINE_DIR	=	/usr/local/lib
+# READLINE_HED	=	/usr/local/include
+READLINE_DIR	=	/opt/homebrew/opt/readline/lib
+READLINE_HED	=	/opt/homebrew/opt/readline/include
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
 VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
@@ -118,6 +123,9 @@ all: $(NAME)
 
 valgrind: $(NAME)
 	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
+
+dock: $(DK_FILE) $(DK_COMP)
+	docker-compose run --rm valgrind
 
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."

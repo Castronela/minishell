@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 19:50:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 15:57:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	init_environ_variables(t_shell *shl, char **envp)
 			ft_free2d(split);
 		}
 	}
-	copy_environ(shl, envp, i - 1);
+	copy_environ(shl, envp, i);
 }
 
 /*
@@ -168,6 +168,7 @@ void	update_shlvl(t_shell *shl)
 	char		*shlvl;
 	int			i;
 	t_lst_str	*var_node[2];
+	char		*tmp;
 	
 	i = -1;
 	while (shl->environ[++i])
@@ -179,17 +180,27 @@ void	update_shlvl(t_shell *shl)
 		}
 	}
 	shl->shlvl += ft_atoi(shlvl);
-	shlvl = ft_strjoin("SHLVL=", ft_itoa(shl->shlvl));
-	if (!shlvl)
+	tmp = ft_itoa(shl->shlvl);
+	if (!tmp)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
+	shlvl = ft_strjoin("SHLVL=", tmp);
+	if (!shlvl)
+	{
+		free(tmp);
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	}
 	free(shl->environ[i]);
 	shl->environ[i] = shlvl;
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
-	var_node[1] = ft_lst_new("SHLVL", ft_itoa(shl->shlvl));
+	var_node[1] = ft_lst_new("SHLVL", tmp);
 	if (!var_node[1])
+	{
+		free(tmp);
 		exit_early(shl, NULL, ERRMSG_MALLOC);
+	}
 	ft_replace_node(shl, &(var_node[0]), var_node[1]);
 	var_node[0] = ft_find_node(shl->variables, "SHLVL", 0, 1);
+	free(tmp);
 	printf("%s:	%s\n", var_node[0]->key, var_node[0]->val);
 }
 
@@ -215,6 +226,8 @@ void	set_prompt(t_shell *shl, char *prefix, char *separator)
 			break ;
 		}
 	}
+	if (split[0] == NULL)
+		shl->prompt = assemble_prompt(prefix, shl->cur_wd, separator);
 	ft_free2d(split);
 }
 

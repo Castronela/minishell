@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 17:14:57 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/04 17:02:18 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:37:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ void	*ft_recalloc(void *ptr, size_t size, size_t old_size)
 	}
 	if (old_size == 0)
 		old_size = ft_strlen2(ptr);
+	if (size < old_size)
+		old_size = size;
 	if (ptr)
 	{
 		ft_memmove(new_ptr, ptr, old_size);

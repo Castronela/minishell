@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/06 19:15:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/09 02:30:31 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 	tmp = ft_strjoin(var_name, "=");
 	if (!tmp)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	if (update_environ(find_string_ptr(shl, tmp, ft_strlen(tmp)), tmp,
+	if (update_environ(find_string_addr(shl, tmp, ft_strlen(tmp)), tmp,
 			cmd->bin_path) == -1)
 	{
 		free(tmp);
@@ -62,7 +62,7 @@ Function to add a new varaible to the minishell memory but not to shl->env
     mini_export function
   - If malloc fails at any time, exit_early function is used to exit safely
 
-Note:	var_node = ft_lst_new(*split, (var + var_len)) is used instead of
+Note:	var_node = ft_lst_new(*split, (var + offset)) is used instead of
 		var_node = ft_lst_new(*split, *(split + 1)) ; for cases of arguments
 		with multiple '=' character which would also be splitted by ft_split().
 		eg.: abc=456=oiu54
@@ -71,16 +71,16 @@ void	store_as_variable(t_shell *shl, char *var)
 {
 	t_lst_str	*var_node;
 	char		**split;
-	size_t		var_len;
+	size_t		offset;
 
-	var_len = var_name_length(var);
+	offset = offset_to_env_value(var);
 	split = ft_split(var, '=');
 	if (!split)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	var_node = ft_find_node(shl->variables, *split, 0, 1);
 	if (var_node == NULL)
 	{
-		var_node = ft_lst_new(*split, (var + var_len));
+		var_node = ft_lst_new(*split, (var + offset));
 		if (!var_node)
 			exit_early(shl, split, "Could not malloc new variable list node");
 		ft_lst_addback(&shl->variables, var_node);
@@ -88,7 +88,7 @@ void	store_as_variable(t_shell *shl, char *var)
 	else
 	{
 		free(var_node->val);
-		var_node->val = ft_strdup((var + var_len));
+		var_node->val = ft_strdup((var + offset));
 		if (!var_node->val)
 			exit_early(shl, split, ERRMSG_MALLOC);
 	}

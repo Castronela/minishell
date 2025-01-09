@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/07 20:23:37 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/09 14:27:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,9 +215,17 @@ int			is_built_in(char *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
 
 void		mini_echo(t_cmds *cmd);
+
 int			mini_export(t_shell *shl, t_cmds *cmd);
+int			is_bash_reserved(char c);
+char		*get_var_component(t_shell *shl, char *arg, int what);
+
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
+
 int			mini_unset(t_shell *shl, t_cmds *cmd);
+void		remove_from_environ(t_shell *shl, char *var_name);
+void		remove_variable(t_shell *shl, char *arg);
+
 void		mini_cd(t_shell *shl, t_cmds *cmd);
 void		mini_env(t_shell *shl, t_cmds *cmd);
 void		mini_exit(t_shell *shl);
@@ -276,10 +284,11 @@ void		add_to_environ(t_shell *shl, char *var);
 
 int			compare_strings(const char *str, const char *field, int exact);
 int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
-char		**find_string_ptr(t_shell *shl, char *str, int	n);
+char		**find_string_addr(t_shell *shl, char *str, int	n);
+int			find_dptr_index(t_shell *shl, char *str, int n);
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int			count_pointers(char **dp);
-size_t		var_name_length(char *str);
+size_t		offset_to_env_value(char *str);
 
 /* ------------------------------ utilities.c ------------------------------ */
 
