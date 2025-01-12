@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 19:29:13 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 21:22:49 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,10 @@ char	**find_string_addr(t_shell *shl, char *str, int	n)
 Function to return the address of the double pointer that holds the pointer to 
 the string being searched in the double pointer, that matches the string 'str'
   - 'n' is the number of characters to match while finding the pointer
+  - Returns an int corresponding to its index in the array of  strings being
+	searched in
+  - Returns -1 if a match is not found for 'str' in the array of strings
+  - The array of strings being searched in this function is shl->environ
 */
 int	find_dptr_index(t_shell *shl, char *str, int n)
 {

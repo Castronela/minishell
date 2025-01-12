@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 18:43:54 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 19:16:04 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,7 @@ int		remove_path(t_cmds *cmd);
 
 /*
 
-
-!!! Correction needed
-	- Need to take into account the heredoc toggle while filling fd_out or the
-	argument to send to print
-	- Need to make some changes in this file but can't remember what
-	Will add later when it comes back to me...lol
 */
-
 int	get_binaries(t_shell *shl)
 {
 	t_cmds	*cmd;
@@ -33,12 +26,15 @@ int	get_binaries(t_shell *shl)
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
-		if (cmd->args && !cmd->lvar_assignment)
-			cmd->bin_path = get_binary_path(shl, cmd);
-		if (!cmd->bin_path)
-			exit_early(shl, NULL, "Path malloc failed");
-		if (remove_path(cmd) == -1)
-			exit_early(shl, NULL, "Remove path malloc failed");
+		if (cmd->cmd_index != 0)
+		{
+			if (cmd->args)
+				cmd->bin_path = get_binary_path(shl, cmd);
+			if (!cmd->bin_path)
+				exit_early(shl, NULL, "Path malloc failed");
+			if (remove_path(cmd) == -1)
+				exit_early(shl, NULL, "Remove path malloc failed");	
+		}
 		cmd = cmd->next;
 	}
 	return (0);

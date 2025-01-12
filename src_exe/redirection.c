@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 20:00:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 19:54:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void		open_file_fds(t_shell *shl, t_cmds *cmd);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void		ft_close_stdcpy(t_shell *shl, int mod);
 
 static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
 
@@ -90,27 +91,53 @@ Function to close pipes associated to a command
   - Closes only cmd->fd_in when mod = 0
   - Closes only cmd->fd_out when mod = 1
   - Closes only cmd->fd_cls when mod = 2
+  - Closes the copy of STDIN and STDOUT
   - Closes all fds: cmd->fd_in, cmd->fd_out & both cmd->fd_cls when mod = 3
   - Sets the closed ends value to -1 after closing the file descriptor
 */
 void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 {
-	if (cmd->fd_in != 0 && cmd->fd_in != -1 && mod == 0)
+	if (mod == 0 && cmd->fd_in != 0 && cmd->fd_in != -1)
 	{
 		if (ft_close(cmd->fd_in) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_in = -1;
 	}
-	if (cmd->fd_out != 1 && cmd->fd_out != -1 && mod == 1)
+	if (mod == 1 && cmd->fd_out != 1 && cmd->fd_out != -1)
 	{
 		if (ft_close(cmd->fd_out) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_out = -1;
 	}
-	if (cmd->fd_cls > 1 && mod == 2)
+	if (mod == 2 && cmd->fd_cls > 1)
 	{
 		if (ft_close(cmd->fd_cls) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_cls = -1;
+	}
+}
+
+/*
+Function to close the dup'ed copies of stdio (especially for child processes)
+  - Closes stdin copy if mod = 0
+  - Closes stdout copy if mod = 1
+  - Closes both stdin and stdout copies if mode = 2
+  
+*/
+void	ft_close_stdcpy(t_shell *shl, int mod)
+{
+	if ((mod == 0 || mod ==2) && shl->stdio[0] > 1 &&
+			shl->stdio[0] != STDIN_FILENO)
+	{
+		if (ft_close(shl->stdio[0]) < 0)
+			exit_early(shl, NULL, ERRMSG_CLOSE);
+		shl->stdio[0] = -1;
+	}
+	if ((mod == 1 || mod ==2) && shl->stdio[1] > 1 &&
+			shl->stdio[1] != STDOUT_FILENO)
+	{
+		if (ft_close(shl->stdio[1]) < 0)
+			exit_early(shl, NULL, ERRMSG_CLOSE);
+		shl->stdio[1] = -1;
 	}
 }

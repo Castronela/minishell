@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 17:05:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 21:23:16 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,18 +30,6 @@ Note:	Here, the upd_str is only freed if checks[2] == 1 which indicates that
 	unset $(env | awk -F= '{print $1}')
 	Caution: it deletes all env variables
 */
-int	mini_unset_old(t_shell *shl, t_cmds *cmd)
-{
-	// t_lst_str	*del_node;
-	char		*var_str;
-
-	var_str = *(cmd->args + 1);
-	printf("I am here\n");
-	remove_from_environ(shl, var_str);
-	remove_variable(shl, var_str);
-	return (0);
-}
-
 int	mini_unset(t_shell *shl, t_cmds *cmd)
 {
 	char	**arguments;
@@ -86,7 +74,6 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 	}
 	if (checks[0] == 1)
 	{
-		printf("This time, I am here\n");
 		remove_from_environ(shl, arg);
 		remove_variable(shl, arg);
 		checks[2] = 1;
@@ -130,27 +117,32 @@ void	remove_from_environ(t_shell *shl, char *var_name)
 	envar = shl->environ;
 	var_len = offset_to_env_value(var_name);
 	dp_index = find_dptr_index(shl, var_name, var_len);
-	// if ((envar + dp_index) && envar[dp_index])
-	// 	free(envar[dp_index]);
-	// if ((envar + dp_index))
-	free(envar[dp_index]);
-	// envar[dp_index] = NULL;
-	while (envar[dp_index + 1])
+	if (dp_index >= 0)
 	{
-		*(envar + dp_index) = *(envar + dp_index + 1);
-		dp_index++;
+		free(envar[dp_index]);
+		while (envar[dp_index + 1])
+		{
+			*(envar + dp_index) = *(envar + dp_index + 1);
+			dp_index++;
+		}
+		shl->environ = ft_recalloc(shl->environ, dp_len * sizeof(*shl->environ), 
+				(dp_len + 1) * sizeof(*shl->environ));
+		shl->environ[dp_len - 1] = NULL;
 	}
-	shl->environ = ft_recalloc(shl->environ, dp_len * sizeof(*shl->environ), 
-			(dp_len + 1) * sizeof(*shl->environ));
-	shl->environ[dp_len - 1] = NULL;
 }
 
 void	remove_variable(t_shell *shl, char *arg)
 {
-	t_lst_str	*del_node;
+	t_lst_str	*del_var;
+	t_lst_str	*del_local_var;
 	
-	del_node = ft_find_node(shl->variables, arg, 0, 1);
-	ft_remove_node(&shl->variables, &del_node);
+	del_var = ft_find_node(shl->variables, arg, 0, 1);
+	if (del_var)
+		ft_remove_node(&shl->variables, &del_var);
+	del_local_var = ft_find_node(shl->local_vars, arg, 0, 1);
+	if (del_local_var)
+		ft_remove_node(&shl->local_vars, &del_local_var);
+	printf("This was executed w/o issues\n");
 }
 
 

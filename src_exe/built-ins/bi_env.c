@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:14 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 02:30:31 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 22:25:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,21 @@ void	mini_env(t_shell *shl, t_cmds *cmd)
 	while (shl->environ[++i])
 		printf("%s\n", shl->environ[i]);
 
-	// Extras down from here
-	printf("\n\n");
-	t_lst_str	*vars;
+	// // Extras down from here
+	// printf("\n\n");
+	// t_lst_str	*vars;
 
-	vars = shl->variables;
-	while (vars)
-	{
-		printf("key: value ->	%s : %s\n", vars->key, vars->val);
-		vars = vars->next;
-	}
+	// vars = shl->variables;
+	// while (vars)
+	// {
+	// 	printf("key: value ->	%s : %s\n", vars->key, vars->val);
+	// 	vars = vars->next;
+	// }
+	// printf("\n\n");
+	// vars = shl->local_vars;
+	// while (vars)
+	// {
+	// 	printf("key: value ->	%s : %s\n", vars->key, vars->val);
+	// 	vars = vars->next;
+	// }
 }
