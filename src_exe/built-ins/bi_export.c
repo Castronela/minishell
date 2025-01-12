@@ -6,20 +6,20 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 15:06:37 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:04:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 int			mini_export(t_shell *shl, t_cmds *cmd);
-static void	check_and_export_arg(t_shell *shl, char *arg, int *checks);
-static void	print_quoted_env(t_shell *shl);
 void		add_to_environ(t_shell *shl, char *var);
-static int	is_valid_name(char *arg, int *i);
-static int	is_valid_val(char *arg, int *i);
 int			is_bash_reserved(char c);
 char		*get_var_component(t_shell *shl, char *arg, int what);
+static void	check_and_export_arg(t_shell *shl, char *arg, int *checks);
+static void	print_quoted_env(t_shell *shl);
+static int	is_valid_name(char *arg, int *i);
+static int	is_valid_val(char *arg, int *i);
 
 /*
 Function for built-in export function
@@ -82,8 +82,8 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 
 	upd_str = NULL;
 	ret = 0;
-	arguments = cmd->args;
-	if (*(cmd->args + 1) == NULL)
+	arguments = cmd->args + cmd->skip;
+	if (*(arguments + 1) == NULL)
 		return (print_quoted_env(shl), 0);
 	while (*(++arguments))
 	{

@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/09 20:42:10 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/10 02:29:21 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -91,10 +91,13 @@ LIBFT_FLG		=	-L$(LIBFT_DIR) -l$(basename $(subst lib,,$(LIBFT)))					# library f
 
 # Readline for Linux
 READLINE		=	libreadline.a
-READLINE_DIR	=	/usr/local/lib
-READLINE_HED	=	/usr/local/include
-# READLINE_DIR	=	/opt/homebrew/opt/readline/lib
-# READLINE_HED	=	/opt/homebrew/opt/readline/include
+ifeq ($(USER), pranujamatya)
+	READLINE_DIR	=	/opt/homebrew/opt/readline/lib
+	READLINE_HED	=	/opt/homebrew/opt/readline/include
+else
+	READLINE_DIR	=	/usr/local/lib
+	READLINE_HED	=	/usr/local/include
+endif
 READLINE_FLG	=	-L$(READLINE_DIR) -l$(basename $(subst lib,,$(READLINE)))
 
 VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
@@ -128,7 +131,7 @@ all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
 
 valgrind: $(NAME)
-	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME
+	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
 
 # dock: $(DK_COMP)
 # 	@if [ $(shell docker images | grep -c valgrind) -eq 0 ]; then \
@@ -138,13 +141,11 @@ valgrind: $(NAME)
 # 	@docker-compose run --rm -build valgrind
 
 # Target to execute the dock_build.sh script and run the Docker container
-# .PHONY: dock
-
 dock:
-	@echo "Executing dock_build.sh script..."
-	@./$(DOCK_BUILD_SCRIPT)
-	@echo "Running Docker container..."
 	@docker-compose run --rm $(IMAGE_NAME)
+# @echo "Executing dock_build.sh script..."
+# @./$(DOCK_BUILD_SCRIPT)
+# @echo "Running Docker container..."
 
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."

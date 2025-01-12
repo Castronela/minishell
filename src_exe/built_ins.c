@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 13:38:19 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 19:28:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 19:17:07 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ Your shell must implement the following builtins:
 // Function to check whether the command is in the built-in list
 int	is_built_in(char *cmd)
 {
-	// if (cmp_cstr(cmd, "echo", 1, 0) || ft_strncmp(cmd, "cd", 2) == 0 ||
-	// 	ft_strncmp(cmd, "pwd", 3) == 0 || ft_strncmp(cmd, "export", 6) == 0 ||
-	// 	ft_strncmp(cmd, "unset", 5) == 0 || ft_strncmp(cmd, "env", 5) == 0 ||
-	// 	ft_strncmp(cmd, "exit", 4) == 0)
+	// if (compare_strings(cmd, "echo", 1) || compare_strings(cmd, "cd", 1) == 0 ||
+	// 	compare_strings(cmd, "pwd", 1) == 0 || compare_strings(cmd, "export", 1) == 0 ||
+	// 	compare_strings(cmd, "unset", 1) == 0 || compare_strings(cmd, "env", 1) == 0 ||
+	// 	compare_strings(cmd, "exit", 1) == 0)
 	// 	return (1);
-	if (compare_strings(cmd, "echo", 1) || ft_strncmp(cmd, "cd", 2) == 0 ||
+	if (ft_strncmp(cmd, "echo", 4) == 0 || ft_strncmp(cmd, "cd", 2) == 0 ||
 		ft_strncmp(cmd, "pwd", 3) == 0 || ft_strncmp(cmd, "export", 6) == 0 ||
 		ft_strncmp(cmd, "unset", 5) == 0 || ft_strncmp(cmd, "env", 5) == 0 ||
 		ft_strncmp(cmd, "exit", 4) == 0)
@@ -54,24 +54,28 @@ int	is_built_in(char *cmd)
 
 void	exec_built_in(t_shell *shl, t_cmds *cmd)
 {
+	char	*first_arg;
+	
+	update_env_var(shl, cmd, UNDERSCORE, NULL);
+	first_arg = *(cmd->args + cmd->skip);
 	if (set_redirections(shl, cmd) < 0)
 		exit_early(shl, NULL, ERRMSG_DUP2);
-	// if (cmp_cstr(*cmd->args, "echo", 1, 0))
-	// 	mini_echo(cmd);
-	if (compare_strings(*cmd->args, "echo", 1))
+	if (compare_strings(first_arg, "echo", 1))
 		mini_echo(cmd);
-	else if (compare_strings(*cmd->args, "cd", 1))
+	else if (compare_strings(first_arg, "cd", 1))
 		mini_cd(shl, cmd);
-	else if (compare_strings(*cmd->args, "pwd", 1))
+	else if (compare_strings(first_arg, "pwd", 1))
 		mini_pwd(shl, cmd);
-	else if (compare_strings(*cmd->args, "export", 1))
+	else if (compare_strings(first_arg, "export", 1))
 		mini_export(shl, cmd);
-	else if (compare_strings(*cmd->args, "unset", 1))
+	else if (compare_strings(first_arg, "unset", 1))
 		mini_unset(shl, cmd);
-	else if (compare_strings(*cmd->args, "env", 1))
+	else if (compare_strings(first_arg, "env", 1))
 		mini_env(shl, cmd);
-	else if (compare_strings(*cmd->args, "exit", 1))
+	else if (compare_strings(first_arg, "exit", 1))
 		mini_exit(shl);
+	else
+		printf("NOT A BUILT-IN COMMAND\n");
 	ft_close_cmd_pipe(shl, cmd, 0);
 	ft_close_cmd_pipe(shl, cmd, 1);
 	restore_std_fds(shl);

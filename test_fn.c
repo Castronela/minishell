@@ -27,6 +27,8 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		printf("Command nr. %d\n", i+1);
 		printf("\n%*s%d", spacing, "cmd_index : ", cmd_node->cmd_index);
 		printf("\n%*s%d", spacing, "exc_index : ", cmd_node->exc_index);
+		printf("\n%*s%d", spacing, "lvar_assignment : ", cmd_node->lvar_assignment);
+		printf("\n%*s%d", spacing, "skip : ", cmd_node->skip);
 		printf("\n\n%*s%s", spacing, "bin path : ", cmd_node->bin_path ? cmd_node->bin_path : "");
 		printf("\n%*s", spacing, "args : ");
 		for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)

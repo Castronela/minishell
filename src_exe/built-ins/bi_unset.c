@@ -6,13 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 16:45:48 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:05:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 int			mini_unset(t_shell *shl, t_cmds *cmd);
-static int	is_valid_name(char *arg, int *i);
+static int	is_valid_name(char *arg);
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks);
 void		remove_from_environ(t_shell *shl, char *var_name);
 void		remove_variable(t_shell *shl, char *arg);
@@ -51,8 +51,8 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 
 	upd_str = NULL;
 	ret = 0;
-	arguments = cmd->args;
-	if (*(cmd->args + 1) == NULL)
+	arguments = cmd->args + cmd->skip;
+	if (*(arguments + 1) == NULL)
 		return (write(STDOUT_FILENO, "\n", 1), 0);
 	while (*(++arguments))
 	{
@@ -74,10 +74,7 @@ Static sub-function for export checks and execution if checks pass
 */
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 {
-	int	i;
-	
-	i = 0;
-	checks[0] = is_valid_name(arg, &i);
+	checks[0] = is_valid_name(arg);
 	printf("checks[0] = %d\n", checks[0]);
 	checks[1] = 0;
 	checks[2] = 0;
@@ -98,20 +95,23 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 		checks[2] = 1;
 }
 
-static int	is_valid_name(char *arg, int *i)
+static int	is_valid_name(char *arg)
 {
+	int	i;
+	
+	i = 0;
 	if (arg[0] == '=')
 		return (-1);
 	if (!ft_isalpha(arg[0]) && arg[0] != '_')
 		return (-1);
 	if (arg[0] == '_' && arg[1] == '\0')
 		return (2);
-	while (arg[++(*i)])
+	while (arg[++i])
 	{
-		if (arg[*i] == '=')
-			return (++(*i), -1);
-		if (!ft_isalnum(arg[*i]) && arg[*i] != '_')
-			return (-1 * (*i));
+		if (arg[i] == '=')
+			return (++i, -1);
+		if (!ft_isalnum(arg[i]) && arg[i] != '_')
+			return (-1 * i);
 	}
 	return (1);
 }

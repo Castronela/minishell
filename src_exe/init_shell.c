@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 15:57:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:35:55 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 	shl->prompt = NULL;
 	init_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
+	shl->local_vars = NULL;
+	shl->aliases = NULL;
 	update_shlvl(shl);
 	shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
 	if (!shl->cur_wd)

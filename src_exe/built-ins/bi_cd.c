@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 15:58:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:02:15 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,15 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 {
 	t_lst_str	*node;
+	char		*arg;
 
-	if (*(cmd->args + 1) == NULL || compare_strings(*(cmd->args + 1), "--", 1))
+	arg = *(cmd->args + cmd->skip + 1);
+	if (arg == NULL || compare_strings(arg, "--", 1))
 	{
 		node = ft_find_node(shl->variables, "HOME", 0, 1);
 		*new_cwd = node->val;
 	}	
-	else if (compare_strings(*(cmd->args + 1), "-", 1))
+	else if (compare_strings(arg, "-", 1))
 	{
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
 		if (!node)
@@ -75,7 +77,7 @@ static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 			*new_cwd = node->val;
 	}
 	else
-		*new_cwd = *(cmd->args + 1);
+		*new_cwd = arg;
 	return (1);
 }
 

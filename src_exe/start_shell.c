@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 20:03:12 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 01:28:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,45 +20,41 @@ void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
 static void	set_prev_exitcode(t_shell *shell);
 void		restore_std_fds(t_shell *shl);
+int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
+int			is_command(t_cmds *cmd);
+// static int	skip_assignments(t_cmds *cmd);
 
-// static void	print_env(t_shell *shl);
-// static void	print_shlvl(t_shell *shl);
-// static void	print_cwd(t_shell *shl);
-// static void	print_env_paths(t_shell *shl);
+/*
+Function to start shell execution
 
+!!!	Confirm the annotation on the break condition (on the presence of break 
+	statement)
+*/
 void	start_shell(t_shell *shl)
-{
+{	
 	while (1)
 	{
 		set_signal(shl, 1);
 		set_prev_exitcode(shl);
-		
 		// shl->cmdline = ft_strdup("ls | grep s | grep src");
 		shl->cmdline = readline(shl->prompt);
-		if (!shl->cmdline)
+		if (!shl->cmdline)		// Is this required??
 			break ;
-		// if (!(ft_strncmp(shl->cmdline, "exit", 4)))
-		// 	break ;
 		if (parser(shl))
 		{
 			add_history(shl->cmdline);
-        	// test_print_cmdlst(shl, 30);
 			reset_cmd_vars(shl, 1);
 			continue ;
 		}
 		set_signal(shl, 2);
 		add_history(shl->cmdline);
-        test_print_cmdlst(shl, 30);
 		index_cmds(shl);
-        test_print_cmdlst(shl, 30);
 		get_binaries(shl);
-        test_print_cmdlst(shl, 30);
 		// test_by_print(shl);
 		// test_std_fds(shl);
 		mini_execute(shl);
-        test_print_cmdlst(shl, 30);
-		// test_printf_fds();
         // test_print_cmdlst(shl, 30);
+		// test_printf_fds();
 		reset_cmd_vars(shl, 1);
 	}
 }
@@ -78,14 +74,12 @@ void	mini_execute(t_shell *shl)
 	{
 		init_cmd_pipe(shl, cmd);
 		open_file_fds(shl, cmd);
-		if (cmd->args && cmd->exc_index == 0)
-		{
-			update_env_var(shl, cmd, UNDERSCORE, NULL);
+		if (cmd->args && !cmd->cmd_index)
+			exec_var_assignments(shl, cmd);
+		else if (cmd->args && !cmd->exc_index)
 			exec_built_in(shl, cmd);
-		}
-		else if (cmd->args)
+		else if (cmd->args && cmd->cmd_index)
 		{
-			update_env_var(shl, cmd, UNDERSCORE, NULL);
 			exec_external(shl, cmd, p_index);
 			p_index++;
 		}
@@ -97,6 +91,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 {
 	int	ec;
 
+	update_env_var(shl, cmd, UNDERSCORE, NULL);
 	ec = 0;
 	if ((*(shl->pid + p_index) = ft_fork()) < 0)
 		exit_early(shl, NULL, ERRMSG_FORK);
@@ -109,8 +104,10 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 			exit_early(shl, NULL, ERRMSG_DUP2);
 		ft_close_cmd_pipe(shl, cmd, 0);
 		ft_close_cmd_pipe(shl, cmd, 1);
-		execve(cmd->bin_path, cmd->args, shl->environ);
-		exit_early(shl, NULL, ERRMSG_EXECVE);
+		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
+			*(cmd->args + cmd->skip), ": command not found\n", NULL});
+		exit_early(shl, NULL, NULL);
 	}
 	ft_close_cmd_pipe(shl, cmd, 0);
 	ft_close_cmd_pipe(shl, cmd, 1);
@@ -126,23 +123,24 @@ Function that indexes all commands as well as all external commands from 1 to n
 */
 void	index_cmds(t_shell *shl)
 {
-	t_cmds	*cmds;
+	t_cmds	*cmd;
 	int		total;
 	int		ext;
 
 	total = 1;
 	ext = 1;
-	cmds = shl->cmds_lst;
-	printf("I am here inside index_cmds before the loop\n");
-	while (cmds)
+	cmd = shl->cmds_lst;
+	while (cmd)
 	{
-		printf("I am here inside index_cmds loop\n");
-		printf("%d\n", cmds->cmd_index);
-		cmds->cmd_index = total++;
-		printf("%d\n", cmds->cmd_index);
-		if (cmds->args && !is_built_in(*(cmds->args)))
-			cmds->exc_index = ext++;
-		cmds = cmds->next;
+		if (is_command(cmd))
+		{
+			cmd->cmd_index = total++;
+			if (cmd->args && !is_built_in(*(cmd->args + cmd->skip)))
+				cmd->exc_index = ext++;
+		}
+		else
+			cmd->lvar_assignment = 1;
+		cmd = cmd->next;
 	}
 }
 
@@ -205,4 +203,104 @@ void	restore_std_fds(t_shell *shl)
 		exit_early(shl, NULL, ERRMSG_DUP2);
 	if ((dup2(shl->stdio[1], STDOUT_FILENO)) == -1)
 		exit_early(shl, NULL, ERRMSG_DUP2);
+}
+
+// -------------------- LOCAL VARIABLE ASSIGNMENT FUNCTIONS --------------------
+/*
+Function to execute variable assignments
+
+*/
+int	exec_var_assignments(t_shell *shl, t_cmds *cmd)
+{
+	char	**args;
+
+	args = cmd->args;
+	while (*args)
+	{
+		store_local_variable(shl, *args);
+		args++;
+	}
+	return (0);
+}
+
+// static int	skip_assignments(t_cmds *cmd)
+// {
+// 	char	**args;
+// 	int		i;
+// 	int		skip;
+// 	int		eq;
+	
+// 	args = cmd->args;
+// 	skip = 0;
+// 	i = 0;
+// 	while (!is_command(cmd))
+// 	{
+// 		eq = 0;
+// 		if ((*(args + skip))[0] == '=')
+// 			return (-1);
+// 		if (!ft_isalpha((*(args + skip))[0]) && (*(args + skip))[0] != '_')
+// 			return (-1);
+// 		while ((*(args + skip))[++i])
+// 		{
+// 			if ((*(args + skip))[i] == '=')
+// 			{
+// 				eq = 1;
+// 				break ;
+// 			}
+// 			if (!ft_isalnum((*(args + skip))[i]) && (*(args + skip))[i] != '_')
+// 				return (-1);
+// 		}
+// 		if (eq == 0)
+// 			return (-1);
+// 		skip++;
+// 	}
+// 	return (skip);
+// }
+
+
+/*
+Function that checks if any of the arguments in the cmd struct is a command
+  - Returns 1 when it finds the first command, i.e. either the variable name is 
+	invalid or the '=' is not present in at least one of the args
+  - Returns 0 if no commands are found and all args are proper variables, i.e.
+	all args are valid variable names containing an '=' sign
+  - The value at the address stored by the 'skip' pointer is incremented to
+	count the total number of valid variable arguments found before a command
+	was encountered
+  - The value at 'skip' is for the purpose of indicating how many arguments to
+	skip to get to the argument where the command and its arguments start
+
+!!! Function too long
+*/
+int	is_command(t_cmds *cmd)
+{
+	char	**args;
+	int		i;
+	int		eq;
+
+	args = cmd->args;
+	while (*args)
+	{
+		i = 0;
+		eq = 0;
+		if ((*args)[0] == '=')
+		return (1);
+		if (!ft_isalpha((*args)[0]) && (*args)[0] != '_')
+			return (1);
+		while ((*args)[++i])
+		{
+			if ((*args)[i] == '=')
+			{
+				eq = 1;
+				break ;
+			}
+			if (!ft_isalnum((*args)[i]) && (*args)[i] != '_')
+				return (1);
+		}
+		if (!eq)
+			return (1);
+		args++;
+		(cmd->skip)++;
+	}
+	return (0);
 }

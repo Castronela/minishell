@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/09 18:06:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 19:01:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd = malloc(sizeof(t_cmds));
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
-	printf("new_cmd->cmd_index about to be initialized\n");
 	new_cmd->cmd_index = 0;
-	printf("new_cmd->cmd_index initialized to:	%d\n", new_cmd->cmd_index);
 	new_cmd->exc_index = 0;
+	new_cmd->lvar_assignment = 0;
+	new_cmd->skip = 0;
 	new_cmd->bin_path = NULL;
 	new_cmd->args = NULL;
 	new_cmd->heredocs_lst = NULL;

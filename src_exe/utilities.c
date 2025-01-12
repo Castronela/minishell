@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 16:21:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 19:10:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,15 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 {
 	if (double_ptr)
 		ft_free2d(double_ptr);
-	reset_cmd_vars(shl, 1);
-	clearout(shl);
+	if (shl)
+	{
+		reset_cmd_vars(shl, 1);
+		clearout(shl);
+	}
 	if (msg && *msg)
 		perror(msg);
+	else if (msg && !*msg)
+		strerror(errno);
 	exit(errno);
 }
 
@@ -90,11 +95,27 @@ void	clearout(t_shell *shl)
 		ft_lst_free(&shl->variables);
 	if (shl->env_paths != NULL)
 		ft_lst_free(&shl->env_paths);
+	if (shl->local_vars != NULL)
+		ft_lst_free(&shl->local_vars);
+	if (shl->aliases != NULL)
+		ft_lst_free(&shl->aliases);
 	if (shl->prompt != NULL)
 		ft_free_safe((void **)(&(shl->prompt)));
 	// if (shl->prompt != NULL)
 	// 	free(shl->prompt);
 	rl_clear_history();
+	if (shl->stdio[0] != STDIN_FILENO)
+	{
+		if (close(shl->stdio[0]) < 0)
+			exit_early(NULL, NULL, ERRMSG_CLOSE);
+		printf("Closed the copy of stdin\n");
+	}
+	if (shl->stdio[1] != STDOUT_FILENO)
+	{
+		if (close(shl->stdio[1]) < 0)
+			exit_early(NULL, NULL, ERRMSG_CLOSE);	
+		printf("Closed the copy of stdout\n");
+	}
 }
 
 void	ft_print_lst(t_lst_str *root)

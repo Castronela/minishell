@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 19:59:54 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:14:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,8 +154,10 @@ typedef struct s_lst_str
 
 typedef struct s_cmds
 {
-	int				cmd_index;		// Field indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
-	int				exc_index;		// Field indicate the index of the external command; should default to 0 if command is built-in
+	int				cmd_index;		// Field to indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
+	int				exc_index;		// Field to indicate the index of the external command; should default to 0 if command is built-in
+	int				lvar_assignment;// Field to indicate that this is a local variable assignment
+	int				skip;
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
 	t_lst_str		*heredocs_lst;	// If << is present, this will contain the heredoc string, else NULL
@@ -178,6 +180,8 @@ typedef struct s_shell
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
+	t_lst_str	*local_vars;		// Stores only local variables
+	t_lst_str	*aliases;			// Stores aliases
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
@@ -266,6 +270,8 @@ void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
 void		restore_std_fds(t_shell *shl);
+int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
+int			is_command(t_cmds *cmd);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
@@ -278,6 +284,7 @@ void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
 void		update_wdirs(t_shell *shl, char *new_cwd);
 void		store_as_variable(t_shell *shl, char *var);
+void		store_local_variable(t_shell *shl, char *var);
 void		add_to_environ(t_shell *shl, char *var);
 
 /* -------------------------------- stirngs.c -------------------------------- */

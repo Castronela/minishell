@@ -6,14 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/08 03:23:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/11 17:38:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_echo(t_cmds *cmd);
-static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skip);
+static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skp);
 
 /*
 Built-in echo function
@@ -28,18 +28,18 @@ void	mini_echo(t_cmds *cmd)
 	char	*str;
 	int		new_line;
 	int		arg_index;
-	int		skip;
+	int		skp;
 
 	new_line = 1;
-	arg_index = 1;
-	skip = 1;
+	arg_index = cmd->skip + 1;
+	skp = 1;
 	str = *(cmd->args + arg_index);
 	while (str && *str == '-' && *(str + 1) == 'n')
 	{
 		if (*(str + 2) != '\0' && *(str + 2) != 'n')
 			break;
-		skip++;
-		set_echo_flag(str, &new_line, &arg_index, skip);
+		skp++;
+		set_echo_flag(str, &new_line, &arg_index, skp);
 		str = *(cmd->args + arg_index);
 	}
 	while (*(cmd->args + arg_index))
@@ -56,7 +56,7 @@ void	mini_echo(t_cmds *cmd)
 /*
 Function to deal with -n flag anomalies
 */
-static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skip)
+static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skp)
 {
 	int fl_index;
 
@@ -66,7 +66,7 @@ static void set_echo_flag(const char *str, int *new_line, int *arg_index, int sk
 		if (str[fl_index] == 'n')
 		{
 			*new_line = 0;
-			*arg_index = skip;
+			*arg_index = skp;
 		}
 		else
 		{
