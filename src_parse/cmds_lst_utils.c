@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/11 19:01:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 16:11:36 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,11 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd = malloc(sizeof(t_cmds));
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
-	new_cmd->cmd_index = 0;
-	new_cmd->exc_index = 0;
-	new_cmd->lvar_assignment = 0;
-	new_cmd->skip = 0;
-	new_cmd->bin_path = NULL;
-	new_cmd->args = NULL;
-	new_cmd->heredocs_lst = NULL;
-	new_cmd->fd_in = STDIN_FILENO;
-	new_cmd->fd_out = STDOUT_FILENO;
-	new_cmd->apend = 0;
-	new_cmd->file_in = NULL;
-	new_cmd->toggle_heredoc = 0;
-	new_cmd->file_out = NULL;
-	new_cmd->cmd_separator = NULL;
-	new_cmd->next = NULL;
-	new_cmd->fd_cls = -1;
+	*new_cmd = (t_cmds) {
+		.fd_in = STDIN_FILENO,
+		.fd_out = STDOUT_FILENO,
+		.fd_cls = -1
+	};
 	return (new_cmd);
 }
 
@@ -102,6 +91,8 @@ void	reset_cmd_vars(t_shell *shell, int free_before)
 	}
 	shell->pid = NULL;
 	shell->cmdline = NULL;
-	shell->cmds_lst = NULL;
 	shell->open_qt = 0;
+	shell->cmds_lst = NULL;
+	shell->exit_code_prev = shell->exit_code;
+	shell->exit_code = 0;
 }

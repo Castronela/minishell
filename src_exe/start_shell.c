@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 01:28:52 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 16:12:06 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void		create_pids(t_shell *shl);
 void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
 void		index_cmds(t_shell *shl);
 int			get_total_cmds(t_shell *shl, int which);
-static void	set_prev_exitcode(t_shell *shell);
 void		restore_std_fds(t_shell *shl);
 int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
 int			is_command(t_cmds *cmd);
@@ -35,7 +34,6 @@ void	start_shell(t_shell *shl)
 	while (1)
 	{
 		set_signal(shl, 1);
-		set_prev_exitcode(shl);
 		// shl->cmdline = ft_strdup("ls | grep s | grep src");
 		shl->cmdline = readline(shl->prompt);
 		if (!shl->cmdline)		// Is this required??
@@ -186,12 +184,6 @@ void	create_pids(t_shell *shl)
 	shl->pid = malloc(total_ext * sizeof(pid_t));
 	if (!shl->pid)
 		exit_early(shl, NULL, "PID malloc failed");
-}
-
-static void set_prev_exitcode(t_shell *shell)
-{
-	shell->exit_code_prev = shell->exit_code;
-	shell->exit_code = 0;	
 }
 
 /*

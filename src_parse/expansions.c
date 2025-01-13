@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2024/12/27 16:33:12 by david            ###   ########.fr       */
+/*   Updated: 2025/01/13 16:08:27 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,8 @@ static char	*get_var_value(t_shell *shell, char *var_name)
 	else
 	{
 		var_node = ft_find_node(shell->variables, var_name + 1, 0, 1);
+		if (!var_node)
+			var_node = ft_find_node(shell->local_vars, var_name + 1, 0, 1);
 		if (var_node)
 			var_value = ft_strdup(var_node->val);
 	}
