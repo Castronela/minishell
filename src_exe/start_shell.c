@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 16:12:06 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:13:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ void	start_shell(t_shell *shl)
 		set_signal(shl, 2);
 		add_history(shl->cmdline);
 		index_cmds(shl);
+        // test_print_cmdlst(shl, 30);
 		get_binaries(shl);
 		// test_by_print(shl);
 		// test_std_fds(shl);
 		mini_execute(shl);
-        // test_print_cmdlst(shl, 30);
 		// test_printf_fds();
 		reset_cmd_vars(shl, 1);
 	}
@@ -97,6 +97,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		ft_close_cmd_pipe(shl, cmd, 0);
 	if (shl->pid[p_index] == 0)
 	{
+		ft_close_stdcpy(shl, 2);
 		ft_close_cmd_pipe(shl, cmd, 2);
 		if (set_redirections(shl, cmd) < 0)
 			exit_early(shl, NULL, ERRMSG_DUP2);
@@ -201,16 +202,36 @@ void	restore_std_fds(t_shell *shl)
 /*
 Function to execute variable assignments
 
+
+Note:	Here, the cmd->skip parameter should not be used as it is not executing
+		a command but rather variable assignments, which the cmd->skip parameter
+		is designed to skip
 */
 int	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 {
-	char	**args;
+	char		**args[2];
+	t_lst_str	*var_node;
+	size_t		offset;
 
-	args = cmd->args;
-	while (*args)
+	args[0] = cmd->args;
+	while (*(args[0]))
 	{
-		store_local_variable(shl, *args);
-		args++;
+		args[1] = ft_split(*(args[0]), '=');
+		if (!(args[1]))
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		var_node = ft_find_node(shl->variables, *(args[1]), 0, 1);
+		offset = offset_to_env_value(*(args[0]));
+		if (var_node)
+		{
+			free(var_node->val);
+			var_node->val = ft_strdup((*(args[0]) + offset));
+			if (!var_node->val)
+				exit_early(shl, args[1], ERRMSG_MALLOC);
+		}
+		else
+			store_local_variable(shl, *(args[0]));
+		ft_free2d(args[1]);
+		(args[0])++;
 	}
 	return (0);
 }

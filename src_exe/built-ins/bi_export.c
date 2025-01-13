@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 17:04:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 15:22:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,42 +37,6 @@ Note:	Here, the upd_str is only freed if checks[2] == 1 which indicates that
 
 !!! Use the new ft_fprintf_str() fn instead of multiples writes here.
 */
-
-// int	mini_export_old(t_shell *shl, t_cmds *cmd)
-// {
-// 	int		i;
-// 	char	**arguments;
-// 	int		checks[3];
-// 	char	*upd_str;
-
-// 	arguments = cmd->args;
-// 	while (*(++arguments))
-// 	{
-// 		upd_str = *arguments;
-// 		i = 0;
-// 		checks[2] = 0;
-// 		checks[0] = is_valid_name(*arguments, &i);
-// 		checks[1] = is_valid_val(*arguments, &i);
-// 		if (checks[0] < 0)
-// 			ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-// 			"export: `", *arguments, "\': not a valid identifier\n", NULL});
-// 		if (checks[0] == 1 && checks[1] == 1)
-// 		{
-// 			checks[2] = 1;
-// 			add_to_environ(shl, *arguments);
-// 			store_as_variable(shl, *arguments);
-// 		}
-// 		if (checks[0] == 2)
-// 			checks[2] = 1;
-// 		if (*(arguments + 1) == NULL && checks[2] == 1)
-// 			upd_str = get_var_component(shl, *arguments, 0);
-// 	}
-// 	update_env_var(shl, cmd, UNDERSCORE, upd_str);
-// 	if (checks[2] == 1)
-// 		free(upd_str);
-// 	return (0);
-// }
-
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
 	char	**arguments;

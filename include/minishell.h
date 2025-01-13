@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 17:14:52 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 19:52:48 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,6 +278,7 @@ int			is_command(t_cmds *cmd);
 void		open_file_fds(t_shell *shl, t_cmds *cmd);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void		ft_close_stdcpy(t_shell *shl, int mod);
 
 /* --------------------------- environmentalists.c --------------------------- */
 

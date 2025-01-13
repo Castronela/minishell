@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 16:04:48 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/12 17:09:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 		var_val = cmd->bin_path;
 	else
 		var_val = val;
-	if (update_environ(find_string_addr(shl, tmp_name, ft_strlen(tmp_name)), 
+	if (update_environ(find_string_addr(shl, tmp_name, ft_strlen(tmp_name)),
 			tmp_name, var_val) == -1)
 	{
 		free(tmp_name);
@@ -74,7 +74,7 @@ Note:	var_node = ft_lst_new(*split, (var + offset)) is used instead of
 */
 void	store_as_variable(t_shell *shl, char *var)
 {
-	t_lst_str	*var_node;
+	t_lst_str	*var_node[2];
 	char		**split;
 	size_t		offset;
 
@@ -82,19 +82,22 @@ void	store_as_variable(t_shell *shl, char *var)
 	split = ft_split(var, '=');
 	if (!split)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	var_node = ft_find_node(shl->variables, *split, 0, 1);
-	if (var_node == NULL)
+	var_node[0] = ft_find_node(shl->variables, *split, 0, 1);
+	var_node[1] = ft_find_node(shl->local_vars, *split, 0, 1);
+	if (var_node[0] == NULL)
 	{
-		var_node = ft_lst_new(*split, (var + offset));
-		if (!var_node)
+		if (var_node[1])
+			ft_remove_node(&shl->local_vars, &(var_node[1]));
+		var_node[0] = ft_lst_new(*split, (var + offset));
+		if (!var_node[0])
 			exit_early(shl, split, "Could not malloc new variable list node");
-		ft_lst_addback(&shl->variables, var_node);
+		ft_lst_addback(&shl->variables, var_node[0]);
 	}
-	else
+	else if (var_node[0])
 	{
-		free(var_node->val);
-		var_node->val = ft_strdup((var + offset));
-		if (!var_node->val)
+		free(var_node[0]->val);
+		var_node[0]->val = ft_strdup((var + offset));
+		if (!var_node[0]->val)
 			exit_early(shl, split, ERRMSG_MALLOC);
 	}
 	ft_free2d(split);
