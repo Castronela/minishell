@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 19:54:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:02:09 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	open_file_fds(t_shell *shl, t_cmds *cmd)
 	if (cmd->file_in != NULL && !cmd->toggle_heredoc)
 	{
 		if (cmd->fd_in != 0)
-			ft_close(cmd->fd_in);
+			close(cmd->fd_in);
 		if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
 			exit_early(shl, NULL, ERRMSG_OPEN);
 	}
@@ -36,7 +36,7 @@ void	open_file_fds(t_shell *shl, t_cmds *cmd)
 	if (cmd->file_out != NULL)
 	{
 		if (cmd->fd_out != 1)
-			ft_close(cmd->fd_out);
+			close(cmd->fd_out);
 		if (cmd->apend)
 			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_APPEND, 0644);
 		else
@@ -44,7 +44,7 @@ void	open_file_fds(t_shell *shl, t_cmds *cmd)
 		if (cmd->fd_out == -1)
 		{
 			if (cmd->fd_in != 0)
-				ft_close(cmd->fd_in);
+				close(cmd->fd_in);
 			exit_early(shl, NULL, ERRMSG_OPEN);
 		}
 	}
@@ -75,12 +75,12 @@ int	set_redirections(t_shell *shl, t_cmds *cmd)
 	if (cmd->fd_in != STDIN_FILENO)
 	{
 		if ((dup2(cmd->fd_in, STDIN_FILENO)) == -1)
-			return (printf("1\n"),ft_close(cmd->fd_in), -1);
+			return (printf("1\n"),close(cmd->fd_in), -1);
 	}
 	if (cmd->fd_out != STDOUT_FILENO)
 	{
 		if ((dup2(cmd->fd_out, STDOUT_FILENO)) == -1)
-			return (printf("2\n"),ft_close(cmd->fd_out), -1);
+			return (printf("2\n"),close(cmd->fd_out), -1);
 	}
 	return (0);
 }
@@ -99,19 +99,19 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 {
 	if (mod == 0 && cmd->fd_in != 0 && cmd->fd_in != -1)
 	{
-		if (ft_close(cmd->fd_in) < 0)
+		if (close(cmd->fd_in) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_in = -1;
 	}
 	if (mod == 1 && cmd->fd_out != 1 && cmd->fd_out != -1)
 	{
-		if (ft_close(cmd->fd_out) < 0)
+		if (close(cmd->fd_out) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_out = -1;
 	}
 	if (mod == 2 && cmd->fd_cls > 1)
 	{
-		if (ft_close(cmd->fd_cls) < 0)
+		if (close(cmd->fd_cls) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_cls = -1;
 	}
@@ -129,14 +129,14 @@ void	ft_close_stdcpy(t_shell *shl, int mod)
 	if ((mod == 0 || mod ==2) && shl->stdio[0] > 1 &&
 			shl->stdio[0] != STDIN_FILENO)
 	{
-		if (ft_close(shl->stdio[0]) < 0)
+		if (close(shl->stdio[0]) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		shl->stdio[0] = -1;
 	}
 	if ((mod == 1 || mod ==2) && shl->stdio[1] > 1 &&
 			shl->stdio[1] != STDOUT_FILENO)
 	{
-		if (ft_close(shl->stdio[1]) < 0)
+		if (close(shl->stdio[1]) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		shl->stdio[1] = -1;
 	}

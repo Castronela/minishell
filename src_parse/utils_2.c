@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:35:34 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/04 17:32:34 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 17:53:32 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,25 @@ size_t	find_longest_match_length(const char *str, const char *pattern[]);
 bool	is_redir(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index],
-			(const char *[]){REDIRECTION_OPERATORS, NULL}));
+			(const char *[]){RD_IN, RD_OUT, RD_OUT_A, RD_HD, NULL}));
 }
 
 bool	is_control(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index],
-			(const char *[]){CONTROL_OPERATORS, NULL}));
+			(const char *[]){CT_PIPE, CT_AND, NULL}));
 }
 
 bool	is_special_param(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index],
-			(const char *[]){SPECIAL_OPERATORS, NULL}));
+			(const char *[]){DOLLAR, QUESTION_MARK, POUND, NULL}));
 }
 
 bool	is_command_sep(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index],
-			(const char *[]){COMMAND_SEPARATORS, NULL}));
+			(const char *[]){CS_SMICOL, CS_NEWLNE, NULL}));
 }
 
 /*

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 17:13:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:01:14 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 
 	update_env_var(shl, cmd, UNDERSCORE, NULL);
 	ec = 0;
-	if ((*(shl->pid + p_index) = ft_fork()) < 0)
+	if ((*(shl->pid + p_index) = fork()) < 0)
 		exit_early(shl, NULL, ERRMSG_FORK);
 	if (shl->pid[p_index] != 0)
 		ft_close_cmd_pipe(shl, cmd, 0);

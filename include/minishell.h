@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 19:52:48 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:37:55 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,29 +65,21 @@
 # define RD_OUT_A ">>"			// append output redirection
 # define RD_HD "<<"				// heredoc redirection
 
-# define REDIRECTION_OPERATORS RD_IN, RD_OUT, RD_OUT_A, RD_HD
-
 // ---- Control Operators ----------------------------------------------------------------
 
 # define CT_PIPE "|"			// pipe control
 # define CT_AND "&&"			// pipe control
-
-# define CONTROL_OPERATORS CT_PIPE, CT_AND
 
 // ---- Command Separators ---------------------------------------------------------------
 
 # define CS_SMICOL ";"
 # define CS_NEWLNE "\n"
 
-# define COMMAND_SEPARATORS CS_SMICOL, CS_NEWLNE
-
 // ---- Special Parameters ---------------------------------------------------------------
 
 # define DOLLAR "$"
 # define QUESTION_MARK "?"
 # define POUND "#"
-
-# define SPECIAL_OPERATORS DOLLAR, QUESTION_MARK, POUND
 
 // ---- Reserved Bash Characters ---------------------------------------------------------
 
@@ -101,13 +93,11 @@
 # define BS '\\'
 # define PP '|'
 
-# define RESERVED_BASH_CHARS BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP
-
 //--------------------------------------------------------------------------------------//
 //                                    Error Messages                                    //
 //--------------------------------------------------------------------------------------//
 
-# define ERSHL C_RED "minishell: " BG_RESET
+# define ERSHL "\033[31mminishell: \033[32m"
 
 // ---- Function Error Message -----------------------------------------------------------
 
@@ -160,13 +150,15 @@ typedef struct s_cmds
 	int				skip;
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
-	t_lst_str		*heredocs_lst;	// If << is present, this will contain the heredoc string, else NULL
+	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
-	int				apend;			// If >> is present, this will be set to 1, else 0
-	char			*file_in;		// Name of infile if < is present, else NULL
-	int				toggle_heredoc;
-	char			*file_out;		// Name of outfile if > is present, else NULL
+	// int				apend;			// to be deleted
+	// char			*file_in;		// to be deleted
+	// int				toggle_heredoc;
+	// char			*file_out;		// to be deleted
+	t_lst_str		*redirs_in;
+	t_lst_str		*redirs_out;
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	struct s_cmds	*next;
@@ -194,15 +186,6 @@ typedef struct s_shell
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
-
-
-
-int			ft_close(int fd);
-int 		ft_close2(int fd);
-int 		ft_pipe(int pipefd[2]);
-pid_t 		ft_fork();
-void 		test_printf_fds(void);
-void 		test_std_fds(t_shell *shl);
 
 
 //--------------------------------------------------------------------------------------//
@@ -386,9 +369,9 @@ void 		test_print_envariables(t_shell *shell);
 /* ======================== End Function Prototypes ======================== */
 
 void test_printf_fds(void);
-pid_t ft_fork();
-int ft_pipe(int pipefd[2]);
-int ft_close(int fd);
+pid_t fork();
+int pipe(int pipefd[2]);
+int close(int fd);
 
 
 #endif

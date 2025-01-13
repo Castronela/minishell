@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 15:22:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 17:58:44 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,8 +206,8 @@ Function to check whether the char parameter is a bash-reserved character
 */
 int	is_bash_reserved(char c)
 {
-	if (ft_strchr((const char []){RESERVED_BASH_CHARS, '\0'}, 
-			(unsigned int)c) == NULL)
+	if (ft_strchr((const char []){BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP, 
+			'\0'}, (unsigned int)c) == NULL)
 		return (0);
 	return (1);
 }
