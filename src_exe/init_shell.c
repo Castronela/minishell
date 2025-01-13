@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 17:35:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 21:03:55 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
 void		init_environ_variables(t_shell *shl, char **envp);
 static void	copy_environ(t_shell *shl, char **envp, int size);
-void		copy_env_paths(t_shell *shl, char **envp);
+void		link_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
 char		*assemble_prompt(char *prefix, char *cwd, char *separator);
@@ -45,7 +45,7 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 	shl->cur_wd = NULL;
 	shl->prompt = NULL;
 	init_environ_variables(shl, envp);
-	copy_env_paths(shl, envp);
+	link_env_paths(shl, envp);
 	shl->local_vars = NULL;
 	shl->aliases = NULL;
 	update_shlvl(shl);
@@ -124,10 +124,9 @@ Copies env path variable into shell struct
   - Memories and errors are handled by exit_early function in case of failure
   - Allocations by ft_split are freed using ft_free2d
 */
-void	copy_env_paths(t_shell *shl, char **envp)
+void	link_env_paths(t_shell *shl, char **envp)
 {
 	int			i;
-	char		**paths;
 	t_lst_str	*new_node;
 
 	paths = NULL;
@@ -152,6 +151,34 @@ void	copy_env_paths(t_shell *shl, char **envp)
 	}
 	ft_free2d(paths);
 }
+// void	copy_env_paths(t_shell *shl, char **envp)
+// {
+// 	int			i;
+// 	char		**paths;
+// 	t_lst_str	*new_node;
+
+// 	paths = NULL;
+// 	i = -1;
+// 	while (envp[++i])
+// 	{
+// 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
+// 		{
+// 			paths = ft_split(envp[i] + 5, ':');
+// 			if (!paths)
+// 				exit_early(shl, NULL, "Could not split PATH");
+// 			break ;
+// 		}
+// 	}
+// 	i = -1;
+// 	while (paths[++i])
+// 	{
+// 		new_node = ft_lst_new(paths[i], NULL);
+// 		if (!new_node)
+// 			exit_early(shl, paths, "Could not malloc t_lst_str node");
+// 		ft_lst_addback(&shl->env_paths, new_node);
+// 	}
+// 	ft_free2d(paths);
+// }
 
 /*
 Updates the SHLVL environment variable

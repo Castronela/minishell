@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 19:16:04 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/13 21:13:31 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,24 @@ char	*get_binary_path(t_shell *shl, t_cmds *cmd);
 int		remove_path(t_cmds *cmd);
 
 /*
-
+Function to get binaries
 */
 int	get_binaries(t_shell *shl)
 {
 	t_cmds	*cmd;
+	char	**env_paths;
 	
 	cmd = shl->cmds_lst;
+	env_paths = ft_split(shl->environ[find_dptr_index(shl, "PATH", 4)], ':');
 	while (cmd)
 	{
 		if (cmd->cmd_index != 0)
 		{
 			if (cmd->args)
+			{
+				
 				cmd->bin_path = get_binary_path(shl, cmd);
+			}
 			if (!cmd->bin_path)
 				exit_early(shl, NULL, "Path malloc failed");
 			if (remove_path(cmd) == -1)
@@ -38,6 +43,28 @@ int	get_binaries(t_shell *shl)
 		cmd = cmd->next;
 	}
 	return (0);
+}
+
+/*
+Function that returns a double char of paths malloc'd by ft_split by finding
+the path value on shl->variables
+*/
+static char	**get_env_paths(t_shell *shl)
+{
+	char		**paths;
+	t_lst_str	*env_paths;
+
+	paths = NULL;
+	env_paths = ft_find_node(shl->variables, "PATH", 0, 1);
+	if (!env_paths)
+		return (NULL);
+	else
+	{
+		paths = ft_split(env_paths->val, ':');
+		if (!paths)
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		
+	}
 }
 
 char	*get_binary_path(t_shell *shl, t_cmds *cmd)

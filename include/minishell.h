@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:37:55 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 21:03:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,15 +150,15 @@ typedef struct s_cmds
 	int				skip;
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
-	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
-	// int				apend;			// to be deleted
-	// char			*file_in;		// to be deleted
-	// int				toggle_heredoc;
-	// char			*file_out;		// to be deleted
-	t_lst_str		*redirs_in;
-	t_lst_str		*redirs_out;
+	char			*file_in;		// to be deleted
+	t_lst_str		*heredocs_lst;	// to be deleted
+	int				toggle_heredoc;	// to be deleted
+	int				apend;			// to be deleted
+	char			*file_out;		// to be deleted
+	t_lst_str		*redirs_in;		// incoming re-structuring
+	t_lst_str		*redirs_out;	// incoming re-structuring
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	struct s_cmds	*next;
@@ -171,7 +171,7 @@ typedef struct s_shell
 	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
-	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
+	char		*env_paths;			// Borrowed pointer that points to path variable in shl->variables->val
 	t_lst_str	*local_vars;		// Stores only local variables
 	t_lst_str	*aliases;			// Stores aliases
 	int			shlvl;				// Stores the current shell level
@@ -221,7 +221,7 @@ void		mini_exit(t_shell *shl);
 
 void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
 void		init_environ_variables(t_shell *shl, char **envp);
-void		copy_env_paths(t_shell *shl, char **envp);
+void		link_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
 char		*assemble_prompt(char *prefix, char *cwd, char *separator);

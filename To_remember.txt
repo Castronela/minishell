@@ -34,8 +34,13 @@ added later.
 	-	
 	-
 
+3.	Niche commands to help with testing and debugging
+	
+	Command to delete all env variables
+	unset $(env | awk -F= '{print $1}')
 
-3.	Default variables set by bash at startup
+
+4.	Default variables set by bash at startup
 
 	When Bash starts up, it sets several default environment variables. Here are some of the key environment variables that are typically set by Bash during startup:
 
