@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 15:54:29 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 21:10:53 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	parser(t_shell *shell)
 		}
 		if (!is_valid_control_1(shell))
 			return (1);
+		// test_print_cmdlst(shell, 30);
 		if (heredoc(shell))
 			return (1);
 		if (index_cmd >= ft_strlen2(shell->cmdline) && open_ctr_op(shell,

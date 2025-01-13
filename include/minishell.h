@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:37:55 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 19:55:07 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ typedef struct s_cmds
 	int				skip;
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
+	int				arg_count;
 	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO

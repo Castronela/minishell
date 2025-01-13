@@ -33,17 +33,18 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		printf("\n%*s", spacing, "args : ");
 		for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
 			printf("(%s) ", cmd_node->args[j]);
-		for (t_lst_str *node = cmd_node->heredocs_lst; node; node = node->next)
+		for (t_lst_str *node = cmd_node->redirs_in; node; node = node->next)
 		{
-			printf("\n\n%*s%s", spacing, "HereDoc delimiter : ", node->key ? node->key : "");
-			printf("\n%*s%s", spacing, "HereDoc body : ", node->val ? node->val : "");
+			printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
+			printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "");
+		}
+		for (t_lst_str *node = cmd_node->redirs_out; node; node = node->next)
+		{
+			printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
+			printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "");
 		}
 		printf("\n\n%*s%d", spacing, "fd_in : ", cmd_node->fd_in);
-		printf("\n%*s%s", spacing, "file_in : ", cmd_node->file_in ? cmd_node->file_in : "");
-		printf("\n%*s%d", spacing, "toggle heredoc : ", cmd_node->toggle_heredoc);
 		printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
-		printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
-		printf("\n%*s%d", spacing, "append : ", cmd_node->apend);
 		printf("\n\n%*s%s\n\n", spacing, "cmd_separator : ", cmd_node->cmd_separator ? cmd_node->cmd_separator : "");
 		
 		cmd_node = cmd_node->next;
@@ -54,52 +55,54 @@ void test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing)
 {
 	printf("\n%*s%s\n", spacing, "COMMANDLINE : ", shell->cmdline);
 
-	printf("Command nr. %d\n", cmd_node->cmd_index);
 	printf("\n%*s%d", spacing, "cmd_index : ", cmd_node->cmd_index);
 	printf("\n%*s%d", spacing, "exc_index : ", cmd_node->exc_index);
+	printf("\n%*s%d", spacing, "lvar_assignment : ", cmd_node->lvar_assignment);
+	printf("\n%*s%d", spacing, "skip : ", cmd_node->skip);
 	printf("\n\n%*s%s", spacing, "bin path : ", cmd_node->bin_path ? cmd_node->bin_path : "");
 	printf("\n%*s", spacing, "args : ");
 	for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
 		printf("(%s) ", cmd_node->args[j]);
-	for (t_lst_str *node = cmd_node->heredocs_lst; node; node = node->next)
+	for (t_lst_str *node = cmd_node->redirs_in; node; node = node->next)
 	{
-		printf("\n\n%*s%s", spacing, "HereDoc delimiter : ", node->key ? node->key : "");
-		printf("\n%*s%s", spacing, "HereDoc body : ", node->val ? node->val : "");
+		printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
+		printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "");
+	}
+	for (t_lst_str *node = cmd_node->redirs_out; node; node = node->next)
+	{
+		printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
+		printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "");
 	}
 	printf("\n\n%*s%d", spacing, "fd_in : ", cmd_node->fd_in);
-	printf("\n%*s%s", spacing, "file_in : ", cmd_node->file_in ? cmd_node->file_in : "");
-	printf("\n%*s%d", spacing, "toggle heredoc : ", cmd_node->toggle_heredoc);
 	printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
-	printf("\n%*s%s", spacing, "file_out : ", cmd_node->file_out ? cmd_node->file_out : "");
-	printf("\n%*s%d", spacing, "append : ", cmd_node->apend);
 	printf("\n\n%*s%s\n\n", spacing, "cmd_separator : ", cmd_node->cmd_separator ? cmd_node->cmd_separator : "");
 	printf("\n");
 }
 
-void test_free_cmds(t_shell *shell)
-{
-	t_cmds *cmd_node = shell->cmds_lst;
-	t_cmds *cmd_node_free;
+// void test_free_cmds(t_shell *shell)
+// {
+// 	t_cmds *cmd_node = shell->cmds_lst;
+// 	t_cmds *cmd_node_free;
 
-	while (cmd_node)
-	{
-		if (cmd_node->bin_path)
-			free (cmd_node->bin_path);
-		if (cmd_node->args)
-			ft_free2d(cmd_node->args);
-		if (cmd_node->heredocs_lst)
-			ft_lst_free(&cmd_node->heredocs_lst);
-		if (cmd_node->file_in)
-			free(cmd_node->file_in);
-		if (cmd_node->file_out)
-			free(cmd_node->file_out);
-		if (cmd_node->cmd_separator)
-			free(cmd_node->cmd_separator);
-		cmd_node_free = cmd_node;
-		cmd_node = cmd_node->next;
-		free(cmd_node_free);
-	}
-}
+// 	while (cmd_node)
+// 	{
+// 		if (cmd_node->bin_path)
+// 			free (cmd_node->bin_path);
+// 		if (cmd_node->args)
+// 			ft_free2d(cmd_node->args);
+// 		if (cmd_node->heredocs_lst)
+// 			ft_lst_free(&cmd_node->heredocs_lst);
+// 		if (cmd_node->file_in)
+// 			free(cmd_node->file_in);
+// 		if (cmd_node->file_out)
+// 			free(cmd_node->file_out);
+// 		if (cmd_node->cmd_separator)
+// 			free(cmd_node->cmd_separator);
+// 		cmd_node_free = cmd_node;
+// 		cmd_node = cmd_node->next;
+// 		free(cmd_node_free);
+// 	}
+// }
 /* Dont need this anymore `*/
 // // void test_new_tokenizer(char **envp)
 // void test_new_tokenizer(t_shell *shl)

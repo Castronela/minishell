@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/07 20:22:30 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:16:38 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,23 @@ int	heredoc(t_shell *shell)
 
 static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 {
-	t_lst_str	*heredoc_node;
+	t_lst_str	*node;
 	int			flag_expand_vars;
 
-	heredoc_node = cmd_node->heredocs_lst;
-	while (heredoc_node)
+	node = cmd_node->redirs_in;
+	while (node)
 	{
-		if (!heredoc_node->val)
+		if (!node->val && node->key)
 		{
-			flag_expand_vars = count_closed_quotes(heredoc_node->key);
-			remove_closed_quotes(shell, &heredoc_node->key);
-			if (append_to_str(&heredoc_node->key, "\n", -1))
+			flag_expand_vars = count_closed_quotes(node->key);
+			remove_closed_quotes(shell, &node->key);
+			if (append_to_str(&node->key, "\n", -1))
 				exit_early(shell, NULL, ERRMSG_MALLOC);
-			if (heredoc_get_body(shell, heredoc_node))
+			if (heredoc_get_body(shell, node))
 				return (1);
-			heredoc_body_var_expand(shell, heredoc_node, flag_expand_vars);
+			heredoc_body_var_expand(shell, node, flag_expand_vars);
 		}
-		heredoc_node = heredoc_node->next;
+		node = node->next;
 	}
 	return (0);
 }

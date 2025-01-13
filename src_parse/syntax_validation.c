@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/06 19:48:47 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:23:08 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,8 @@ bool	is_valid_control_1(t_shell *shell)
 	{
 		if (cmd_node->cmd_separator && is_control(cmd_node->cmd_separator, 0))
 		{
-			if (!cmd_node->args && !cmd_node->file_in && !cmd_node->file_out
-				&& !cmd_node->heredocs_lst)
+			if (!cmd_node->args && !cmd_node->redirs_in 
+				&& !cmd_node->redirs_out)
 			{
 				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 						SYNTX_UNEXP_TOKEN, cmd_node->cmd_separator, "'\n",

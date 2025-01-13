@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/13 17:52:03 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 18:48:49 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ Returns allocated string of next token starting from index 'i_cmdline'
 return:
 0 - continue normally
 1 - free all cmd vars and restart main prompt
+2 - free all vars and exit
 */
 int	get_next_token(t_shell *shell, size_t *index_cmd, char **token)
 {
@@ -46,7 +47,7 @@ int	get_next_token(t_shell *shell, size_t *index_cmd, char **token)
 	{
 		*token = ft_substr(shell->cmdline, i_start, ((*index_cmd) - i_start));
 		if (!(*token))
-			exit_early(shell, NULL, ERRMSG_MALLOC);
+			return (2);
 	}
 	skip_whitespaces(shell->cmdline, index_cmd);
 	return (0);
