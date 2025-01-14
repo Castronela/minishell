@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:01:14 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 04:53:33 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int			get_total_cmds(t_shell *shl, int which);
 void		restore_std_fds(t_shell *shl);
 int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
 int			is_command(t_cmds *cmd);
+static void	execve_aftermath_exit(t_shell *shl, t_cmds *cmd, int err);
 // static int	skip_assignments(t_cmds *cmd);
 
 /*
@@ -85,6 +86,10 @@ void	mini_execute(t_shell *shl)
 	}
 }
 
+/*
+
+!!! !! Still getting seg fault when path is accessed after unsetting
+*/
 void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 {
 	int	ec;
@@ -104,9 +109,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		ft_close_cmd_pipe(shl, cmd, 0);
 		ft_close_cmd_pipe(shl, cmd, 1);
 		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-			*(cmd->args + cmd->skip), ": command not found\n", NULL});
-		exit_early(shl, NULL, NULL);
+		execve_aftermath_exit(shl, cmd, errno);
 	}
 	ft_close_cmd_pipe(shl, cmd, 0);
 	ft_close_cmd_pipe(shl, cmd, 1);
@@ -114,6 +117,22 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFEXITED(ec))
 		shl->exit_code = WEXITSTATUS(ec);
+}
+
+static void	execve_aftermath_exit(t_shell *shl, t_cmds *cmd, int err)
+{
+	if (!cmd->bin_path)
+	{
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
+			*(cmd->args + cmd->skip), ": ", strerror(err), "\n", NULL});
+		exit_early(shl, NULL, NULL);
+	}
+	else
+	{
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
+			*(cmd->args + cmd->skip), ": command not found\n", NULL});
+		exit_early(shl, NULL, NULL);
+	}
 }
 
 /*/

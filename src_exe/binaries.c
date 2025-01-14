@@ -6,63 +6,90 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 19:16:04 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 03:50:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int		get_binaries(t_shell *shl);
-char	*get_binary_path(t_shell *shl, t_cmds *cmd);
-int		remove_path(t_cmds *cmd);
+int			get_binaries(t_shell *shl);
+char		*get_binary_path(t_cmds *cmd, char **env_paths);
+int			remove_path(t_cmds *cmd);
+static char	**get_env_paths(t_shell *shl);
 
 /*
-
+Function to get binaries
 */
 int	get_binaries(t_shell *shl)
 {
 	t_cmds	*cmd;
+	char	**env_paths;
 	
 	cmd = shl->cmds_lst;
+	env_paths = get_env_paths(shl);
 	while (cmd)
 	{
-		if (cmd->cmd_index != 0)
+		if (env_paths == NULL)
+			cmd->bin_path = NULL;
+		else if (env_paths && cmd->cmd_index != 0)
 		{
 			if (cmd->args)
-				cmd->bin_path = get_binary_path(shl, cmd);
+				cmd->bin_path = get_binary_path(cmd, env_paths);
 			if (!cmd->bin_path)
-				exit_early(shl, NULL, "Path malloc failed");
+				exit_early(shl, env_paths, "Path malloc failed");
 			if (remove_path(cmd) == -1)
-				exit_early(shl, NULL, "Remove path malloc failed");	
+				exit_early(shl, env_paths, "Remove-path malloc failed");	
 		}
 		cmd = cmd->next;
 	}
+	ft_free2d(env_paths);
 	return (0);
 }
 
-char	*get_binary_path(t_shell *shl, t_cmds *cmd)
+/*
+Function that returns a double char of paths malloc'd by ft_split by finding
+the path value on shl->variables
+*/
+static char	**get_env_paths(t_shell *shl)
+{
+	char		**env_paths;
+	t_lst_str	*paths;
+
+	env_paths = NULL;
+	paths = ft_find_node(shl->variables, "PATH", 0, 1);
+	if (!paths)
+		return (NULL);
+	else
+	{
+		env_paths = ft_split(paths->val, ':');
+		if (!env_paths)
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		return (env_paths);
+	}
+}
+
+char	*get_binary_path(t_cmds *cmd, char **env_paths)
 {
 	char	*tmp[3];
-	t_lst_str	*paths;
 	char	*cmd_name;
+	int		i;
 
 	cmd_name = *(cmd->args + cmd->skip);
-	paths = shl->env_paths;
 	if (!(tmp[0] = ft_strdup(cmd_name)))
-			return (perror("ft_strdup-malloc failed:"), NULL);
+		return (perror("ft_strdup malloc failed:"), NULL);
 	if ((access(tmp[0], F_OK) == 0 && tmp[0][0] == '/'))
 		return (tmp[0]);
-	while (paths)
+	i = -1;
+	while (env_paths[++i])
 	{
-		if (!(tmp[1] = ft_strjoin(paths->key, "/")))
-			return (free(tmp[0]), perror("tmp1-m failed:"), NULL);
+		if (!(tmp[1] = ft_strjoin(env_paths[i], "/")))
+			return (free(tmp[0]), perror("tmp1 malloc failed:"), NULL);
 		if (!(tmp[2] = ft_strjoin(tmp[1], cmd_name)))
-			return (free(tmp[0]), free(tmp[1]), perror("tmp2-m failed:"), NULL);
+			return (free(tmp[0]), free(tmp[1]), perror("tmp2 malloc failed:"), NULL);
 		free(tmp[1]);
 		if (access(tmp[2], F_OK) == 0)
 			return (free(tmp[0]), tmp[2]);
 		free(tmp[2]);
-		paths = paths->next;
 	}
 	return (tmp[0]);
 }

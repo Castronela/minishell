@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 19:55:07 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 15:07:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@
 
 // ---- Built-in Error Message -----------------------------------------------------------
 
-# define ERRMSG_CD "cd:"
+# define ERRMSG_CD "cd: "
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -154,12 +154,13 @@ typedef struct s_cmds
 	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
-	// int				apend;			// to be deleted
-	// char			*file_in;		// to be deleted
-	// int				toggle_heredoc;
-	// char			*file_out;		// to be deleted
-	t_lst_str		*redirs_in;
-	t_lst_str		*redirs_out;
+	char			*file_in;		// to be deleted
+	t_lst_str		*heredocs_lst;	// to be deleted
+	int				toggle_heredoc;	// to be deleted
+	int				apend;			// to be deleted
+	char			*file_out;		// to be deleted
+	t_lst_str		*redirs_in;		// incoming re-structuring
+	t_lst_str		*redirs_out;	// incoming re-structuring
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	struct s_cmds	*next;
@@ -172,9 +173,8 @@ typedef struct s_shell
 	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
-	t_lst_str	*env_paths;			// Stores the PATH variable from the calling shell
+	// t_lst_str	*env_paths;			// Borrowed pointer that points to path variable in shl->variables->val
 	t_lst_str	*local_vars;		// Stores only local variables
-	t_lst_str	*aliases;			// Stores aliases
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
@@ -222,7 +222,7 @@ void		mini_exit(t_shell *shl);
 
 void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
 void		init_environ_variables(t_shell *shl, char **envp);
-void		copy_env_paths(t_shell *shl, char **envp);
+void		link_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
 char		*assemble_prompt(char *prefix, char *cwd, char *separator);
@@ -242,7 +242,7 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 /* ----------------------------- start_shell.c ----------------------------- */
 
 int			get_binaries(t_shell *shl);
-char		*get_binary_path(t_shell *shl, t_cmds *cmd);
+char		*get_binary_path(t_cmds *cmd, char **env_paths);
 int			remove_path(t_cmds *cmd);
 
 /* ----------------------------- start_shell.c ----------------------------- */
@@ -287,6 +287,7 @@ size_t		offset_to_env_value(char *str);
 void		arg_error(char **av);
 void		ft_free2dint(int **memory);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);
+void		exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 void		clearout(t_shell *shl);
 void		ft_print_lst(t_lst_str *root);
 

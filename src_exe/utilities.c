@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 19:10:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 03:48:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	arg_error(char **av);
 void	ft_free2dint(int **memory);
 void	exit_early(t_shell *shl, char **double_ptr, char *msg);
+void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 void	clearout(t_shell *shl);
 void	ft_print_lst(t_lst_str *root);
 
@@ -73,6 +74,24 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 	exit(errno);
 }
 
+void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg)
+{
+	if (double_ptr)
+		ft_free2d(double_ptr);
+	if (s_ptr)
+		free(s_ptr);
+	if (shl)
+	{
+		reset_cmd_vars(shl, 1);
+		clearout(shl);
+	}
+	if (msg && *msg)
+		perror(msg);
+	else if (msg && !*msg)
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){strerror(errno), NULL});
+	exit(errno);
+}
+
 /*
 Function to free any allocated memory during the minishell session and return
   - When called, the fn frees all allocated t_shell field pointers, clears the 
@@ -93,12 +112,12 @@ void	clearout(t_shell *shl)
 		ft_free2d_safe(&shl->environ);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
-	if (shl->env_paths != NULL)
-		ft_lst_free(&shl->env_paths);
+	// if (shl->env_paths != NULL)
+	// 	ft_lst_free(&shl->env_paths);
 	if (shl->local_vars != NULL)
 		ft_lst_free(&shl->local_vars);
-	if (shl->aliases != NULL)
-		ft_lst_free(&shl->aliases);
+	if (shl->cur_wd != NULL)
+		ft_free_safe((void **)(&(shl->cur_wd)));
 	if (shl->prompt != NULL)
 		ft_free_safe((void **)(&(shl->prompt)));
 	// if (shl->prompt != NULL)

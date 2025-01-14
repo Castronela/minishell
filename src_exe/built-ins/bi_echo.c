@@ -6,14 +6,15 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 17:38:14 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 00:32:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_echo(t_cmds *cmd);
-static void set_echo_flag(const char *str, int *new_line, int *arg_index, int skp);
+static void set_echo_flag(const char *str, int *new_line, 
+			int *arg_index, int skp);
 
 /*
 Built-in echo function
@@ -22,6 +23,7 @@ Built-in echo function
   - if command contains no -n option, then it writes to fd_out followed by a newline
 
 !!! > 25 lines
+!!! shl->exit_code = 0 at the end of each built-in functions
 */
 void	mini_echo(t_cmds *cmd)
 {
