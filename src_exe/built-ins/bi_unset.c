@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 21:23:16 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 00:20:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 	update_env_var(shl, cmd, UNDERSCORE, upd_str);
 	if (upd_str && checks[2] == 1)
 		free(upd_str);
-	return (ret);	
+	// if (ft_find_node(shl->variables, "PATH", 0, 1) == NULL)
+	return (ret);
 }
 
 /*

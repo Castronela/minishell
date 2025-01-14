@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 21:03:55 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 03:47:38 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Initializes the elements of the shell struct "t_shell"
 
 !!! Need to look into update_shlvl for leaks and other potential problems
 -->>	Potentially totally fixed. Haven't checked with valgrind yet.
+-->>	No issues with valgrind so far
 */
 void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 {
@@ -40,16 +41,16 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 	shl->stdio[1] = dup(STDOUT_FILENO);
 	shl->environ = NULL;
 	shl->variables = NULL;
-	shl->env_paths = NULL;
+	// shl->env_paths = NULL;
 	shl->shlvl = 1;
 	shl->cur_wd = NULL;
 	shl->prompt = NULL;
 	init_environ_variables(shl, envp);
-	link_env_paths(shl, envp);
+	// link_env_paths(shl, envp);
 	shl->local_vars = NULL;
-	shl->aliases = NULL;
 	update_shlvl(shl);
-	shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
+	// shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
+	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
@@ -124,37 +125,9 @@ Copies env path variable into shell struct
   - Memories and errors are handled by exit_early function in case of failure
   - Allocations by ft_split are freed using ft_free2d
 */
-void	link_env_paths(t_shell *shl, char **envp)
-{
-	int			i;
-	t_lst_str	*new_node;
-
-	paths = NULL;
-	i = -1;
-	while (envp[++i])
-	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-		{
-			paths = ft_split(envp[i] + 5, ':');
-			if (!paths)
-				exit_early(shl, NULL, "Could not split PATH");
-			break ;
-		}
-	}
-	i = -1;
-	while (paths[++i])
-	{
-		new_node = ft_lst_new(paths[i], NULL);
-		if (!new_node)
-			exit_early(shl, paths, "Could not malloc t_lst_str node");
-		ft_lst_addback(&shl->env_paths, new_node);
-	}
-	ft_free2d(paths);
-}
-// void	copy_env_paths(t_shell *shl, char **envp)
+// void	link_env_paths(t_shell *shl, char **envp)
 // {
 // 	int			i;
-// 	char		**paths;
 // 	t_lst_str	*new_node;
 
 // 	paths = NULL;

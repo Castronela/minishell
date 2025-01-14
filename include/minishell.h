@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 21:03:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 03:49:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@
 
 // ---- Built-in Error Message -----------------------------------------------------------
 
-# define ERRMSG_CD "cd:"
+# define ERRMSG_CD "cd: "
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -171,9 +171,8 @@ typedef struct s_shell
 	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
-	char		*env_paths;			// Borrowed pointer that points to path variable in shl->variables->val
+	// t_lst_str	*env_paths;			// Borrowed pointer that points to path variable in shl->variables->val
 	t_lst_str	*local_vars;		// Stores only local variables
-	t_lst_str	*aliases;			// Stores aliases
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
@@ -241,7 +240,7 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 /* ----------------------------- start_shell.c ----------------------------- */
 
 int			get_binaries(t_shell *shl);
-char		*get_binary_path(t_shell *shl, t_cmds *cmd);
+char		*get_binary_path(t_cmds *cmd, char **env_paths);
 int			remove_path(t_cmds *cmd);
 
 /* ----------------------------- start_shell.c ----------------------------- */
@@ -286,6 +285,7 @@ size_t		offset_to_env_value(char *str);
 void		arg_error(char **av);
 void		ft_free2dint(int **memory);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);
+void		exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 void		clearout(t_shell *shl);
 void		ft_print_lst(t_lst_str *root);
 
