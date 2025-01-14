@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 21:22:34 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 20:28:31 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,6 @@ static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	return (0);
 }
 
-/*
-Initializes 'new_cmdnode' with redirection targets:
-	- checks redirection type of 'operator'
-	- retrieves next token and stores it
-	into 'new_cmdnode' as redirection target
-	- does syntax check for redirection operators
-*/
 static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 {	
 	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1) 
@@ -109,20 +102,19 @@ static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 	else if (!ft_strncmp(node->key, RD_OUT, ft_strlen(RD_OUT) + 1)
 		|| !ft_strncmp(node->key, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
 		ft_lst_addback(&new_cmdnode->redirs_out, node);
-	if (!ft_strncmp(node->key, RD_IN, ft_strlen(RD_IN) + 1))
-	{
-		free(node->key);
-		node->key = NULL;
-	}
-	else if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
+	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
 	{
 		free(node->key);
 		node->key = node->val;
 		node->val = NULL;
 	}
-	if ((!node->key || ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
-		&& node->val)
+	else
 		expand_homedir_special_char(shell, &node->val);
+	if (!ft_strncmp(node->key, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
+	{
+		free(node->key);
+		node->key = NULL;
+	}
 }
 
 /*

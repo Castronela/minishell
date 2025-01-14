@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/09 16:18:36 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 20:37:21 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Function to mimic exit command
 void	mini_exit(t_shell *shl)
 {
 	write(1, "exit\n", 5);
-	reset_cmd_vars(shl, 1);
+	reset_cmd_vars(shl, 1, 1);
 	clearout(shl);
 	exit(EXIT_SUCCESS);
 }

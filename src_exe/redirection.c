@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:02:09 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/13 20:26:36 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,53 +17,55 @@ int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
 
-static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
+// static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
 
 // data.pipe_fd[0]	-	read end of the pipe, i.e. to read from the pipe
 // data.pipe_fd[1]	-	write end of the pipe, i.e. to write to the pipe
 
 void	open_file_fds(t_shell *shl, t_cmds *cmd)
 {
-	if (cmd->file_in != NULL && !cmd->toggle_heredoc)
-	{
-		if (cmd->fd_in != 0)
-			close(cmd->fd_in);
-		if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
-			exit_early(shl, NULL, ERRMSG_OPEN);
-	}
-	else if (cmd->toggle_heredoc)
-		heredoc_redirections(shl, cmd);
-	if (cmd->file_out != NULL)
-	{
-		if (cmd->fd_out != 1)
-			close(cmd->fd_out);
-		if (cmd->apend)
-			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		else
-			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (cmd->fd_out == -1)
-		{
-			if (cmd->fd_in != 0)
-				close(cmd->fd_in);
-			exit_early(shl, NULL, ERRMSG_OPEN);
-		}
-	}
+	(void)shl;
+	(void)cmd;
+	// if (cmd->file_in != NULL && !cmd->toggle_heredoc)
+	// {
+	// 	if (cmd->fd_in != 0)
+	// 		close(cmd->fd_in);
+	// 	if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
+	// 		exit_early(shl, NULL, ERRMSG_OPEN);
+	// }
+	// else if (cmd->toggle_heredoc)
+	// 	heredoc_redirections(shl, cmd);
+	// if (cmd->file_out != NULL)
+	// {
+	// 	if (cmd->fd_out != 1)
+	// 		close(cmd->fd_out);
+	// 	if (cmd->apend)
+	// 		cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	// 	else
+	// 		cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	// 	if (cmd->fd_out == -1)
+	// 	{
+	// 		if (cmd->fd_in != 0)
+	// 			close(cmd->fd_in);
+	// 		exit_early(shl, NULL, ERRMSG_OPEN);
+	// 	}
+	// }
 }
 
-static void heredoc_redirections(t_shell *shl, t_cmds *cmd)
-{
-	t_lst_str *node;
-	int fds[2];
+// static void heredoc_redirections(t_shell *shl, t_cmds *cmd)
+// {
+// 	t_lst_str *node;
+// 	int fds[2];
 	
-	if (pipe(fds) < 0)
-		exit_early(shl, NULL, ERRMSG_PIPE);;
-	node = ft_lst_last(cmd->heredocs_lst);
-	if (write(fds[1], node->val, ft_strlen2(node->val)) < 0)
-		exit_early(shl, NULL, ERRMSG_WRITE);
-	if (close(fds[1]) < 0)
-		exit_early(shl, NULL, ERRMSG_CLOSE);
-	cmd->fd_in = fds[0];
-}
+// 	if (pipe(fds) < 0)
+// 		exit_early(shl, NULL, ERRMSG_PIPE);;
+// 	node = ft_lst_last(cmd->heredocs_lst);
+// 	if (write(fds[1], node->val, ft_strlen2(node->val)) < 0)
+// 		exit_early(shl, NULL, ERRMSG_WRITE);
+// 	if (close(fds[1]) < 0)
+// 		exit_early(shl, NULL, ERRMSG_CLOSE);
+// 	cmd->fd_in = fds[0];
+// }
 
 /*
 Function to dup2 the STDIN_FILENO and STDOUT_FILENO when fd_in and fd_out are

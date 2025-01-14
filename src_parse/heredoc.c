@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 20:16:38 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 21:00:42 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 int			heredoc(t_shell *shell);
 
 static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node);
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node);
-static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
-				int flag_expand_vars);
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node, 
+	const int flag_expand_vars);
+static void	heredoc_body_var_expand(t_shell *shell, char **str,
+		int flag_expand_vars);
 
 /*
 Loops through every command node and checks for open heredocs;
@@ -38,6 +39,7 @@ int	heredoc(t_shell *shell)
 				exit_early(shell, NULL, ERRMSG_WRITE);
 			return (1);
 		}
+		shell->heredoc_file_no++;
 		cmd_node = cmd_node->next;
 	}
 	return (0);
@@ -55,21 +57,28 @@ static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 		{
 			flag_expand_vars = count_closed_quotes(node->key);
 			remove_closed_quotes(shell, &node->key);
-			if (append_to_str(&node->key, "\n", -1))
-				exit_early(shell, NULL, ERRMSG_MALLOC);
-			if (heredoc_get_body(shell, node))
+			if (open_hd_tmp_file(shell, node))
 				return (1);
-			heredoc_body_var_expand(shell, node, flag_expand_vars);
+			if (append_to_str(&node->key, "\n", -1))
+				exit_early(shell, NULL, ERRMSG_MALLOC); 
+			if (heredoc_get_body(shell, node, flag_expand_vars))
+				return (1);
+			free(node->key);
+			node->key = NULL;
 		}
+		close(shell->file_fd_to_close);
+		shell->file_fd_to_close = -1;
 		node = node->next;
 	}
 	return (0);
 }
 
+
 /*
 Retrieves all necessary Heredoc body from user
 */
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node, 
+	const int flag_expand_vars)
 {
 	char	*input;
 	int		hd_pipe[2];
@@ -79,22 +88,20 @@ static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node)
 		if (prep_prompt(shell, &hd_pipe, 1))
 			return (1);
 		input = prompt_read(shell, hd_pipe[0]);
-		if (!input)
-			break ;
-		else if (!ft_strncmp(input, heredoc_node->key,
+		close(hd_pipe[0]);
+		if (!input || !ft_strncmp(input, heredoc_node->key,
 				ft_strlen(heredoc_node->key) + 1))
 			break ;
-		else if (append_to_str(&heredoc_node->val, input, -1))
+		heredoc_body_var_expand(shell, &input, flag_expand_vars);
+		if (write(shell->file_fd_to_close, input, ft_strlen2(input)) < 0)
 		{
 			free(input);
-			close(hd_pipe[0]);
-			exit_early(shell, NULL, ERRMSG_MALLOC);
+			exit_early(shell, NULL, ERRMSG_WRITE);
 		}
 		free(input);
 	}
 	if (input)
 		free(input);
-	close(hd_pipe[0]);
 	return (0);
 }
 
@@ -104,7 +111,7 @@ Expands variables of heredoc body ONLY if 'flag_expand_vars' is 0
 	- performs variable expansion
 	- removes double quotes added earlier
 */
-static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
+static void	heredoc_body_var_expand(t_shell *shell, char **str,
 		int flag_expand_vars)
 {
 	char	*new_hd_body;
@@ -112,20 +119,23 @@ static void	heredoc_body_var_expand(t_shell *shell, t_lst_str *heredoc_node,
 
 	if (flag_expand_vars)
 		return ;
-	hd_body_len = ft_strlen2(heredoc_node->val);
+	hd_body_len = ft_strlen2(*str);
 	new_hd_body = ft_calloc(hd_body_len + 3, sizeof(*new_hd_body));
 	if (!new_hd_body)
+	{
+		free(*str);
 		exit_early(shell, NULL, ERRMSG_MALLOC);
+	}
 	new_hd_body[0] = '\"';
-	ft_strlcpy2(&new_hd_body[1], heredoc_node->val, hd_body_len + 1);
+	ft_strlcpy2(&new_hd_body[1], *str, hd_body_len + 1);
+	free(*str);
 	new_hd_body[hd_body_len + 1] = '\"';
 	var_expansion(shell, &new_hd_body);
 	hd_body_len = ft_strlen2(new_hd_body);
 	new_hd_body = ft_memmove(new_hd_body, &new_hd_body[1], hd_body_len - 1);
 	new_hd_body = ft_recalloc(new_hd_body, hd_body_len - 1, 0);
-	new_hd_body[hd_body_len - 2] = 0;
 	if (!new_hd_body)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
-	free(heredoc_node->val);
-	heredoc_node->val = new_hd_body;
+	new_hd_body[hd_body_len - 2] = 0;
+	*str = new_hd_body;
 }

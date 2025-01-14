@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 20:21:48 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 21:01:33 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void	lst_cmds_freelst(t_shell *shell);
-void	reset_cmd_vars(t_shell *shell, int free_before);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -73,28 +72,4 @@ void	lst_cmds_freelst(t_shell *shell)
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);
 	}
-}
-
-/*
-Nullifies all command variables
-	- if 'free_before' > 0 then frees command variables
-	before nullifying them
-*/
-void	reset_cmd_vars(t_shell *shell, int free_before)
-{
-	if (free_before)
-	{
-		if (shell->pid)
-			free(shell->pid);
-		if (shell->cmdline)
-			free(shell->cmdline);
-		if (shell->cmds_lst)
-			lst_cmds_freelst(shell);
-	}
-	shell->pid = NULL;
-	shell->cmdline = NULL;
-	shell->open_qt = 0;
-	shell->cmds_lst = NULL;
-	shell->exit_code_prev = shell->exit_code;
-	shell->exit_code = 0;
 }

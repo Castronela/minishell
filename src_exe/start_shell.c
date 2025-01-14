@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:01:14 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 20:36:34 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,19 @@ void	start_shell(t_shell *shl)
 		if (parser(shl))
 		{
 			add_history(shl->cmdline);
-			reset_cmd_vars(shl, 1);
+			reset_cmd_vars(shl, 1, 1);
 			continue ;
 		}
 		set_signal(shl, 2);
 		add_history(shl->cmdline);
-		index_cmds(shl);
-        // test_print_cmdlst(shl, 30);
-		get_binaries(shl);
+		// index_cmds(shl);
+        test_print_cmdlst(shl, 30);
+		// get_binaries(shl);
 		// test_by_print(shl);
 		// test_std_fds(shl);
-		mini_execute(shl);
+		// mini_execute(shl);
 		// test_printf_fds();
-		reset_cmd_vars(shl, 1);
+		reset_cmd_vars(shl, 1, 1);
 	}
 }
 

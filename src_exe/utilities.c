@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/11 19:10:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 20:37:03 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 		ft_free2d(double_ptr);
 	if (shl)
 	{
-		reset_cmd_vars(shl, 1);
+		reset_cmd_vars(shl, 1, 1);
 		clearout(shl);
 	}
 	if (msg && *msg)
@@ -108,13 +108,13 @@ void	clearout(t_shell *shl)
 	{
 		if (close(shl->stdio[0]) < 0)
 			exit_early(NULL, NULL, ERRMSG_CLOSE);
-		printf("Closed the copy of stdin\n");
+		// printf("Closed the copy of stdin\n");
 	}
 	if (shl->stdio[1] != STDOUT_FILENO)
 	{
 		if (close(shl->stdio[1]) < 0)
 			exit_early(NULL, NULL, ERRMSG_CLOSE);	
-		printf("Closed the copy of stdout\n");
+		// printf("Closed the copy of stdout\n");
 	}
 }
 
