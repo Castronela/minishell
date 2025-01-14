@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 17:09:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 16:28:29 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 	char		*tmp_name;
 	char		*var_val;
 	t_lst_str	*env_lst[2];
-
+ 
 	tmp_name = ft_strjoin(var_name, "=");
 	if (!tmp_name)
 		exit_early(shl, NULL, ERRMSG_MALLOC);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   secondary_prompt.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/07 20:02:15 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 20:04:34 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

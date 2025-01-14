@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 04:53:33 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 19:32:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ void	start_shell(t_shell *shl)
 		set_signal(shl, 2);
 		add_history(shl->cmdline);
 		index_cmds(shl);
-        // test_print_cmdlst(shl, 30);
 		get_binaries(shl);
 		// test_by_print(shl);
 		// test_std_fds(shl);
+        test_print_cmdlst(shl, 30);
 		mini_execute(shl);
 		// test_printf_fds();
 		reset_cmd_vars(shl, 1);
@@ -121,7 +121,7 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 
 static void	execve_aftermath_exit(t_shell *shl, t_cmds *cmd, int err)
 {
-	if (!cmd->bin_path)
+	if (!(*cmd->bin_path))
 	{
 		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
 			*(cmd->args + cmd->skip), ": ", strerror(err), "\n", NULL});

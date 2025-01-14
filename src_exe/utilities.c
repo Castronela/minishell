@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 03:48:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 16:44:33 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,30 +106,24 @@ Function to free any allocated memory during the minishell session and return
 */
 void	clearout(t_shell *shl)
 {
-	// if (shl->environ != NULL)
-	// 	ft_free2d(shl->environ);
 	if (shl->environ != NULL)
 		ft_free2d_safe(&shl->environ);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
-	// if (shl->env_paths != NULL)
-	// 	ft_lst_free(&shl->env_paths);
 	if (shl->local_vars != NULL)
 		ft_lst_free(&shl->local_vars);
 	if (shl->cur_wd != NULL)
 		ft_free_safe((void **)(&(shl->cur_wd)));
 	if (shl->prompt != NULL)
 		ft_free_safe((void **)(&(shl->prompt)));
-	// if (shl->prompt != NULL)
-	// 	free(shl->prompt);
 	rl_clear_history();
-	if (shl->stdio[0] != STDIN_FILENO)
+	if (shl->stdio[0] != STDIN_FILENO && shl->stdio[0] != -1)
 	{
 		if (close(shl->stdio[0]) < 0)
 			exit_early(NULL, NULL, ERRMSG_CLOSE);
 		printf("Closed the copy of stdin\n");
 	}
-	if (shl->stdio[1] != STDOUT_FILENO)
+	if (shl->stdio[1] != STDOUT_FILENO && shl->stdio[1] != -1)
 	{
 		if (close(shl->stdio[1]) < 0)
 			exit_early(NULL, NULL, ERRMSG_CLOSE);	

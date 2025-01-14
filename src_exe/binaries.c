@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 03:50:14 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 20:26:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ int	get_binaries(t_shell *shl)
 	env_paths = get_env_paths(shl);
 	while (cmd)
 	{
-		if (env_paths == NULL)
-			cmd->bin_path = NULL;
-		else if (env_paths && cmd->cmd_index != 0)
+		if (cmd->cmd_index != 0)
 		{
-			if (cmd->args)
+			if (env_paths && cmd->args)
 				cmd->bin_path = get_binary_path(cmd, env_paths);
+			else if (!env_paths)
+				cmd->bin_path = ft_strdup("");
 			if (!cmd->bin_path)
 				exit_early(shl, env_paths, "Path malloc failed");
 			if (remove_path(cmd) == -1)
@@ -42,7 +42,8 @@ int	get_binaries(t_shell *shl)
 		}
 		cmd = cmd->next;
 	}
-	ft_free2d(env_paths);
+	if (env_paths)
+		ft_free2d(env_paths);
 	return (0);
 }
 

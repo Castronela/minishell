@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 04:50:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/14 19:44:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 	else if (compare_strings(arg, "-", 1))
 	{
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
-		if (!node)
+		if (!node || !(*node->val))
 			return (shl->exit_code = 1, ft_fprintf_str(STDERR_FILENO, 
 				(const char *[]){"minishell: cd: OLDPWD not set\n", NULL}), -1);
 		else
@@ -154,4 +154,3 @@ void	update_wdirs(t_shell *shl, char *new_cwd)
 // 	}
 // 	return (0);
 // }
-
