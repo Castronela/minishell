@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/14 20:59:58 by dstinghe         ###   ########.fr        #
+#    Updated: 2025/01/15 00:19:00 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -104,6 +104,7 @@ VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
 					--leak-check=full \
 					--show-leak-kinds=all \
 					--trace-children=yes \
+					--track-fds=yes \
 					-s \
 					# --child-silent-after-fork=yes \
 # Leak Sanitizer for leak check on Mac (run: make LEAK=1)

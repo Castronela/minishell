@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 20:23:08 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:17:41 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	is_valid_quotation(t_shell *shell)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_EOF, "\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_SYNTAX;
+		shell->exit_code = ERRCODE_GENERAL;
 		return (false);
 	}
 	return (true);
@@ -57,14 +57,13 @@ bool	is_valid_control_1(t_shell *shell)
 	{
 		if (cmd_node->cmd_separator && is_control(cmd_node->cmd_separator, 0))
 		{
-			if (!cmd_node->args && !cmd_node->redirs_in 
-				&& !cmd_node->redirs_out)
+			if (!cmd_node->args && !cmd_node->redirs)
 			{
 				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 						SYNTX_UNEXP_TOKEN, cmd_node->cmd_separator, "'\n",
 						NULL}))
 					exit_early(shell, NULL, ERRMSG_WRITE);
-				shell->exit_code = ERRCODE_SYNTAX;
+				shell->exit_code = ERRCODE_GENERAL;
 				return (false);
 			}
 		}
@@ -93,7 +92,7 @@ bool	is_valid_control_2(t_shell *shell)
 				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 						SYNTX_UNEXP_EOF, "\n", NULL}))
 					exit_early(shell, NULL, ERRMSG_WRITE);
-				shell->exit_code = ERRCODE_SYNTAX;
+				shell->exit_code = ERRCODE_GENERAL;
 				return (false);
 			}
 		}
@@ -114,7 +113,7 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_TOKEN, "newline'\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_SYNTAX;
+		shell->exit_code = ERRCODE_GENERAL;
 		return (false);
 	}
 	else if (is_control(redir_target, 0) || is_redir(redir_target, 0)
@@ -123,7 +122,7 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_TOKEN, redir_target, "'\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_SYNTAX;
+		shell->exit_code = ERRCODE_GENERAL;
 		return (false);
 	}
 	return (true);

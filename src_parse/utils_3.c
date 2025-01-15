@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 21:00:25 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:21:16 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "minishell.h"
 
-void	    reset_cmd_vars(t_shell *shell, const int free_before, 
-            const int rm_tmp);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
 int         open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 
 static int  get_temp_file_path(t_shell *shell, t_lst_str *cur_node, 
@@ -25,29 +24,25 @@ Nullifies all command variables
 	- if 'free_before' > 0 then frees command variables
 	before nullifying them
 */
-void	reset_cmd_vars(t_shell *shell, const int free_before, const int rm_tmp)
+void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 {
 	if (rm_tmp)
 		remove_tmp_files(shell);
-	shell->exit_code_prev = 0;
-	if (free_before)
-	{
-		if (shell->file_fd_to_close != -1)
-			close(shell->file_fd_to_close);
-		if (shell->pid)
-			free(shell->pid);
-		if (shell->cmdline)
-			free(shell->cmdline);
-		if (shell->cmds_lst)
-			lst_cmds_freelst(shell);
-		shell->exit_code_prev = shell->exit_code;
-	}
+	if (shell->tmp_file_fd != -1)
+		close(shell->tmp_file_fd);
+	if (shell->pid)
+		free(shell->pid);
+	if (shell->cmdline)
+		free(shell->cmdline);
+	if (shell->cmds_lst)
+		lst_cmds_freelst(shell);
+	shell->exit_code_prev = shell->exit_code;
 	shell->pid = NULL;
 	shell->cmdline = NULL;
 	shell->open_qt = 0;
 	shell->cmds_lst = NULL;
 	shell->heredoc_file_no = 0;
-	shell->file_fd_to_close = -1;
+	shell->tmp_file_fd = -1;
 	shell->exit_code = 0;
 }
 
@@ -59,7 +54,7 @@ static void remove_tmp_files(t_shell *shell)
 	cmd = shell->cmds_lst;
 	while (cmd)
 	{
-		node = cmd->redirs_in;
+		node = cmd->redirs;
 		while (node)
 		{
 			if (!node->key)
@@ -77,9 +72,9 @@ int open_hd_tmp_file(t_shell *shell, t_lst_str *node)
 {
 	if (get_temp_file_path(shell, node, ft_itoa(shell->heredoc_file_no)))
 		return (1);
-	shell->file_fd_to_close = open(node->val, O_CREAT | O_TRUNC | O_RDWR 
+	shell->tmp_file_fd = open(node->val, O_CREAT | O_TRUNC | O_RDWR 
 		| O_APPEND, 0644);
-	if (shell->file_fd_to_close < 0)
+	if (shell->tmp_file_fd < 0)
 	{
 		shell->exit_code = errno;
 		perror(ERSHL HD_CREATE_TMP_FILE);

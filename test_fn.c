@@ -33,14 +33,8 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		printf("\n%*s", spacing, "args : ");
 		for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
 			printf("(%s) ", cmd_node->args[j]);
-		printf("\n\n%*s", spacing, "file in : ");
-		for (t_lst_str *node = cmd_node->redirs_in; node; node = node->next)
-		{
-			printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
-			printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "NULL");
-		}
-		printf("\n\n%*s", spacing, "file out : ");
-		for (t_lst_str *node = cmd_node->redirs_out; node; node = node->next)
+		printf("\n\n%*s", spacing, "redirs : ");
+		for (t_lst_str *node = cmd_node->redirs; node; node = node->next)
 		{
 			printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
 			printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "NULL");
@@ -65,14 +59,8 @@ void test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing)
 	printf("\n%*s", spacing, "args : ");
 	for (int j = 0; cmd_node->args && cmd_node->args[j]; j++)
 		printf("(%s) ", cmd_node->args[j]);
-	printf("\n\n%*s", spacing, "file in : ");
-	for (t_lst_str *node = cmd_node->redirs_in; node; node = node->next)
-	{
-		printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
-		printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "NULL");
-	}
-	printf("\n\n%*s", spacing, "file out : ");
-	for (t_lst_str *node = cmd_node->redirs_out; node; node = node->next)
+	printf("\n\n%*s", spacing, "redirs : ");
+	for (t_lst_str *node = cmd_node->redirs; node; node = node->next)
 	{
 		printf("\n\n%*s%s", spacing, "key : ", node->key ? node->key : "");
 		printf("\n%*s%s", spacing, "val : ", node->val ? node->val : "NULL");

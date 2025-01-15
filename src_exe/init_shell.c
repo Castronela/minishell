@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_shell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 20:36:08 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:21:16 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,17 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 		.av = av,
 		.stdio[0] = dup(STDIN_FILENO),
 		.stdio[1] = dup(STDOUT_FILENO),
-		.shlvl = 1
+		.shlvl = 1,
+		.tmp_file_fd = -1
 	};
+	if (shl->stdio[0] < 0 || shl->stdio[1] < 0)
+	{
+		if (shl->stdio[1] != -1)
+			close(shl->stdio[1]);
+		if (shl->stdio[0] != -1)
+			close(shl->stdio[0]);
+		exit_early(NULL, NULL, ERRMSG_DUP);
+	}
 	init_environ_variables(shl, envp);
 	copy_env_paths(shl, envp);
 	update_shlvl(shl);

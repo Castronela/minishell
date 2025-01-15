@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 20:28:31 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/14 23:22:36 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	}
 	if (is_redir_target_valid(shell, target) == false)
 	{
+		free(target);
 		free(operator);
 		return (1);
 	}
@@ -96,12 +97,7 @@ static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 
 static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 {	
-	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1) 
-		|| !ft_strncmp(node->key, RD_IN, ft_strlen(RD_IN) + 1))
-		ft_lst_addback(&new_cmdnode->redirs_in, node);
-	else if (!ft_strncmp(node->key, RD_OUT, ft_strlen(RD_OUT) + 1)
-		|| !ft_strncmp(node->key, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
-		ft_lst_addback(&new_cmdnode->redirs_out, node);
+	ft_lst_addback(&new_cmdnode->redirs, node);
 	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
 	{
 		free(node->key);
@@ -110,11 +106,6 @@ static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 	}
 	else
 		expand_homedir_special_char(shell, &node->val);
-	if (!ft_strncmp(node->key, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
-	{
-		free(node->key);
-		node->key = NULL;
-	}
 }
 
 /*

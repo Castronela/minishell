@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   secondary_prompt.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 20:43:47 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 00:30:52 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,11 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	char	*input;
 	int		exit_status;
 
-	reset_cmd_vars(shell, 1, 0);
+	reset_cmd_vars(shell, 0);
 	clearout(shell);
+	close(fd_pipe[0]);
 	signal(SIGINT, SIG_DFL);
 	exit_status = 0;
-	close(fd_pipe[0]);
 	input = readline(PS2);
 	if (input)
 	{

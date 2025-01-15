@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 20:59:47 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:21:16 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@
 # define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
+# define ERRMSG_DUP "Error dup"
 # define ERRMSG_DUP2 "Error dup2"
 # define ERRMSG_UNLINK "Error unlink"
 
@@ -136,8 +137,10 @@ file"
 //                                     Error Codes                                      //
 //--------------------------------------------------------------------------------------//
 
-# define ERRCODE_SYNTAX 258
-
+# define ERRCODE_GENERAL 1          // General error
+# define ERRCODE_BUILT_IN 2         // Error in a built-in command
+# define ERRCODE_CMD_CNOT_EXEC 126  // Command found but is not executable
+# define ERRCODE_CMD_NOT_FOUND 127  // Command not found
 
 //--------------------------------------------------------------------------------------//
 //                                   Type Definitions                                   //
@@ -167,8 +170,7 @@ typedef struct s_cmds
 	// char			*file_in;		// to be deleted
 	// int				toggle_heredoc;
 	// char			*file_out;		// to be deleted
-	t_lst_str		*redirs_in;
-	t_lst_str		*redirs_out;
+	t_lst_str		*redirs;
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	struct s_cmds	*next;
@@ -194,7 +196,7 @@ typedef struct s_shell
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
 	int			heredoc_file_no;
-	int			file_fd_to_close;
+	int			tmp_file_fd;
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
@@ -270,7 +272,7 @@ int			is_command(t_cmds *cmd);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
-void		open_file_fds(t_shell *shl, t_cmds *cmd);
+int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
@@ -365,8 +367,7 @@ bool 		is_control(const char *str, const size_t index);
 bool 		is_special_param(const char *str, const size_t index);
 bool		is_command_sep(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
-void		reset_cmd_vars(t_shell *shell, const int free_before, 
-			const int rm_tmp);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
 int 		open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			append_to_str(char **str, char *append, int append_len);
 

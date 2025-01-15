@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 21:00:42 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:43:33 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 	t_lst_str	*node;
 	int			flag_expand_vars;
 
-	node = cmd_node->redirs_in;
+	node = cmd_node->redirs;
 	while (node)
 	{
 		if (!node->val && node->key)
@@ -65,9 +65,9 @@ static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 				return (1);
 			free(node->key);
 			node->key = NULL;
+			close(shell->tmp_file_fd);
+			shell->tmp_file_fd = -1;
 		}
-		close(shell->file_fd_to_close);
-		shell->file_fd_to_close = -1;
 		node = node->next;
 	}
 	return (0);
@@ -88,12 +88,11 @@ static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node,
 		if (prep_prompt(shell, &hd_pipe, 1))
 			return (1);
 		input = prompt_read(shell, hd_pipe[0]);
-		close(hd_pipe[0]);
 		if (!input || !ft_strncmp(input, heredoc_node->key,
 				ft_strlen(heredoc_node->key) + 1))
 			break ;
 		heredoc_body_var_expand(shell, &input, flag_expand_vars);
-		if (write(shell->file_fd_to_close, input, ft_strlen2(input)) < 0)
+		if (write(shell->tmp_file_fd, input, ft_strlen2(input)) < 0)
 		{
 			free(input);
 			exit_early(shell, NULL, ERRMSG_WRITE);

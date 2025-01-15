@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utilities.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 20:37:03 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 01:35:23 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 		ft_free2d(double_ptr);
 	if (shl)
 	{
-		reset_cmd_vars(shl, 1, 1);
+		reset_cmd_vars(shl, 1);
 		clearout(shl);
 	}
 	if (msg && *msg)

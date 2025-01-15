@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 21:01:33 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 00:30:36 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,8 @@ void	lst_cmds_freelst(t_shell *shell)
 			free(cmd_node->bin_path);
 		if (cmd_node->args)
 			ft_free2d(cmd_node->args);
-		if (cmd_node->redirs_in)
-			ft_lst_free(&cmd_node->redirs_in);
-		if (cmd_node->redirs_out)
-			ft_lst_free(&cmd_node->redirs_out);
-		// if (cmd_node->file_in)
-		// 	free(cmd_node->file_in);
-		// if (cmd_node->file_out)
-		// 	free(cmd_node->file_out);
+		if (cmd_node->redirs)
+			ft_lst_free(&cmd_node->redirs);
 		if (cmd_node->cmd_separator)
 			free(cmd_node->cmd_separator);
 		cmd_node_free = cmd_node;
