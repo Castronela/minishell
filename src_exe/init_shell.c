@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 03:47:38 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 17:00:30 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,28 +35,30 @@ Initializes the elements of the shell struct "t_shell"
 */
 void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 {
-	shl->ac = ac;
-	shl->av = av;
-	shl->stdio[0] = dup(STDIN_FILENO);
-	shl->stdio[1] = dup(STDOUT_FILENO);
-	shl->environ = NULL;
-	shl->variables = NULL;
-	// shl->env_paths = NULL;
-	shl->shlvl = 1;
-	shl->cur_wd = NULL;
-	shl->prompt = NULL;
+	*shl = (t_shell) {
+		.ac = ac,
+		.av = av,
+		.stdio[0] = dup(STDIN_FILENO),
+		.stdio[1] = dup(STDOUT_FILENO),
+		.shlvl = 1,
+		.tmp_file_fd = -1
+	};
+	if (shl->stdio[0] < 0 || shl->stdio[1] < 0)
+	{
+		if (shl->stdio[1] != -1)
+			close(shl->stdio[1]);
+		if (shl->stdio[0] != -1)
+			close(shl->stdio[0]);
+		exit_early(NULL, NULL, ERRMSG_DUP);
+	}
 	init_environ_variables(shl, envp);
-	// link_env_paths(shl, envp);
-	shl->local_vars = NULL;
+	copy_env_paths(shl, envp);
 	update_shlvl(shl);
 	// shl->cur_wd = ft_find_node(shl->variables, "PWD", 0, 1)->val;
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
-	shl->exit_code_prev = 0;
-	shl->exit_code = 0;
-	reset_cmd_vars(shl, 0);
 }
 
 /*

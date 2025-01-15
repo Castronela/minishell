@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/10 02:29:21 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/15 00:19:00 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,7 @@ SRC_PARSE	= 	parser_1.c parser_2.c \
 				pipes.c \
 				cmds_lst_utils.c \
 				signal.c \
-				utils_1.c utils_2.c
+				utils_1.c utils_2.c utils_3.c
 SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
 				built_ins.c bi_cd.c bi_echo.c bi_env.c bi_exit.c bi_export.c bi_pwd.c bi_unset.c \
 				environmentalists.c strings.c \
@@ -104,6 +104,7 @@ VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
 					--leak-check=full \
 					--show-leak-kinds=all \
 					--trace-children=yes \
+					--track-fds=yes \
 					-s \
 					# --child-silent-after-fork=yes \
 # Leak Sanitizer for leak check on Mac (run: make LEAK=1)

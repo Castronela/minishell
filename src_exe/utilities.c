@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 16:44:33 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 17:02:26 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,13 +121,11 @@ void	clearout(t_shell *shl)
 	{
 		if (close(shl->stdio[0]) < 0)
 			exit_early(NULL, NULL, ERRMSG_CLOSE);
-		printf("Closed the copy of stdin\n");
 	}
 	if (shl->stdio[1] != STDOUT_FILENO && shl->stdio[1] != -1)
 	{
 		if (close(shl->stdio[1]) < 0)
-			exit_early(NULL, NULL, ERRMSG_CLOSE);	
-		printf("Closed the copy of stdout\n");
+			exit_early(NULL, NULL, ERRMSG_CLOSE);
 	}
 }
 

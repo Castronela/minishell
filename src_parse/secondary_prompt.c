@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/14 20:04:34 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 17:02:39 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,11 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	char	*input;
 	int		exit_status;
 
+	reset_cmd_vars(shell, 0);
 	clearout(shell);
-	reset_cmd_vars(shell, 1);
+	close(fd_pipe[0]);
 	signal(SIGINT, SIG_DFL);
 	exit_status = 0;
-	close(fd_pipe[0]);
 	input = readline(PS2);
 	if (input)
 	{

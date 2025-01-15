@@ -6,63 +6,66 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 16:43:30 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 16:58:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void		open_file_fds(t_shell *shl, t_cmds *cmd);
+int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
 
-static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
+static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
+	int *flag);
+
+// static void	heredoc_redirections(t_shell *shl, t_cmds *cmd);
 
 // data.pipe_fd[0]	-	read end of the pipe, i.e. to read from the pipe
 // data.pipe_fd[1]	-	write end of the pipe, i.e. to write to the pipe
 
-void	open_file_fds(t_shell *shl, t_cmds *cmd)
+int open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node)
 {
-	if (cmd->file_in != NULL && !cmd->toggle_heredoc)
+	int flag;
+	int *pt_fd;
+
+	while(node)
 	{
-		if (cmd->fd_in != 0)
-			close(cmd->fd_in);
-		if ((cmd->fd_in = open(cmd->file_in, O_RDONLY)) == -1)
-			exit_early(shl, NULL, ERRMSG_OPEN);
-	}
-	else if (cmd->toggle_heredoc)
-		heredoc_redirections(shl, cmd);
-	if (cmd->file_out != NULL)
-	{
-		if (cmd->fd_out != 1)
-			close(cmd->fd_out);
-		if (cmd->apend)
-			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_APPEND, 0644);
-		else
-			cmd->fd_out = open(cmd->file_out, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (cmd->fd_out == -1)
+		set_fd_pointer_and_flag(cmd, node, &pt_fd, &flag);
+		if (*pt_fd > STDERR_FILENO)
+			close(*pt_fd);
+		*pt_fd = open(node->val, flag, 0644);
+		if (*pt_fd < 0)
 		{
-			if (cmd->fd_in != 0)
-				close(cmd->fd_in);
-			exit_early(shl, NULL, ERRMSG_OPEN);
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
+				": ", strerror(errno), "\n", NULL});
+			ft_close_cmd_pipe(shl, cmd, 0);
+			ft_close_cmd_pipe(shl, cmd, 1);
+			shl->exit_code = ERRCODE_GENERAL;
+			return (1);
 		}
+		node = node->next;
 	}
+	return (0);
 }
 
-static void heredoc_redirections(t_shell *shl, t_cmds *cmd)
+static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
+	int *flag)
 {
-	t_lst_str *node;
-	int fds[2];
-	
-	if (pipe(fds) < 0)
-		exit_early(shl, NULL, ERRMSG_PIPE);;
-	node = ft_lst_last(cmd->heredocs_lst);
-	if (write(fds[1], node->val, ft_strlen2(node->val)) < 0)
-		exit_early(shl, NULL, ERRMSG_WRITE);
-	if (close(fds[1]) < 0)
-		exit_early(shl, NULL, ERRMSG_CLOSE);
-	cmd->fd_in = fds[0];
+	if (!node->key || compare_strings(node->key, RD_IN, 1))
+	{
+		*pt_fd = &cmd->fd_in;
+		*flag = O_RDONLY;
+	}
+	else
+	{
+		*pt_fd = &cmd->fd_out;
+		if (compare_strings(node->key, RD_OUT_A, 1))
+			*flag = O_CREAT | O_WRONLY | O_APPEND;
+		else
+			*flag = O_CREAT | O_WRONLY | O_TRUNC;
+	}
 }
 
 /*
@@ -75,12 +78,12 @@ int	set_redirections(t_shell *shl, t_cmds *cmd)
 	if (cmd->fd_in != STDIN_FILENO)
 	{
 		if ((dup2(cmd->fd_in, STDIN_FILENO)) == -1)
-			return (printf("1\n"),close(cmd->fd_in), -1);
+			return (close(cmd->fd_in), -1);
 	}
 	if (cmd->fd_out != STDOUT_FILENO)
 	{
 		if ((dup2(cmd->fd_out, STDOUT_FILENO)) == -1)
-			return (printf("2\n"),close(cmd->fd_out), -1);
+			return (close(cmd->fd_out), -1);
 	}
 	return (0);
 }
@@ -109,7 +112,7 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_out = -1;
 	}
-	if (mod == 2 && cmd->fd_cls > 1)
+	if (mod == 2 && cmd->fd_cls > STDERR_FILENO)
 	{
 		if (close(cmd->fd_cls) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);

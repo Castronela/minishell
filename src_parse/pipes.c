@@ -35,7 +35,6 @@ void	init_pipes(t_shell *shell)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
 			cmd_node->fd_cls = pipe_fds[0];
-			
 			cmd_node->next->fd_in = pipe_fds[0];
 		}
 		cmd_node = cmd_node->next;
@@ -57,7 +56,6 @@ void	init_cmd_pipe(t_shell *shell, t_cmds *cmd)
 				exit_early(shell, NULL, ERRMSG_PIPE);
 			cmd_node->fd_out = pipe_fds[1];
 			cmd_node->fd_cls = pipe_fds[0];
-			
 			cmd_node->next->fd_in = pipe_fds[0];
 		}
 		cmd_node = cmd_node->next;

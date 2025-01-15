@@ -6,7 +6,7 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:59:37 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 18:02:00 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 16:32:15 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,6 @@ int	main(int ac, char **av, char **envp)
 	init_shell(&shl, ac, av, envp);
 	start_shell(&shl);
 	clearout(&shl);
-	ft_printf("Finished\n");
+	// ft_printf("Finished\n");
 	return (shl.exit_code);
 }

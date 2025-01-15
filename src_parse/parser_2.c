@@ -6,18 +6,18 @@
 /*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 21:22:34 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/15 16:04:48 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int init_token(t_shell *shell, t_cmds *new_cmdnode, char *token,
-		size_t *index_cmd);
+static int	init_token(t_shell *shell, t_cmds *new_cmdnode, char *token,
+				size_t *index_cmd);
 static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
-		size_t *index_cmd);
-static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, 
-		t_lst_str *node);
+				size_t *index_cmd);
+static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode,
+				t_lst_str *node);
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument);
 
 /*
@@ -52,7 +52,7 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 	return (0);
 }
 
-static int init_token(t_shell *shell, t_cmds *new_cmdnode, char *token,
+static int	init_token(t_shell *shell, t_cmds *new_cmdnode, char *token,
 		size_t *index_cmd)
 {
 	if (is_redir(token, 0))
@@ -65,13 +65,13 @@ static int init_token(t_shell *shell, t_cmds *new_cmdnode, char *token,
 	return (0);
 }
 
-static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
+static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 		size_t *index_cmd)
 {
-	int ret_code;
-	char *target;
-	t_lst_str *node;
-	
+	int			ret_code;
+	char		*target;
+	t_lst_str	*node;
+
 	ret_code = get_next_token(shell, index_cmd, &target);
 	if (ret_code == 1)
 		return (1);
@@ -82,6 +82,7 @@ static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	}
 	if (is_redir_target_valid(shell, target) == false)
 	{
+		free(target);
 		free(operator);
 		return (1);
 	}
@@ -94,34 +95,16 @@ static int init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	return (0);
 }
 
-/*
-Initializes 'new_cmdnode' with redirection targets:
-	- checks redirection type of 'operator'
-	- retrieves next token and stores it
-	into 'new_cmdnode' as redirection target
-	- does syntax check for redirection operators
-*/
 static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
-{	
-	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1) 
-		|| !ft_strncmp(node->key, RD_IN, ft_strlen(RD_IN) + 1))
-		ft_lst_addback(&new_cmdnode->redirs_in, node);
-	else if (!ft_strncmp(node->key, RD_OUT, ft_strlen(RD_OUT) + 1)
-		|| !ft_strncmp(node->key, RD_OUT_A, ft_strlen(RD_OUT_A) + 1))
-		ft_lst_addback(&new_cmdnode->redirs_out, node);
-	if (!ft_strncmp(node->key, RD_IN, ft_strlen(RD_IN) + 1))
-	{
-		free(node->key);
-		node->key = NULL;
-	}
-	else if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
+{
+	ft_lst_addback(&new_cmdnode->redirs, node);
+	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
 	{
 		free(node->key);
 		node->key = node->val;
 		node->val = NULL;
 	}
-	if ((!node->key || ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
-		&& node->val)
+	else
 		expand_homedir_special_char(shell, &node->val);
 }
 

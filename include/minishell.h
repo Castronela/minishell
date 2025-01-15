@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 15:07:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 16:57:23 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@
 # define C_RED "\033[31m"
 # define C_GREEN "\033[32m"
 
-
+# define PATH_TMP_DIR "/tmp/"
+# define HD_TMP_FILE_NAME ".minishell_heredoc_"
+# define HD_TMP_FILE_EXT ".tmp"
 
 //--------------------------------------------------------------------------------------//
 //                              Recognized Meta Characters                              //
@@ -97,7 +99,7 @@
 //                                    Error Messages                                    //
 //--------------------------------------------------------------------------------------//
 
-# define ERSHL "\033[31mminishell: \033[32m"
+# define ERSHL "\033[31mminishell: \033[0m"
 
 // ---- Function Error Message -----------------------------------------------------------
 
@@ -111,11 +113,23 @@
 # define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
 # define ERRMSG_WAITPID "Error waitpid"
+# define ERRMSG_DUP "Error dup"
 # define ERRMSG_DUP2 "Error dup2"
+# define ERRMSG_UNLINK "Error unlink"
+
+// ---- Heredoc Error Messages -----------------------------------------------------------
+
+# define HD_ACCESS_DIR_TMP_FILE "cannot access directory for here-document temp\
+file"
+# define HD_CREATE_TMP_FILE "cannot create temp file for here-document"
 
 // ---- Built-in Error Message -----------------------------------------------------------
 
-# define ERRMSG_CD "cd: "
+# define ERRMSG_CD "cd:"
+
+// ---- External Error Message -----------------------------------------------------------
+
+# define ERRMSG_CMD_NOT_FOUND ": command not found\n"
 
 // ---- Syntax Error Message -------------------------------------------------------------
 
@@ -127,8 +141,10 @@
 //                                     Error Codes                                      //
 //--------------------------------------------------------------------------------------//
 
-# define ERRCODE_SYNTAX 258
-
+# define ERRCODE_GENERAL 1          // General error
+# define ERRCODE_BUILT_IN 2         // Error in a built-in command
+# define ERRCODE_CMD_CNOT_EXEC 126  // Command found but is not executable
+# define ERRCODE_CMD_NOT_FOUND 127  // Command not found
 
 //--------------------------------------------------------------------------------------//
 //                                   Type Definitions                                   //
@@ -154,13 +170,11 @@ typedef struct s_cmds
 	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
-	char			*file_in;		// to be deleted
-	t_lst_str		*heredocs_lst;	// to be deleted
-	int				toggle_heredoc;	// to be deleted
-	int				apend;			// to be deleted
-	char			*file_out;		// to be deleted
-	t_lst_str		*redirs_in;		// incoming re-structuring
-	t_lst_str		*redirs_out;	// incoming re-structuring
+	// int				apend;			// to be deleted
+	// char			*file_in;		// to be deleted
+	// int				toggle_heredoc;
+	// char			*file_out;		// to be deleted
+	t_lst_str		*redirs;
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	struct s_cmds	*next;
@@ -184,6 +198,8 @@ typedef struct s_shell
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
+	int			heredoc_file_no;
+	int			tmp_file_fd;
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
@@ -259,7 +275,7 @@ int			is_command(t_cmds *cmd);
 
 /* ------------------------------ redirection.c ------------------------------ */
 
-void		open_file_fds(t_shell *shl, t_cmds *cmd);
+int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
@@ -294,7 +310,8 @@ void		ft_print_lst(t_lst_str *root);
 /* ============================= src_parse/... ============================= */
 
 int			parser(t_shell *shell);
-int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd);
+int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, 
+			size_t *index_cmd);
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
@@ -303,7 +320,8 @@ int			get_next_token(t_shell *shell, size_t *index_cmd, char **token);
 /* -------------------------- Secondary prompting -------------------------- */
 
 int			secondary_prompt(t_shell *shell, const bool prepend_nl);
-int			prep_prompt(t_shell *shell, int (*hd_pipe)[2], const bool append_nl);
+int			prep_prompt(t_shell *shell, int (*hd_pipe)[2], 
+			const bool append_nl);
 char		*prompt_read(t_shell *shell, int fd_read);
 
 /* ---------------------------- Syntax Checker ---------------------------- */
@@ -353,7 +371,8 @@ bool 		is_control(const char *str, const size_t index);
 bool 		is_special_param(const char *str, const size_t index);
 bool		is_command_sep(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
-void		reset_cmd_vars(t_shell *shell, int free_before);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
+int 		open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			append_to_str(char **str, char *append, int append_len);
 
 /* ----------------------------- Test functions ----------------------------- */
@@ -361,7 +380,7 @@ int			append_to_str(char **str, char *append, int append_len);
 void		test_by_print(t_shell *shl);
 
 void 		test_print_cmdlst(t_shell *shell, int spacing);
-void		 test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
+void		test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
 void 		test_free_cmds(t_shell *shell);
 void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
@@ -369,11 +388,6 @@ void 		test_print_envariables(t_shell *shell);
 
 
 /* ======================== End Function Prototypes ======================== */
-
-void test_printf_fds(void);
-pid_t fork();
-int pipe(int pipefd[2]);
-int close(int fd);
 
 
 #endif

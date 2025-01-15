@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 19:32:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 16:58:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ void	mini_execute(t_shell *shl)
 	while (cmd)
 	{
 		init_cmd_pipe(shl, cmd);
-		open_file_fds(shl, cmd);
+		if (open_file_fds(shl, cmd, cmd->redirs))
+			break ;
 		if (cmd->args && !cmd->cmd_index)
 			exec_var_assignments(shl, cmd);
 		else if (cmd->args && !cmd->exc_index)
