@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/15 00:19:00 by david            ###   ########.fr        #
+#    Updated: 2025/01/16 18:14:43 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,21 +55,32 @@ SRC_PARSE	= 	parser_1.c parser_2.c \
 				cmds_lst_utils.c \
 				signal.c \
 				utils_1.c utils_2.c utils_3.c
-SRC_EXE		=	init_shell.c binaries.c start_shell.c lst_str_fns.c utilities.c redirection.c \
-				built_ins.c bi_cd.c bi_echo.c bi_env.c bi_exit.c bi_export.c bi_pwd.c bi_unset.c \
-				environmentalists.c strings.c \
+SRC_EXE		=	initiate.c \
+				initializations.c \
+				indexing.c \
+				binaries.c \
+				executions.c \
+				redirections.c \
+				process_utils.c \
+				lst_str_fns.c \
+				lst_str_fns_2.c \
+				bi_cd.c \
+				bi_echo.c \
+				bi_env.c \
+				bi_exit.c \
+				bi_export.c \
+				bi_pwd.c \
+				bi_unset.c \
+				env_utils.c \
+				string_utils.c \
+				error_handlers.c \
 				tests.c
-# SRC_EXE		=	init_shell.c lst_str_fns.c utilities.c test_main.c \
-# 				built_ins.c
-# SRC_BI		=	bi_cd.c	bi_echo.c bi_export.c bi_pwd.c
 
 VPATH		+=	src_parse src_exe src_exe/built-ins
 
-# SRC			=	$(SRC_MAIN) $(SRC_PARSE) $(SRC_EXE) $(SRC_BI)
 SRC			=	$(SRC_MAIN) $(SRC_PARSE) $(SRC_EXE)
 OBJ 		+= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
 DEP			= 	$(OBJ:.o=.d)
-
 
 # ----------------- Target Binary ----------------- #
 

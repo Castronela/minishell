@@ -1,20 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   environmentalists.c                                :+:      :+:    :+:   */
+/*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 16:28:29 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 17:56:06 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
+void	add_to_environ(t_shell *shl, char *var);
 void	store_as_variable(t_shell *shl, char *var);
 void	store_local_variable(t_shell *shl, char *var);
+char	*get_var_component(t_shell *shl, char *arg, int what);
 
 /*
 Function to update a variable in both shl->environ and shl->variables
@@ -40,9 +42,18 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 	if (!tmp_name)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	if (compare_strings(tmp_name, "_=", 1))
-		var_val = cmd->bin_path;
+	{
+		if (cmd->bin_path)
+			var_val = cmd->bin_path;
+		else
+			var_val = cmd->args[count_pointers(cmd->args) -1];
+		printf("here:	%s\n", cmd->bin_path);
+	}
 	else
-		var_val = val;
+	{
+			var_val = val;
+			printf("no, here\n");
+	}
 	if (update_environ(find_string_addr(shl, tmp_name, ft_strlen(tmp_name)),
 			tmp_name, var_val) == -1)
 	{
@@ -57,6 +68,36 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 	env_lst[0] = ft_find_node(shl->variables, var_name, 0, 1);
 	env_lst[1] = ft_lst_new(var_name, var_val);
 	ft_replace_node(shl, &(env_lst[0]), env_lst[1]);
+}
+
+/*
+Function to add a env variable entry to shl->environ
+*/
+void	add_to_environ(t_shell *shl, char *var)
+{
+	char	**dp;
+	size_t	dp_len;
+	size_t	var_len;
+
+	var_len = offset_to_env_value(var);
+	dp = find_string_addr(shl, var, var_len);
+	if (dp == NULL)
+	{
+		dp_len = count_pointers(shl->environ);
+		shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
+				sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
+		shl->environ[dp_len] = ft_strdup(var);
+		if (!shl->environ[dp_len])
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		shl->environ[dp_len + 1] = NULL;
+	}
+	else
+	{
+		free(*dp);
+		*dp = ft_strdup((var));
+		if (!*dp)
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+	}
 }
 
 /*
@@ -129,4 +170,34 @@ void	store_local_variable(t_shell *shl, char *var)
 			exit_early(shl, split, ERRMSG_MALLOC);
 	}
 	ft_free2d(split);
+}
+
+/*
+Function to get variable component
+  - Returns the variable name if 'what' is 0
+  - Returns the variable value if 'what' is 1
+*/
+char	*get_var_component(t_shell *shl, char *arg, int what)
+{
+	char	**split;
+	char	*component;
+
+	split = ft_split(arg, '=');
+	component = NULL;
+	if (!split)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
+	if (what == 0)
+	{
+		component = ft_strdup(split[0]);
+		if (!component)
+			exit_early(shl, split, ERRMSG_MALLOC);
+	}
+	else if (what == 1)
+	{
+		component = ft_strdup(split[1]);
+		if (!component)
+			exit_early(shl, split, ERRMSG_MALLOC);
+	}
+	ft_free2d(split);
+	return (component);
 }

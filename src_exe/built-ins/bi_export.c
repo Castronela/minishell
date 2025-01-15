@@ -3,21 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   bi_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/13 17:58:44 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/16 18:03:05 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 int			mini_export(t_shell *shl, t_cmds *cmd);
-void		add_to_environ(t_shell *shl, char *var);
-int			is_bash_reserved(char c);
-char		*get_var_component(t_shell *shl, char *arg, int what);
-static void	check_and_export_arg(t_shell *shl, char *arg, int *checks);
+
 static void	print_quoted_env(t_shell *shl);
+static void	check_and_export_arg(t_shell *shl, char *arg, int *checks);
 static int	is_valid_name(char *arg, int *i);
 static int	is_valid_val(char *arg, int *i);
 
@@ -118,36 +116,6 @@ static void	check_and_export_arg(t_shell *shl, char *arg, int *checks)
 }
 
 /*
-Origin file: bi_export.c
-*/
-void	add_to_environ(t_shell *shl, char *var)
-{
-	char	**dp;
-	size_t	dp_len;
-	size_t	var_len;
-
-	var_len = offset_to_env_value(var);
-	dp = find_string_addr(shl, var, var_len);
-	if (dp == NULL)
-	{
-		dp_len = count_pointers(shl->environ);
-		shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
-				sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
-		shl->environ[dp_len] = ft_strdup(var);
-		if (!shl->environ[dp_len])
-			exit_early(shl, NULL, ERRMSG_MALLOC);
-		shl->environ[dp_len + 1] = NULL;
-	}
-	else
-	{
-		free(*dp);
-		*dp = ft_strdup((var));
-		if (!*dp)
-			exit_early(shl, NULL, ERRMSG_MALLOC);
-	}
-}
-
-/*
 Function to check whether variable name is valid
   - Checks if the name starts with alphabet or '_', and that the characters
 	following that are alphanumeric
@@ -196,54 +164,6 @@ int	is_valid_val(char *arg, int *i)
 	}
 	return (1);
 }
-
-/*
-Function to check whether the char parameter is a bash-reserved character
-  - Checks the character c within the array of special characters defined in the
-	header file as bash-reserved characters using ft_strchr()
-  - Returns 0 if the character is not found within the array
-  - Returns 1 if the character is found within the array
-*/
-int	is_bash_reserved(char c)
-{
-	if (ft_strchr((const char []){BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP, 
-			'\0'}, (unsigned int)c) == NULL)
-		return (0);
-	return (1);
-}
-
-/*
-Function to get variable component
-  - Returns the variable name if 'what' is 0
-  - Returns the variable value if 'what' is 1
-*/
-char	*get_var_component(t_shell *shl, char *arg, int what)
-{
-	char	**split;
-	char	*component;
-
-	split = ft_split(arg, '=');
-	component = NULL;
-	if (!split)
-		exit_early(shl, NULL, ERRMSG_MALLOC);
-	if (what == 0)
-	{
-		component = ft_strdup(split[0]);
-		if (!component)
-			exit_early(shl, split, ERRMSG_MALLOC);
-	}
-	else if (what == 1)
-	{
-		component = ft_strdup(split[1]);
-		if (!component)
-			exit_early(shl, split, ERRMSG_MALLOC);
-	}
-	ft_free2d(split);
-	return (component);
-}
-
-
-
 
 
 // int	main(int ac, char **av, char **envp)

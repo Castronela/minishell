@@ -1,51 +1,53 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   binaries.c                                         :+:      :+:    :+:   */
+/*   binaries_old.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:24:16 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/15 19:34:41 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int			get_binary(t_shell *shl, t_cmds *cmd);
-int			is_path(const char *str);
-
+int			get_binaries(t_shell *shl);
+char		*get_binary_path(t_cmds *cmd, char **env_paths);
+int			remove_path(t_cmds *cmd);
 static char	**get_env_paths(t_shell *shl);
-static int	get_binary_path(t_cmds *cmd, char **env_paths);
-static int	remove_path(t_cmds *cmd);
+int			is_path(const char *str);
 
 /*
 Function to get binaries
 */
-int	get_binary(t_shell *shl, t_cmds *cmd)
+int	get_binaries(t_shell *shl)
 {
+	t_cmds	*cmd;
 	char	**env_paths;
-	int		cmd_not_found;
-
+	
+	cmd = shl->cmds_lst;
 	env_paths = get_env_paths(shl);
-	if (cmd->cmd_index != 0)
+	while (cmd)
 	{
-		// if (!env_paths)
-		// 	if (!(cmd->bin_path = ft_strdup("")))
-		// 		exit_early(shl, env_paths, "bin-path malloc failed");
-				
-		// if (env_paths && cmd->args)
-		if (cmd->args)
+		if (cmd->cmd_index != 0)
 		{
-			cmd_not_found = get_binary_path(cmd, env_paths);
-			if (cmd_not_found == -1)
+			// if (!env_paths)
+			// 	if (!(cmd->bin_path = ft_strdup("")))
+			// 		exit_early(shl, env_paths, "bin-path malloc failed");
+					
+				
+			
+			// if (env_paths && cmd->args)
+			if (cmd->args)
+				cmd->bin_path = get_binary_path(cmd, env_paths);
+			if (!cmd->bin_path)
 				exit_early(shl, env_paths, "Path malloc failed");
-			if (cmd_not_found)
-				return (1);
+			if (remove_path(cmd) == -1)
+				exit_early(shl, env_paths, "Remove-path malloc failed");	
 		}
-		if (remove_path(cmd) == -1)
-			exit_early(shl, env_paths, "Remove-path malloc failed");
-	}	
+		cmd = cmd->next;
+	}
 	if (env_paths)
 		ft_free2d(env_paths);
 	return (0);
@@ -73,42 +75,42 @@ static char	**get_env_paths(t_shell *shl)
 	}
 }
 
-static int	get_binary_path(t_cmds *cmd, char **env_paths)
+char	*get_binary_path(t_cmds *cmd, char **env_paths)
 {
 	char	*tmp[3];
 	char	*cmd_name;
 	int		i;
 
+	if (!cmd->args)
+		return (NULL);
 	cmd_name = *(cmd->args + cmd->skip);
 	tmp[0] = ft_strdup(cmd_name);
-	if (!tmp[0])
-		return (-1);
+	if (!(tmp[0]))
+		return (perror(ERRMSG_MALLOC), NULL);
 	// if ((access(tmp[0], F_OK) == 0 && (tmp[0][0] == '/' || tmp[0][0] == '.')))
 	// if ((is_path(tmp[0]) && access(tmp[0], F_OK) == 0))
 	if (is_path(tmp[0]) || !env_paths)
+		return (tmp[0]);
+	if (!env_paths && !is_path(tmp[0]))
 	{
-		cmd->bin_path = tmp[0];
-		return (0);
+		free(tmp[0]);
+		tmp[0] = ft_strdup("");
+		if (!tmp[0])
+			return (NULL);
+		return (tmp[0]);
 	}
 	i = -1;
 	while (env_paths && env_paths[++i])
 	{
 		if (!(tmp[1] = ft_strjoin(env_paths[i], "/")))
-			return (free(tmp[0]), perror("tmp1 malloc failed:"), -1);
+			return (free(tmp[0]), perror("tmp1 malloc failed:"), NULL);
 		if (!(tmp[2] = ft_strjoin(tmp[1], cmd_name)))
-			return (free(tmp[0]), free(tmp[1]), perror("tmp2 malloc failed:"), -1);
+			return (free(tmp[0]), free(tmp[1]), perror("tmp2 malloc failed:"), NULL);
 		free(tmp[1]);
 		if (access(tmp[2], F_OK) == 0)
-		{
-			cmd->bin_path = tmp[2];
-			free(tmp[0]);
-			return (0);
-		}
+			return (free(tmp[0]), tmp[2]);
 		free(tmp[2]);
 	}
-	ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-			*(cmd->args + cmd->skip), ": command not found\n", NULL});
-	
 	// if (!env_paths)
 	// {
 	// 	tmp[1] = ft_strdup("");
@@ -116,7 +118,7 @@ static int	get_binary_path(t_cmds *cmd, char **env_paths)
 	// 		return (free(tmp[0]), NULL);
 	// 	return (free(tmp[0]), tmp[1]);
 	// }
-	return (1);
+	return (tmp[0]);
 }
 
 /*
@@ -133,7 +135,7 @@ Scenario 3:
 	- execve handles error message
 
 */
-static int	remove_path(t_cmds *cmd)
+int	remove_path(t_cmds *cmd)
 {
 	char	*cmd_with_path;
 	char	*cmd_wo_path;

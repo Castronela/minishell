@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strings.c                                          :+:      :+:    :+:   */
+/*   strings_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/12 21:22:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 18:02:16 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		compare_strings(const char *str, const char *field, int exact);
-// int		cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
 char	**find_string_addr(t_shell *shl, char *str, int	n);
 int		find_dptr_index(t_shell *shl, char *str, int n);
-int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
 size_t	offset_to_env_value(char *str);
+int		is_bash_reserved(char c);
+
+// int		cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
 
 /*
 The function is meant to compare two strings, and return 1 if they are same;
@@ -54,44 +56,6 @@ int	compare_strings(const char *str, const char *field, int exact)
 }
 
 /*
-Function same as compare_strings() fn, with an additional option to match the
-case while comparing the strings.
-  - If toggle 'cased' is 1, then case is also matched
-  - If toggle 'cased' is 0, then case is disregarded
-  - Returns 1 if the strings are same
-  - Returns 0 if the strings differ
-*/
-// int	cmp_cstr(const char *ndl, const char *hstack, int exact, int cased)
-// {
-// 	unsigned char	*s[5];
-
-// 	if (!ndl || !hstack)
-// 		return (-1);
-// 	s[1] = (unsigned char *)hstack;
-// 	s[2] = (unsigned char *)ndl;
-// 	s[3] = malloc((ft_strlen(ndl) + 1) * sizeof(unsigned char));
-// 	// if (!s[3])
-		
-// 	s[4] = s[3];
-// 	if (cased == 0)
-// 	{
-// 		while (*s[2])
-// 			*(s[3])++ = ft_tolower(*(s[2])++);
-// 		*s[3] = '\0';
-// 		s[0] = s[4];
-// 	}
-// 	else
-// 		s[0] = s[2];
-// 	while (*s[0])
-// 		if (*s[0]++ != *s[1]++)
-// 			return (free(s[4]), 0);
-// 	if (exact)
-// 		if (*s[0] != *s[1])
-// 			return (free(s[4]), 0);
-// 	return (free(s[4]), 1);
-// }
-
-/*
 Function to return the pointer to a string in a double pointer that matches the 
 provided string
   - 'n' is the number of characters to match while finding the pointer
@@ -110,13 +74,12 @@ char	**find_string_addr(t_shell *shl, char *str, int	n)
 }
 
 /*
-Function to return the address of the double pointer that holds the pointer to 
-the string being searched in the double pointer, that matches the string 'str'
-  - 'n' is the number of characters to match while finding the pointer
-  - Returns an int corresponding to its index in the array of  strings being
-	searched in
+Function to return the index of the string in shl->environ
+  - 'str' is the string being searched
+  - 'n' is the number of characters to match with 'str' while finding the 
+  	pointer index
+  - Returns an int corresponding to its index in shl->environ
   - Returns -1 if a match is not found for 'str' in the array of strings
-  - The array of strings being searched in this function is shl->environ
 */
 int	find_dptr_index(t_shell *shl, char *str, int n)
 {
@@ -194,3 +157,56 @@ size_t	offset_to_env_value(char *str)
 		i++;
 	return (i);
 }
+
+/*
+Function to check whether the char parameter is a bash-reserved character
+  - Checks the character c within the array of special characters defined in the
+	header file as bash-reserved characters using ft_strchr()
+  - Returns 0 if the character is not found within the array
+  - Returns 1 if the character is found within the array
+*/
+int	is_bash_reserved(char c)
+{
+	if (ft_strchr((const char []){BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP, 
+			'\0'}, (unsigned int)c) == NULL)
+		return (0);
+	return (1);
+}
+
+/*
+Function same as compare_strings() fn, with an additional option to match the
+case while comparing the strings.
+  - If toggle 'cased' is 1, then case is also matched
+  - If toggle 'cased' is 0, then case is disregarded
+  - Returns 1 if the strings are same
+  - Returns 0 if the strings differ
+*/
+// int	cmp_cstr(const char *ndl, const char *hstack, int exact, int cased)
+// {
+// 	unsigned char	*s[5];
+
+// 	if (!ndl || !hstack)
+// 		return (-1);
+// 	s[1] = (unsigned char *)hstack;
+// 	s[2] = (unsigned char *)ndl;
+// 	s[3] = malloc((ft_strlen(ndl) + 1) * sizeof(unsigned char));
+// 	// if (!s[3])
+		
+// 	s[4] = s[3];
+// 	if (cased == 0)
+// 	{
+// 		while (*s[2])
+// 			*(s[3])++ = ft_tolower(*(s[2])++);
+// 		*s[3] = '\0';
+// 		s[0] = s[4];
+// 	}
+// 	else
+// 		s[0] = s[2];
+// 	while (*s[0])
+// 		if (*s[0]++ != *s[1]++)
+// 			return (free(s[4]), 0);
+// 	if (exact)
+// 		if (*s[0] != *s[1])
+// 			return (free(s[4]), 0);
+// 	return (free(s[4]), 1);
+// }

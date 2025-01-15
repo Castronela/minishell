@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/15 16:57:23 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 18:02:29 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,35 +213,77 @@ int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
 
-/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
+/* ------------------------------- initiate.c ------------------------------- */
 
-int			is_built_in(char *cmd);
-void		exec_built_in(t_shell *shl, t_cmds *cmd);
-
-void		mini_echo(t_cmds *cmd);
-
-int			mini_export(t_shell *shl, t_cmds *cmd);
-int			is_bash_reserved(char c);
-char		*get_var_component(t_shell *shl, char *arg, int what);
-
-int			mini_pwd(t_shell *shl, t_cmds *cmd);
-
-int			mini_unset(t_shell *shl, t_cmds *cmd);
-void		remove_from_environ(t_shell *shl, char *var_name);
-void		remove_variable(t_shell *shl, char *arg);
-
-void		mini_cd(t_shell *shl, t_cmds *cmd);
-void		mini_env(t_shell *shl, t_cmds *cmd);
-void		mini_exit(t_shell *shl);
-
-/* -------------------------- src_exe/init_shell.c -------------------------- */
-
+void		start_shell(t_shell *shl);
 void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		clearout(t_shell *shl);;
+
+/* ------------------------------ initialize.c ------------------------------ */
+
 void		init_environ_variables(t_shell *shl, char **envp);
-void		link_env_paths(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
-char		*assemble_prompt(char *prefix, char *cwd, char *separator);
+
+/* ------------------------------- indexing.c ------------------------------- */
+
+void		index_cmds(t_shell *shl);
+int			is_command(t_cmds *cmd);
+int			is_built_in(char *cmd);
+
+/* ------------------------------ executions.c ------------------------------ */
+
+void		mini_execute(t_shell *shl);
+int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
+void		exec_built_in(t_shell *shl, t_cmds *cmd);
+void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
+
+/* ----------------------------- redirections.c ----------------------------- */
+
+int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
+int			set_redirections(t_shell *shl, t_cmds *cmd);
+void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void		ft_close_stdcpy(t_shell *shl, int mod);
+
+/* ------------------------------- binaries.c ------------------------------- */
+
+// int			get_binaries(t_shell *shl);
+int			get_binary(t_shell *shl, t_cmds *cmd);
+int			is_path(const char *str);
+
+/* ------------------------------ exec_utils.c ------------------------------ */
+
+void		create_pids(t_shell *shl);
+int			get_total_cmds(t_shell *shl, int which);
+void		restore_std_fds(t_shell *shl);
+
+/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
+
+void		mini_cd(t_shell *shl, t_cmds *cmd);
+void		mini_echo(t_cmds *cmd);
+void		mini_env(t_shell *shl, t_cmds *cmd);
+void		mini_exit(t_shell *shl);
+int			mini_export(t_shell *shl, t_cmds *cmd);
+int			mini_pwd(t_shell *shl, t_cmds *cmd);
+int			mini_unset(t_shell *shl, t_cmds *cmd);
+
+/* ------------------------------ env_utils.c ------------------------------ */
+
+void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
+void		store_as_variable(t_shell *shl, char *var);
+void		store_local_variable(t_shell *shl, char *var);
+void		add_to_environ(t_shell *shl, char *var);
+char		*get_var_component(t_shell *shl, char *arg, int what);
+
+/* ----------------------------- stirng_utils.c ----------------------------- */
+
+int			compare_strings(const char *str, const char *field, int exact);
+char		**find_string_addr(t_shell *shl, char *str, int	n);
+int			find_dptr_index(t_shell *shl, char *str, int n);
+int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
+int			count_pointers(char **dp);
+size_t		offset_to_env_value(char *str);
+int			is_bash_reserved(char c);
 
 /* ----------------------------- lst_str_fns.c ----------------------------- */
 
@@ -250,62 +292,18 @@ t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
-void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
-void		ft_del_node(t_lst_str **node);
-void		ft_remove_node(t_lst_str **root, t_lst_str **node);
+
+/* ---------------------------- lst_str_fns_2.c ---------------------------- */
+
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
+void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
+void		ft_remove_node(t_lst_str **root, t_lst_str **node);
+void		ft_del_node(t_lst_str **node);
 
-/* ----------------------------- start_shell.c ----------------------------- */
-
-int			get_binaries(t_shell *shl);
-char		*get_binary_path(t_cmds *cmd, char **env_paths);
-int			remove_path(t_cmds *cmd);
-
-/* ----------------------------- start_shell.c ----------------------------- */
-
-void		start_shell(t_shell *shl);
-void		mini_execute(t_shell *shl);
-void		create_pids(t_shell *shl);
-void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
-void		index_cmds(t_shell *shl);
-int			get_total_cmds(t_shell *shl, int which);
-void		restore_std_fds(t_shell *shl);
-int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
-int			is_command(t_cmds *cmd);
-
-/* ------------------------------ redirection.c ------------------------------ */
-
-int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
-int			set_redirections(t_shell *shl, t_cmds *cmd);
-void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
-void		ft_close_stdcpy(t_shell *shl, int mod);
-
-/* --------------------------- environmentalists.c --------------------------- */
-
-void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void		update_wdirs(t_shell *shl, char *new_cwd);
-void		store_as_variable(t_shell *shl, char *var);
-void		store_local_variable(t_shell *shl, char *var);
-void		add_to_environ(t_shell *shl, char *var);
-
-/* -------------------------------- stirngs.c -------------------------------- */
-
-int			compare_strings(const char *str, const char *field, int exact);
-// int			cmp_cstr(const char *ndl, const char *hstack, int exact, int cased);
-char		**find_string_addr(t_shell *shl, char *str, int	n);
-int			find_dptr_index(t_shell *shl, char *str, int n);
-int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
-int			count_pointers(char **dp);
-size_t		offset_to_env_value(char *str);
-
-/* ------------------------------ utilities.c ------------------------------ */
+/* ---------------------------- error_handlers.c ---------------------------- */
 
 void		arg_error(char **av);
-void		ft_free2dint(int **memory);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);
-void		exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
-void		clearout(t_shell *shl);
-void		ft_print_lst(t_lst_str *root);
 
 /* ============================= src_parse/... ============================= */
 
@@ -378,7 +376,7 @@ int			append_to_str(char **str, char *append, int append_len);
 /* ----------------------------- Test functions ----------------------------- */
 
 void		test_by_print(t_shell *shl);
-
+void		ft_print_lst(t_lst_str *root);
 void 		test_print_cmdlst(t_shell *shell, int spacing);
 void		test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
 void 		test_free_cmds(t_shell *shell);
@@ -386,13 +384,6 @@ void 		test_var_exp(char **envp);
 void 		test_remove_quotes(void);
 void 		test_print_envariables(t_shell *shell);
 
-
 /* ======================== End Function Prototypes ======================== */
 
-
 #endif
-
-
-// cat file
-// cat path/file
-// /bin/cat cat arg1 file

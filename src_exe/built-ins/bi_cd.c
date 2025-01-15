@@ -6,15 +6,16 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 19:44:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 17:00:50 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
-void		update_wdirs(t_shell *shl, char *new_cwd);
+static void	update_wdirs(t_shell *shl, char *new_cwd);
 static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd);
+
 // int		path_is_dir(char *path);
 
 /*

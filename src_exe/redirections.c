@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection.c                                      :+:      :+:    :+:   */
+/*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/15 16:58:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 19:02:19 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
-int			set_redirections(t_shell *shl, t_cmds *cmd);
-void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
-void		ft_close_stdcpy(t_shell *shl, int mod);
+int		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
+int		set_redirections(t_shell *shl, t_cmds *cmd);
+void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void	ft_close_stdcpy(t_shell *shl, int mod);
 
 static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	int *flag);

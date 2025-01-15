@@ -6,16 +6,18 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/14 00:20:09 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 18:09:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
 int			mini_unset(t_shell *shl, t_cmds *cmd);
-static int	is_valid_name(char *arg);
+
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks);
-void		remove_from_environ(t_shell *shl, char *var_name);
-void		remove_variable(t_shell *shl, char *arg);
+static int	is_valid_name(char *arg);
+static void	remove_from_environ(t_shell *shl, char *var_name);
+static void	remove_variable(t_shell *shl, char *arg);
 
 /*
 Function that mimics the built-in unset command in shell
@@ -107,7 +109,7 @@ static int	is_valid_name(char *arg)
 /*
 Origin file: bi_export.c
 */
-void	remove_from_environ(t_shell *shl, char *var_name)
+static void	remove_from_environ(t_shell *shl, char *var_name)
 {
 	int		dp_index;
 	size_t	dp_len;
@@ -132,7 +134,7 @@ void	remove_from_environ(t_shell *shl, char *var_name)
 	}
 }
 
-void	remove_variable(t_shell *shl, char *arg)
+static void	remove_variable(t_shell *shl, char *arg)
 {
 	t_lst_str	*del_var;
 	t_lst_str	*del_local_var;
@@ -145,31 +147,3 @@ void	remove_variable(t_shell *shl, char *arg)
 		ft_remove_node(&shl->local_vars, &del_local_var);
 	printf("This was executed w/o issues\n");
 }
-
-
-// void	add_to_environ(t_shell *shl, char *var)
-// {
-// 	char	**dp;
-// 	size_t	dp_len;
-// 	size_t	var_len;
-
-// 	var_len = offset_to_env_value(var);
-// 	dp = find_string_addr(shl, var, var_len);
-// 	if (dp == NULL)
-// 	{
-// 		dp_len = count_pointers(shl->environ);
-// 		shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
-// 				sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
-// 		shl->environ[dp_len] = ft_strdup(var);
-// 		if (!shl->environ[dp_len])
-// 			exit_early(shl, NULL, ERRMSG_MALLOC);
-// 		shl->environ[dp_len + 1] = NULL;
-// 	}
-// 	else
-// 	{
-// 		free(*dp);
-// 		*dp = ft_strdup((var));
-// 		if (!*dp)
-// 			exit_early(shl, NULL, ERRMSG_MALLOC);
-// 	}
-// }

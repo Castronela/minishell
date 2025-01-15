@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2024/12/22 15:10:28 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/16 16:25:59 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,14 @@ void	test_by_print(t_shell *shl)
 	
 }
 	
-	
-
+void	ft_print_lst(t_lst_str *root)
+{
+	while (root)
+	{
+		ft_printf("%s:	%s\n", root->key, root->val);
+		root = root->next;
+	}
+}	
 
 // static void	print_env(t_shell *shl)
 // {
