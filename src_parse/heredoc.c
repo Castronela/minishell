@@ -15,10 +15,10 @@
 int			heredoc(t_shell *shell);
 
 static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node);
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node, 
-	const int flag_expand_vars);
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node,
+				const int flag_expand_vars);
 static void	heredoc_body_var_expand(t_shell *shell, char **str,
-		int flag_expand_vars);
+				int flag_expand_vars);
 
 /*
 Loops through every command node and checks for open heredocs;
@@ -60,7 +60,7 @@ static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 			if (open_hd_tmp_file(shell, node))
 				return (1);
 			if (append_to_str(&node->key, "\n", -1))
-				exit_early(shell, NULL, ERRMSG_MALLOC); 
+				exit_early(shell, NULL, ERRMSG_MALLOC);
 			if (heredoc_get_body(shell, node, flag_expand_vars))
 				return (1);
 			free(node->key);
@@ -73,12 +73,11 @@ static int	heredoc_loop(t_shell *shell, t_cmds *cmd_node)
 	return (0);
 }
 
-
 /*
 Retrieves all necessary Heredoc body from user
 */
-static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node, 
-	const int flag_expand_vars)
+static int	heredoc_get_body(t_shell *shell, t_lst_str *heredoc_node,
+		const int flag_expand_vars)
 {
 	char	*input;
 	int		hd_pipe[2];

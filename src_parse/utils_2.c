@@ -20,26 +20,26 @@ size_t	find_longest_match_length(const char *str, const char *pattern[]);
 
 bool	is_redir(const char *str, const size_t index)
 {
-	return (find_longest_match_length(&str[index],
-			(const char *[]){RD_IN, RD_OUT, RD_OUT_A, RD_HD, NULL}));
+	return (find_longest_match_length(&str[index], (const char *[]){RD_IN,
+			RD_OUT, RD_OUT_A, RD_HD, NULL}));
 }
 
 bool	is_control(const char *str, const size_t index)
 {
-	return (find_longest_match_length(&str[index],
-			(const char *[]){CT_PIPE, CT_AND, NULL}));
+	return (find_longest_match_length(&str[index], (const char *[]){CT_PIPE,
+			CT_AND, NULL}));
 }
 
 bool	is_special_param(const char *str, const size_t index)
 {
-	return (find_longest_match_length(&str[index],
-			(const char *[]){DOLLAR, QUESTION_MARK, POUND, NULL}));
+	return (find_longest_match_length(&str[index], (const char *[]){DOLLAR,
+			QUESTION_MARK, POUND, NULL}));
 }
 
 bool	is_command_sep(const char *str, const size_t index)
 {
-	return (find_longest_match_length(&str[index],
-			(const char *[]){CS_SMICOL, CS_NEWLNE, NULL}));
+	return (find_longest_match_length(&str[index], (const char *[]){CS_SMICOL,
+			CS_NEWLNE, NULL}));
 }
 
 /*

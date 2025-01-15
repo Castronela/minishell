@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start_shell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/15 00:22:48 by david            ###   ########.fr       */
+/*   Updated: 2025/01/15 16:46:00 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,8 +105,8 @@ void	exec_external(t_shell *shl, t_cmds *cmd, int p_index)
 		ft_close_cmd_pipe(shl, cmd, 0);
 		ft_close_cmd_pipe(shl, cmd, 1);
 		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-			*(cmd->args + cmd->skip), ": command not found\n", NULL});
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
+			*(cmd->args + cmd->skip), ERRMSG_CMD_NOT_FOUND, NULL});
 		exit_early(shl, NULL, NULL);
 	}
 	ft_close_cmd_pipe(shl, cmd, 0);

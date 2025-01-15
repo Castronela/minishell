@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 00:30:36 by david            ###   ########.fr       */
+/*   Updated: 2025/01/15 15:51:09 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,8 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	new_cmd = malloc(sizeof(t_cmds));
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
-	*new_cmd = (t_cmds) {
-		.fd_in = STDIN_FILENO,
-		.fd_out = STDOUT_FILENO,
-		.fd_cls = -1
-	};
+	*new_cmd = (t_cmds){.fd_in = STDIN_FILENO, .fd_out = STDOUT_FILENO,
+		.fd_cls = -1};
 	return (new_cmd);
 }
 

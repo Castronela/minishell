@@ -24,7 +24,7 @@ Returns true if all open quotes from cmdline are closed
 */
 bool	is_valid_quotation(t_shell *shell)
 {
-	char open_qt[2];
+	char	open_qt[2];
 
 	open_qt[1] = 0;
 	if (shell->open_qt)

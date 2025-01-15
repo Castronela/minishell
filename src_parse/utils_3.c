@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
-int         open_hd_tmp_file(t_shell *shell, t_lst_str *node);
+int			open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 
-static int  get_temp_file_path(t_shell *shell, t_lst_str *cur_node, 
-            char *hd_counter);
-static void remove_tmp_files(t_shell *shell);
+static int	get_temp_file_path(t_shell *shell, t_lst_str *cur_node,
+				char *hd_counter);
+static void	remove_tmp_files(t_shell *shell);
 
 /*
 Nullifies all command variables
@@ -46,10 +46,10 @@ void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 	shell->exit_code = 0;
 }
 
-static void remove_tmp_files(t_shell *shell)
+static void	remove_tmp_files(t_shell *shell)
 {
-	t_cmds *cmd;
-	t_lst_str *node;
+	t_cmds		*cmd;
+	t_lst_str	*node;
 
 	cmd = shell->cmds_lst;
 	while (cmd)
@@ -68,12 +68,12 @@ static void remove_tmp_files(t_shell *shell)
 	}
 }
 
-int open_hd_tmp_file(t_shell *shell, t_lst_str *node)
+int	open_hd_tmp_file(t_shell *shell, t_lst_str *node)
 {
 	if (get_temp_file_path(shell, node, ft_itoa(shell->heredoc_file_no)))
 		return (1);
-	shell->tmp_file_fd = open(node->val, O_CREAT | O_TRUNC | O_RDWR 
-		| O_APPEND, 0644);
+	shell->tmp_file_fd = open(node->val, O_CREAT | O_TRUNC | O_RDWR | O_APPEND,
+			0644);
 	if (shell->tmp_file_fd < 0)
 	{
 		shell->exit_code = errno;
@@ -83,10 +83,10 @@ int open_hd_tmp_file(t_shell *shell, t_lst_str *node)
 	return (0);
 }
 
-static int get_temp_file_path(t_shell *shell, t_lst_str *cur_node, 
-    char *hd_counter)
+static int	get_temp_file_path(t_shell *shell, t_lst_str *cur_node,
+		char *hd_counter)
 {
-	t_lst_str *tmp_node;
+	t_lst_str	*tmp_node;
 
 	if (!hd_counter)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
@@ -102,12 +102,12 @@ static int get_temp_file_path(t_shell *shell, t_lst_str *cur_node,
 		return (1);
 	}
 	if (append_to_str(&cur_node->val, HD_TMP_FILE_NAME, -1)
-		|| append_to_str(&cur_node->val, hd_counter, -1) 
+		|| append_to_str(&cur_node->val, hd_counter, -1)
 		|| append_to_str(&cur_node->val, HD_TMP_FILE_EXT, -1))
 	{
 		free(hd_counter);
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
 	free(hd_counter);
-	return(0);
+	return (0);
 }
