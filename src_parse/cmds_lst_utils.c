@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 16:57:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 21:41:18 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode)
 		while (current_cmd->next)
 			current_cmd = current_cmd->next;
 		current_cmd->next = new_cmdnode;
+		new_cmdnode->prev = current_cmd;
 	}
 }
 

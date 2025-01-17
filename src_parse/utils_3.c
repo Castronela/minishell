@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 01:21:16 by david            ###   ########.fr       */
+/*   Updated: 2025/01/17 22:54:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,14 @@ void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 		remove_tmp_files(shell);
 	if (shell->tmp_file_fd != -1)
 		close(shell->tmp_file_fd);
-	if (shell->pid)
-		free(shell->pid);
+	// if (shell->pid)
+	// 	free(shell->pid);
 	if (shell->cmdline)
 		free(shell->cmdline);
 	if (shell->cmds_lst)
 		lst_cmds_freelst(shell);
 	shell->exit_code_prev = shell->exit_code;
-	shell->pid = NULL;
+	// shell->pid = NULL;
 	shell->cmdline = NULL;
 	shell->open_qt = 0;
 	shell->cmds_lst = NULL;

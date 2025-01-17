@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:25:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:55:31 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	test_by_print(t_shell *shl)
 {
-	printf("no. of cmds:	%d\n", get_total_cmds(shl, 0));
-	printf("no. of pids:	%d\n", get_total_cmds(shl, 1));
+	printf("no. of cmds:	%d\n", shl->total_cmds);
+	printf("no. of pids:	%d\n", shl->total_cmds);
 	// print_env(shl);
 	// print_env_paths(shl);
 	// print_cwd(shl);

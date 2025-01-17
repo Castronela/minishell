@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 18:59:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:43:58 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void		index_cmds(t_shell *shl);
 int			is_command(t_cmds *cmd);
-int			is_built_in(char *cmd);
+int			is_built_in(t_cmds *cmds);
 
 static int	check_eq_alnum(char *arg, int *eq);
 
@@ -28,21 +28,22 @@ void	index_cmds(t_shell *shl)
 	int		total;
 	int		ext;
 
-	total = 1;
-	ext = 1;
+	total = 0;
+	ext = 0;
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
 		if (is_command(cmd))
 		{
-			cmd->cmd_index = total++;
-			if (cmd->args && !is_built_in(*(cmd->args + cmd->skip)))
-				cmd->exc_index = ext++;
+			cmd->cmd_index = ++total;
+			if (cmd->args && !is_built_in(cmd))
+				cmd->exc_index = ++ext;
 		}
 		else
 			cmd->lvar_assignment = 1;
 		cmd = cmd->next;
 	}
+	shl->total_cmds = total;
 }
 
 /*
@@ -134,12 +135,15 @@ static int	check_eq_alnum(char *arg, int *eq)
 // }
 
 // Function to check whether the command is in the built-in list
-int	is_built_in(char *cmd)
+int	is_built_in(t_cmds *cmds)
 {
-	if (compare_strings(cmd, "echo", 1) || compare_strings(cmd, "cd", 1) ||
-		compare_strings(cmd, "pwd", 1) || compare_strings(cmd, "export", 1) ||
-		compare_strings(cmd, "unset", 1) || compare_strings(cmd, "env", 1) ||
-		compare_strings(cmd, "exit", 1))
+	char	*arg;
+	
+	arg = *(cmds->args + cmds->skip);
+	if (!cmds->args || compare_strings(arg, "echo", 1) || compare_strings(arg, "cd", 1) ||
+		compare_strings(arg, "pwd", 1) || compare_strings(arg, "export", 1) ||
+		compare_strings(arg, "unset", 1) || compare_strings(arg, "env", 1) ||
+		compare_strings(arg, "exit", 1))
 		return (1);
 	else
 		return (0);

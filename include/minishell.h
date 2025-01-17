@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 18:02:29 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:53:49 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,10 @@ typedef struct s_cmds
 	t_lst_str		*redirs;
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
+	pid_t			pid;
+	int				exit_code;
 	struct s_cmds	*next;
+	struct s_cmds	*prev;
 }	t_cmds;
 
 typedef struct s_shell
@@ -194,7 +197,8 @@ typedef struct s_shell
 	char		*prompt;			// Stores the prompt string for the minishell
 
 	//	Cmd vars; will be reset on every new command prompt
-	pid_t		*pid;				// This stores the pid of all the processes forked during execution
+	// pid_t		*pid;				// This stores the pid of all the processes forked during execution
+	int			total_cmds;			// Stores the total number of commands received from a command-line input
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
@@ -229,14 +233,14 @@ void		set_prompt(t_shell *shl, char *prefix, char *separator);
 
 void		index_cmds(t_shell *shl);
 int			is_command(t_cmds *cmd);
-int			is_built_in(char *cmd);
+int			is_built_in(t_cmds *cmds);
 
 /* ------------------------------ executions.c ------------------------------ */
 
 void		mini_execute(t_shell *shl);
 int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
-void		exec_external(t_shell *shl, t_cmds *cmd, int p_index);
+void		exec_pipeline(t_shell *shl, t_cmds *cmd);
 
 /* ----------------------------- redirections.c ----------------------------- */
 
@@ -244,6 +248,7 @@ int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
 int			set_redirections(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
+int			ft_close(int fd);
 
 /* ------------------------------- binaries.c ------------------------------- */
 
@@ -253,8 +258,8 @@ int			is_path(const char *str);
 
 /* ------------------------------ exec_utils.c ------------------------------ */
 
-void		create_pids(t_shell *shl);
-int			get_total_cmds(t_shell *shl, int which);
+// void		create_pids(t_shell *shl);
+// int			get_total_cmds(t_shell *shl, int which);
 void		restore_std_fds(t_shell *shl);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 18:50:44 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:56:10 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,13 @@ void	start_shell(t_shell *shl)
 		}
 		set_signal(shl, 2);
 		add_history(shl->cmdline);
-        test_print_cmdlst(shl, 30);
 		index_cmds(shl);
+		
+		// create_pids(shl);
 		// get_binaries(shl);
-		mini_execute(shl);
+		if (shl->cmds_lst)
+			mini_execute(shl);
+        test_print_cmdlst(shl, 30);
 		// test_by_print(shl);
 		// test_std_fds(shl);
 		// test_printf_fds();
