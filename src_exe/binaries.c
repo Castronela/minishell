@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:24:16 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:28:44 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	get_binary(t_shell *shl, t_cmds *cmd)
 			if (cmd_not_found == -1)
 				exit_early(shl, env_paths, "Path malloc failed");
 			if (cmd_not_found)
-				return (1);
+				exit_early(shl, NULL, NULL);
 		}
 		if (remove_path(cmd) == -1)
 			exit_early(shl, env_paths, "Remove-path malloc failed");

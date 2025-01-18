@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 19:02:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/17 22:09:47 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
 int		set_redirections(t_shell *shl, t_cmds *cmd);
 void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void	ft_close_stdcpy(t_shell *shl, int mod);
+int	ft_close(int fd);
 
 static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	int *flag);
@@ -33,16 +34,13 @@ int open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node)
 	while(node)
 	{
 		set_fd_pointer_and_flag(cmd, node, &pt_fd, &flag);
-		if (*pt_fd > STDERR_FILENO)
-			close(*pt_fd);
+		if (ft_close(*pt_fd) < 0)
+			exit_early(shl, NULL, NULL);
 		*pt_fd = open(node->val, flag, 0644);
 		if (*pt_fd < 0)
 		{
 			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
 				": ", strerror(errno), "\n", NULL});
-			ft_close_cmd_pipe(shl, cmd, 0);
-			ft_close_cmd_pipe(shl, cmd, 1);
-			shl->exit_code = ERRCODE_GENERAL;
 			return (1);
 		}
 		node = node->next;
@@ -62,9 +60,9 @@ static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	{
 		*pt_fd = &cmd->fd_out;
 		if (compare_strings(node->key, RD_OUT_A, 1))
-			*flag = O_CREAT | O_WRONLY | O_APPEND;
+			*flag = O_WRONLY | O_APPEND;
 		else
-			*flag = O_CREAT | O_WRONLY | O_TRUNC;
+			*flag = O_WRONLY | O_TRUNC;
 	}
 }
 
@@ -143,4 +141,19 @@ void	ft_close_stdcpy(t_shell *shl, int mod)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		shl->stdio[1] = -1;
 	}
+}
+
+int	ft_close(int fd)
+{
+	if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO &&
+			fd >= 0)
+	{
+		if (close(fd) < 0)
+		{
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, ERRMSG_CLOSE,
+				 NULL});
+			return (-1);
+		}
+	}
+	return (0);
 }
