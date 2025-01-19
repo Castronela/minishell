@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:56:10 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 03:46:15 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 void 	init_shell(t_shell *shl, int ac, char **av, char **envp);
 void	start_shell(t_shell *shl);
 void	clearout(t_shell *shl);
+
+static void setup_cmd(t_shell *shl);
 
 // static int	skip_assignments(t_cmds *cmd);
 
@@ -82,15 +84,25 @@ void	start_shell(t_shell *shl)
 		add_history(shl->cmdline);
 		index_cmds(shl);
 		
-		// create_pids(shl);
-		// get_binaries(shl);
+		setup_cmd(shl);
 		if (shl->cmds_lst)
 			mini_execute(shl);
-        test_print_cmdlst(shl, 30);
-		// test_by_print(shl);
-		// test_std_fds(shl);
-		// test_printf_fds();
+        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
+	}
+}
+
+static void setup_cmd(t_shell *shl)
+{
+	t_cmds *cmd;
+
+	cmd = shl->cmds_lst;
+	set_env_paths(shl);
+	while (cmd)
+	{
+		if (!set_redirs(shl, cmd))
+			set_binaries(shl, cmd);
+		cmd = cmd->next;
 	}
 }
 
@@ -110,6 +122,8 @@ void	clearout(t_shell *shl)
 {
 	if (shl->environ != NULL)
 		ft_free2d_safe(&shl->environ);
+	if (shl->env_paths != NULL)
+		ft_free2d_safe(&shl->env_paths);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
 	if (shl->local_vars != NULL)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 17:56:06 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 02:23:03 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,9 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 			var_val = cmd->bin_path;
 		else
 			var_val = cmd->args[count_pointers(cmd->args) -1];
-		printf("here:	%s\n", cmd->bin_path);
 	}
 	else
-	{
-			var_val = val;
-			printf("no, here\n");
-	}
+		var_val = val;
 	if (update_environ(find_string_addr(shl, tmp_name, ft_strlen(tmp_name)),
 			tmp_name, var_val) == -1)
 	{

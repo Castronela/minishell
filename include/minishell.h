@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:53:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 03:29:52 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,10 +141,10 @@ file"
 //                                     Error Codes                                      //
 //--------------------------------------------------------------------------------------//
 
-# define ERRCODE_GENERAL 1          // General error
-# define ERRCODE_BUILT_IN 2         // Error in a built-in command
-# define ERRCODE_CMD_CNOT_EXEC 126  // Command found but is not executable
-# define ERRCODE_CMD_NOT_FOUND 127  // Command not found
+# define ERRCODE_GENERAL 1          		// General error
+# define ERRCODE_BUILT_IN 2         		// Error in a built-in command
+# define ERRCODE_CMD_CNOT_EXEC 126  		// Command found but is not executable
+# define ERRCODE_CMD_OR_FILE_NOT_FOUND 127  // Command not found
 
 //--------------------------------------------------------------------------------------//
 //                                   Type Definitions                                   //
@@ -167,17 +167,13 @@ typedef struct s_cmds
 	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
 	char			**args;			// Double char pointer to the whole command call including command its flags and its args
 	int				arg_count;
-	// t_lst_str		*heredocs_lst;	// to be deleted
 	int				fd_in;			// Defaults to STDINFILENO
 	int				fd_out;			// Defaults to STDOUTFILENO
-	// int				apend;			// to be deleted
-	// char			*file_in;		// to be deleted
-	// int				toggle_heredoc;
-	// char			*file_out;		// to be deleted
 	t_lst_str		*redirs;
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	pid_t			pid;
+	int				exit_order;
 	int				exit_code;
 	struct s_cmds	*next;
 	struct s_cmds	*prev;
@@ -189,8 +185,8 @@ typedef struct s_shell
 	char		**av;
 	int			stdio[2];
 	char		**environ;			// Copy of **envp, as required by execve fn
+	char		**env_paths;
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
-	// t_lst_str	*env_paths;			// Borrowed pointer that points to path variable in shl->variables->val
 	t_lst_str	*local_vars;		// Stores only local variables
 	int			shlvl;				// Stores the current shell level
 	char		*cur_wd;			// Stores the current working directory
@@ -204,6 +200,7 @@ typedef struct s_shell
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
 	int			heredoc_file_no;
 	int			tmp_file_fd;
+	int			last_exited_child;
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
@@ -244,17 +241,17 @@ void		exec_pipeline(t_shell *shl, t_cmds *cmd);
 
 /* ----------------------------- redirections.c ----------------------------- */
 
-int 		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
-int			set_redirections(t_shell *shl, t_cmds *cmd);
+int 		set_redirs(t_shell *shl, t_cmds *cmd);
+int			dup_std_fds(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 void		ft_close_stdcpy(t_shell *shl, int mod);
 int			ft_close(int fd);
 
 /* ------------------------------- binaries.c ------------------------------- */
 
-// int			get_binaries(t_shell *shl);
-int			get_binary(t_shell *shl, t_cmds *cmd);
-int			is_path(const char *str);
+void 		set_binaries(t_shell *shl, t_cmds *cmd);
+void		set_env_paths(t_shell *shl);
+int			is_path(const t_cmds *cmd);
 
 /* ------------------------------ exec_utils.c ------------------------------ */
 
@@ -343,6 +340,7 @@ int 		heredoc(t_shell *shell);
 t_cmds		*lst_cmds_newnode(t_shell *shell);
 void		lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void 		lst_cmds_freelst(t_shell *shell);
+t_cmds 		*lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order);
 
 /* -------------------------- Remove closed quotes -------------------------- */
 

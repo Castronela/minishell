@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binaries_old.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/15 19:34:41 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/18 22:46:36 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int			get_binaries(t_shell *shl);
 char		*get_binary_path(t_cmds *cmd, char **env_paths);
 int			remove_path(t_cmds *cmd);
 static char	**get_env_paths(t_shell *shl);
-int			is_path(const char *str);
+int			is_path(const t_cmds *cmd);
 
 /*
 Function to get binaries
@@ -163,7 +163,7 @@ int	remove_path(t_cmds *cmd)
 	return (cmd->args[cmd->skip] = cmd_wo_path, 0);
 }
 
-int	is_path(const char *str)
+int	is_path(const t_cmds *cmd)
 {
 	char	*s;
 	

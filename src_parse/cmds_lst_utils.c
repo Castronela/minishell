@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/17 21:41:18 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 03:26:33 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void	lst_cmds_freelst(t_shell *shell);
+t_cmds *lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -24,7 +25,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	*new_cmd = (t_cmds){.fd_in = STDIN_FILENO, .fd_out = STDOUT_FILENO,
-		.fd_cls = -1};
+		.fd_cls = -1, .pid = -1};
 	return (new_cmd);
 }
 
@@ -64,4 +65,17 @@ void	lst_cmds_freelst(t_shell *shell)
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);
 	}
+}
+
+t_cmds *lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order)
+{
+	while (cmds)
+	{
+		if (pid && cmds->pid == pid)
+			break ;
+		else if (exit_order && cmds->exit_order == exit_order)
+			break ;
+		cmds = cmds->next;
+	}
+	return (cmds);
 }

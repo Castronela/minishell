@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:09:47 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/18 22:26:55 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int		open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node);
-int		set_redirections(t_shell *shl, t_cmds *cmd);
-void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
-void	ft_close_stdcpy(t_shell *shl, int mod);
-int	ft_close(int fd);
+
+int 		set_redirs(t_shell *shl, t_cmds *cmd);
+int			dup_std_fds(t_shell *shl, t_cmds *cmd);
+void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
+void		ft_close_stdcpy(t_shell *shl, int mod);
+int			ft_close(int fd);
 
 static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	int *flag);
@@ -26,11 +27,13 @@ static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 // data.pipe_fd[0]	-	read end of the pipe, i.e. to read from the pipe
 // data.pipe_fd[1]	-	write end of the pipe, i.e. to write to the pipe
 
-int open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node)
+int set_redirs(t_shell *shl, t_cmds *cmd)
 {
 	int flag;
 	int *pt_fd;
+	t_lst_str *node;
 
+	node = cmd->redirs;
 	while(node)
 	{
 		set_fd_pointer_and_flag(cmd, node, &pt_fd, &flag);
@@ -41,12 +44,17 @@ int open_file_fds(t_shell *shl, t_cmds *cmd, t_lst_str *node)
 		{
 			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
 				": ", strerror(errno), "\n", NULL});
+			if (errno == ENOENT)
+				cmd->exit_code = ERRCODE_CMD_OR_FILE_NOT_FOUND;
+			if (errno == EACCES)
+				cmd->exit_code = ERRCODE_CMD_CNOT_EXEC;
 			return (1);
 		}
 		node = node->next;
 	}
 	return (0);
 }
+
 
 static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	int *flag)
@@ -60,9 +68,9 @@ static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	{
 		*pt_fd = &cmd->fd_out;
 		if (compare_strings(node->key, RD_OUT_A, 1))
-			*flag = O_WRONLY | O_APPEND;
+			*flag = O_CREAT | O_WRONLY | O_APPEND;
 		else
-			*flag = O_WRONLY | O_TRUNC;
+			*flag = O_CREAT | O_WRONLY | O_TRUNC;
 	}
 }
 
@@ -70,7 +78,7 @@ static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 Function to dup2 the STDIN_FILENO and STDOUT_FILENO when fd_in and fd_out are
 not already 0 and 1
 */
-int	set_redirections(t_shell *shl, t_cmds *cmd)
+int	dup_std_fds(t_shell *shl, t_cmds *cmd)
 {
 	(void)shl;
 	if (cmd->fd_in != STDIN_FILENO)
@@ -110,7 +118,7 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 			exit_early(shl, NULL, ERRMSG_CLOSE);
 		cmd->fd_out = -1;
 	}
-	if (mod == 2 && cmd->fd_cls > STDERR_FILENO)
+	if (mod == 2 && cmd->fd_cls != -1)
 	{
 		if (close(cmd->fd_cls) < 0)
 			exit_early(shl, NULL, ERRMSG_CLOSE);

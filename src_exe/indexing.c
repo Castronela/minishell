@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   indexing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:43:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/18 22:48:05 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,10 @@ int	is_built_in(t_cmds *cmds)
 {
 	char	*arg;
 	
+	if (!cmds->args)
+		return (1);
 	arg = *(cmds->args + cmds->skip);
-	if (!cmds->args || compare_strings(arg, "echo", 1) || compare_strings(arg, "cd", 1) ||
+	if (compare_strings(arg, "echo", 1) || compare_strings(arg, "cd", 1) ||
 		compare_strings(arg, "pwd", 1) || compare_strings(arg, "export", 1) ||
 		compare_strings(arg, "unset", 1) || compare_strings(arg, "env", 1) ||
 		compare_strings(arg, "exit", 1))

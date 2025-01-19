@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/16 01:08:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 01:46:14 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,23 +44,20 @@ void	init_pipes(t_shell *shell)
 /*
 Function to open a pipe and store it in the command struct
 */
-void	init_cmd_pipe(t_shell *shell, t_cmds *cmd)
+void	init_cmd_pipe(t_shell *shl, t_cmds *cmd)
 {
-	t_cmds	*cmd_node;
-	int		pipe_fds[2];
-
-	cmd_node = cmd;
-	if (cmd_node)
-	{
-		if (cmd_node->cmd_separator && !ft_strncmp(cmd_node->cmd_separator,
-				CT_PIPE, ft_strlen(CT_PIPE) + 1))
-		{
-			if (pipe(pipe_fds) < 0)
-				exit_early(shell, NULL, ERRMSG_PIPE);
-			cmd_node->fd_out = pipe_fds[1];
-			cmd_node->fd_cls = pipe_fds[0];
-			cmd_node->next->fd_in = pipe_fds[0];
-		}
-		cmd_node = cmd_node->next;
-	}
+	int pipe_fd[2];
+	
+	if (!cmd->next)
+		return ;
+	if (pipe(pipe_fd))
+		exit_early(shl, NULL, ERRMSG_PIPE);
+	if (cmd->fd_out == STDOUT_FILENO)
+		cmd->fd_out = pipe_fd[1];
+	else if (ft_close(pipe_fd[1]))
+		exit_early(shl, NULL, ERRMSG_CLOSE);
+	if (cmd->next->fd_in == STDIN_FILENO)
+		cmd->next->fd_in = pipe_fd[0];
+	else if (ft_close(pipe_fd[0]))
+		exit_early(shl, NULL, ERRMSG_CLOSE);
 }

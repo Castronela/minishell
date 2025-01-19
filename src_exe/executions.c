@@ -3,71 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   executions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:49:57 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 03:44:10 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void		mini_execute(t_shell *shl);
-int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
-void		exec_built_in(t_shell *shl, t_cmds *cmd);
-void		exec_pipeline(t_shell *shl, t_cmds *cmd);
+void	mini_execute(t_shell *shl);
+int		exec_var_assignments(t_shell *shl, t_cmds *cmd);
+void	exec_built_in(t_shell *shl, t_cmds *cmd);
+void	exec_pipeline(t_shell *shl, t_cmds *cmd);
 
-static void	execve_aftermath_exit(t_shell *shl, t_cmds *cmd, int err);
-
-// /*
-// Function to kick-off execution
-// */
-// void	mini_execute(t_shell *shl)
-// {
-// 	int		p_index;
-// 	t_cmds	*cmd;
-
-// 	p_index = 0;
-// 	create_pids(shl);
-// 	cmd = shl->cmds_lst;
-// 	while (cmd)
-// 	{
-// 		// if (!is_built_in(*(cmd->args + cmd->skip)) && get_binary(shl, cmd))
-// 		if (cmd->exc_index && get_binary(shl, cmd))
-// 		{
-// 			cmd = cmd->next;
-// 			continue;
-// 		}
-// 		init_cmd_pipe(shl, cmd);
-// 		if (open_file_fds(shl, cmd, cmd->redirs))
-// 			break ;
-// 		if (cmd->args && cmd->lvar_assignment)
-// 			exec_var_assignments(shl, cmd);
-// 		else if (cmd->args && !cmd->exc_index)
-// 			exec_built_in(shl, cmd);
-// 		else if (cmd->args && cmd->exc_index)
-// 		{
-// 			exec_external(shl, cmd, p_index);
-// 			p_index++;
-// 		}
-// 		cmd = cmd->next;
-// 	}
-// }
+static void handle_child_exit(t_shell *shl);
+static void exec_child(t_shell *shl, t_cmds *cmd);
+static void print_error_after_exit(t_shell *shl);
 
 void	mini_execute(t_shell *shl)
 {
-	int		ec;
 	t_cmds *cmd;
 	
 	cmd = shl->cmds_lst;
-	ec = 0;
 	if (is_built_in(cmd) && shl->total_cmds == 1)
-	{
-		if (!open_file_fds(shl, cmd, cmd->redirs))
-			exec_built_in(shl, cmd);	
-	}
+		exec_built_in(shl, cmd);	
 	else
+	{
 		exec_pipeline(shl, cmd);
+		print_error_after_exit(shl);
+	}
+	while(cmd->next)
+		cmd = cmd->next;
+	shl->exit_code = cmd->exit_code;
+}
+
+static void print_error_after_exit(t_shell *shl)
+{
+	t_cmds *cmd;
+	int 	child_exited;
+
+	child_exited = 1;
+	cmd = lst_cmds_find_node(shl->cmds_lst, 0, child_exited);
+	while (cmd)
+	{
+		if (cmd->exit_code)
+		{
+			if (cmd->exit_code == ENOENT && shl->env_paths && cmd->exc_index)
+				ft_fprintf_str(STDERR_FILENO, (const char *[]) {ERSHL, 
+					cmd->bin_path, ERRMSG_CMD_NOT_FOUND, NULL});
+			else if (cmd->exc_index)
+				ft_fprintf_str(STDERR_FILENO, (const char *[]) {ERSHL, 
+					cmd->bin_path, ": ", strerror(cmd->exit_code), "\n", NULL});
+			if (cmd->exit_code == ENOENT)
+				cmd->exit_code = ERRCODE_CMD_OR_FILE_NOT_FOUND;
+			else if (cmd->exit_code == EACCES)
+				cmd->exit_code = ERRCODE_CMD_CNOT_EXEC;
+		}
+		child_exited++;
+		cmd = lst_cmds_find_node(shl->cmds_lst, 0, child_exited);
+	}
 }
 
 /*
@@ -116,8 +111,6 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 	
 	// update_env_var(shl, cmd, UNDERSCORE, NULL);
 	first_arg = *(cmd->args + cmd->skip);
-	if (set_redirections(shl, cmd) < 0)
-		exit_early(shl, NULL, ERRMSG_DUP2);
 	if (compare_strings(first_arg, "echo", 1))
 		mini_echo(cmd);
 	else if (compare_strings(first_arg, "cd", 1))
@@ -136,7 +129,6 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 		printf("NOT A BUILT-IN COMMAND\n");
 	ft_close_cmd_pipe(shl, cmd, 0);
 	ft_close_cmd_pipe(shl, cmd, 1);
-	restore_std_fds(shl);
 }
 
 /*
@@ -145,122 +137,49 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 */
 void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 {
-	int pipe_fd[2];
-	int ec;
-
-	if (cmd->next)
-	{
-		pipe(pipe_fd);
-		cmd->fd_out = pipe_fd[1];
-		cmd->next->fd_in = pipe_fd[0];
-	}
-	cmd->pid = fork();
-	if (cmd->pid == 0 && !open_file_fds(shl, cmd, cmd->redirs))
-	{
-		ft_close_stdcpy(shl, 2);
-		ft_close(pipe_fd[0]);
-		if (set_redirections(shl, cmd) < 0)
-			exit_early(shl, NULL, ERRMSG_DUP2);
-		if (is_built_in(cmd))
-		{
-			exec_built_in(shl, cmd);
-			exit_early(shl, NULL, NULL);
-		}
-		get_binary(shl, cmd);
-		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-		execve_aftermath_exit(shl, cmd, errno);
-	}
-	else
-	{
-		ft_close(cmd->fd_in);
-		ft_close(cmd->fd_out);
-		if (cmd->next)
-			exec_pipeline(shl, cmd->next);
-		if ((waitpid(cmd->pid, &ec, 0)) == -1)
-			exit_early(shl, NULL, ERRMSG_WAITPID);
-		if (WIFEXITED(ec))
-			cmd->exit_code = WEXITSTATUS(ec);
-	}
-}
-
-// void	exec_pipeline(t_shell *shl, t_cmds *cmd)
-// {
-// 	int	ec;
-
-// 	update_env_var(shl, cmd, UNDERSCORE, NULL);
-// 	ec = 0;
-// 	if ((*(shl->pid + p_index) = fork()) < 0)
-// 		exit_early(shl, NULL, ERRMSG_FORK);
-// 	if (shl->pid[p_index] != 0)
-// 		ft_close_cmd_pipe(shl, cmd, 0);
-// 	if (shl->pid[p_index] == 0)
-// 	{
-// 		ft_close_stdcpy(shl, 2);
-// 		ft_close_cmd_pipe(shl, cmd, 2);
-// 		if (set_redirections(shl, cmd) < 0)
-// 			exit_early(shl, NULL, ERRMSG_DUP2);
-// 		ft_close_cmd_pipe(shl, cmd, 0);
-// 		ft_close_cmd_pipe(shl, cmd, 1);
-// 		if (is_built_in(cmd))
-// 		{
-// 			exec_built_in(shl, cmd);
-			
-// 		}
-// 		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-// 		execve_aftermath_exit(shl, cmd, errno);
-// 	}
-// 	ft_close_cmd_pipe(shl, cmd, 0);
-// 	ft_close_cmd_pipe(shl, cmd, 1);
-// }
-
-// /*
-
-// !!! !! Still getting seg fault when path is accessed after unsetting
-// */
-// void	exec_pipeline(t_shell *shl, t_cmds *cmd)
-// {
-// 	int	ec;
-
-// 	update_env_var(shl, cmd, UNDERSCORE, NULL);
-// 	ec = 0;
-// 	if ((*(shl->pid + p_index) = fork()) < 0)
-// 		exit_early(shl, NULL, ERRMSG_FORK);
-// 	if (shl->pid[p_index] != 0)
-// 		ft_close_cmd_pipe(shl, cmd, 0);
-// 	if (shl->pid[p_index] == 0)
-// 	{
-// 		ft_close_stdcpy(shl, 2);
-// 		ft_close_cmd_pipe(shl, cmd, 2);
-// 		if (set_redirections(shl, cmd) < 0)
-// 			exit_early(shl, NULL, ERRMSG_DUP2);
-// 		ft_close_cmd_pipe(shl, cmd, 0);
-// 		ft_close_cmd_pipe(shl, cmd, 1);
-// 		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-// 		execve_aftermath_exit(shl, cmd, errno);
-// 	}
-// 	ft_close_cmd_pipe(shl, cmd, 0);
-// 	ft_close_cmd_pipe(shl, cmd, 1);
-// 	if ((waitpid(*(shl->pid + p_index), &ec, 0)) == -1)
-// 		exit_early(shl, NULL, ERRMSG_WAITPID);
-// 	if (WIFEXITED(ec))
-// 		shl->exit_code = WEXITSTATUS(ec);
-// }
-
-static void	execve_aftermath_exit(t_shell *shl, t_cmds *cmd, int err)
-{
-	// if (!is_path(*(cmd->args + cmd->skip)) && !ft_find_node(shl->variables, "PATH", 0, 1))
-	// if (!(*cmd->bin_path))
-	// {
-	// 	ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-	// 		*(cmd->args + cmd->skip), ": command not found\n", NULL});
-	// 	exit_early(shl, NULL, NULL);
-	// }
-	// else
-	// {
+	init_cmd_pipe(shl, cmd);
+	if (!cmd->exit_code)
+		cmd->pid = fork();
+	if (cmd->pid == 0)
+		exec_child(shl, cmd);
 	ft_close(cmd->fd_in);
 	ft_close(cmd->fd_out);
-		ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-			*(cmd->args + cmd->skip), ": ", strerror(err), "\n", NULL});
+	if (cmd->next)
+		exec_pipeline(shl, cmd->next);
+	if (cmd->pid != -1)
+		handle_child_exit(shl);	
+}
+
+static void handle_child_exit(t_shell *shl)
+{
+	int 	ec;
+	pid_t 	pid;
+	t_cmds 	*cmd;
+	
+	pid = wait(&ec);
+	if (pid == -1)
+		exit_early(shl, NULL, ERRMSG_WAITPID);
+	cmd = lst_cmds_find_node(shl->cmds_lst, pid, 0);
+	if (WIFEXITED(ec))
+		cmd->exit_code = WEXITSTATUS(ec);
+	cmd->exit_order = ++shl->last_exited_child;
+}
+
+static void exec_child(t_shell *shl, t_cmds *cmd)
+{
+	if (cmd->next && ft_close(cmd->next->fd_in))
 		exit_early(shl, NULL, NULL);
-	// }
+	if (dup_std_fds(shl, cmd) < 0)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+	if (is_built_in(cmd))
+	{
+		exec_built_in(shl, cmd);
+		restore_std_fds(shl);
+		exit_early(shl, NULL, NULL);
+	}
+	// test_print_1cmd(shl, cmd, 30);
+	execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
+	ft_close(cmd->fd_in);
+	ft_close(cmd->fd_out);
+	exit_early(shl, NULL, NULL);
 }
