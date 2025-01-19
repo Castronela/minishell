@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 18:03:05 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 19:46:25 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int			mini_export(t_shell *shl, t_cmds *cmd);
 
 static void	print_quoted_env(t_shell *shl);
-static void	check_and_export_arg(t_shell *shl, char *arg, int *checks);
+static int	check_and_export_arg(t_shell *shl, char *arg, int *checks);
 static int	is_valid_name(char *arg, int *i);
 static int	is_valid_val(char *arg, int *i);
 
@@ -50,7 +50,8 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 	while (*(++arguments))
 	{
 		upd_str = *arguments;
-		check_and_export_arg(shl, *arguments, checks);
+		if (check_and_export_arg(shl, *arguments, checks))
+			cmd->exit_code = ERRCODE_GENERAL;
 		if (*(arguments + 1) == NULL && checks[2] == 1)
 			upd_str = get_var_component(shl, *arguments, 0);
 		if (checks[0] < 1)
@@ -91,7 +92,7 @@ static void	print_quoted_env(t_shell *shl)
 /*
 Static sub-function for export checks and execution if checks pass
 */
-static void	check_and_export_arg(t_shell *shl, char *arg, int *checks)
+static int	check_and_export_arg(t_shell *shl, char *arg, int *checks)
 {
 	int	i;
 
@@ -101,9 +102,10 @@ static void	check_and_export_arg(t_shell *shl, char *arg, int *checks)
 	checks[2] = 0;
 	if (checks[0] < 0)
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-				"export: `", arg, "\': not a valid identifier\n", NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
+				"export: `", arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
+		return (1);
 	}
 	if (checks[0] == 1 && checks[1] == 1)
 	{
@@ -113,6 +115,7 @@ static void	check_and_export_arg(t_shell *shl, char *arg, int *checks)
 	}
 	if (checks[0] == 2)
 		checks[2] = 1;
+	return (0);
 }
 
 /*

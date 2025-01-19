@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 03:26:33 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 18:52:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 t_cmds	*lst_cmds_newnode(t_shell *shell);
 void	lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void	lst_cmds_freelst(t_shell *shell);
-t_cmds *lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order);
 
 t_cmds	*lst_cmds_newnode(t_shell *shell)
 {
@@ -65,17 +64,4 @@ void	lst_cmds_freelst(t_shell *shell)
 		cmd_node = cmd_node->next;
 		free(cmd_node_free);
 	}
-}
-
-t_cmds *lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order)
-{
-	while (cmds)
-	{
-		if (pid && cmds->pid == pid)
-			break ;
-		else if (exit_order && cmds->exit_order == exit_order)
-			break ;
-		cmds = cmds->next;
-	}
-	return (cmds);
 }

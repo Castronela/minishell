@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 15:02:46 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 01:46:14 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 19:30:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ void	init_cmd_pipe(t_shell *shl, t_cmds *cmd)
 		exit_early(shl, NULL, ERRMSG_PIPE);
 	if (cmd->fd_out == STDOUT_FILENO)
 		cmd->fd_out = pipe_fd[1];
-	else if (ft_close(pipe_fd[1]))
+	else if (ft_close(pipe_fd[1]) < 0)
 		exit_early(shl, NULL, ERRMSG_CLOSE);
 	if (cmd->next->fd_in == STDIN_FILENO)
 		cmd->next->fd_in = pipe_fd[0];
-	else if (ft_close(pipe_fd[0]))
+	else if (ft_close(pipe_fd[0]) < 0)
 		exit_early(shl, NULL, ERRMSG_CLOSE);
 }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 17:00:50 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 21:42:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void		mini_cd(t_shell *shl, t_cmds *cmd);
 static void	update_wdirs(t_shell *shl, char *new_cwd);
 static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd);
 
-// int		path_is_dir(char *path);
+int		path_is_dir(char *path);
 
 /*
 Built-in cd function
@@ -46,11 +46,9 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 	{
 		if (chdir(new_cwd) < 0)
 		{
-			ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
 				ERRMSG_CD, new_cwd, ": ", strerror(errno), "\n", NULL});
-			// int num = errno;
-			// printf("errno is :	%d\n", num);
-			shl->exit_code = errno;	// (errno =2 [i.e. errno = ENOENT], but for this case, bash exit code = 1)
+			cmd->exit_code = ERRCODE_GENERAL;	// (errno =2 [i.e. errno = ENOENT], but for this case, bash exit code = 1)
 			return ;
 		}
 		new_cwd = getcwd(NULL, 0);
@@ -133,25 +131,25 @@ void	update_wdirs(t_shell *shl, char *new_cwd)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 }
 
-// /*
-// Function to check whether the given path is a valid path or not
-//   - Returns 1 if it is a valid path
-//   - Returns 0 if the path is invalid, or if the path results in a file
-// */
-// int	path_is_dir(char *path)
-// {
-// 	int			i;
-// 	struct stat	bufr;
+/*
+Function to check whether the given path is a valid path or not
+  - Returns 1 if it is a valid path
+  - Returns 0 if the path is invalid, or if the path results in a file
+*/
+int	path_is_dir(char *path)
+{
+	int			i;
+	struct stat	bufr;
 	
-// 	i = stat(path, &bufr);
-// 	if (i < 0)
-// 		return (0);
-// 	else if (i == 0)
-// 	{
-// 		if (S_ISREG(bufr.st_mode))
-// 			return (0);
-// 		else if (S_ISDIR(bufr.st_mode))
-// 			return (1);
-// 	}
-// 	return (0);
-// }
+	i = stat(path, &bufr);
+	if (i < 0)
+		return (0);
+	else if (i == 0)
+	{
+		if (S_ISREG(bufr.st_mode))
+			return (0);
+		else if (S_ISDIR(bufr.st_mode))
+			return (1);
+	}
+	return (0);
+}

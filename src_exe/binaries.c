@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binaries.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 04:31:31 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 21:46:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ void set_binaries(t_shell *shl, t_cmds *cmd)
 			if (errno == EACCES)
 				cmd->exit_code = ERRCODE_CMD_CNOT_EXEC;
 		}
+		else if (path_is_dir(cmd->bin_path))
+		{
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, cmd->bin_path, 
+				ERRMSG_PATH_IS_DIR, NULL});
+			cmd->exit_code = ERRCODE_CMD_CNOT_EXEC;
+		}
 	}
 }
 
@@ -62,9 +68,9 @@ static void set_binary_from_path(t_shell *shl, t_cmds *cmd)
 		if (!access(cmd->bin_path, F_OK))
 			return ;
 	}
-	cmd->bin_path = ft_strdup(*(cmd->args + cmd->skip));
-	if (!cmd->bin_path)
-		exit_early(shl, NULL, ERRMSG_MALLOC);
+	ft_fprintf_str(STDERR_FILENO, (const char *[]) {ERSHL, 
+		*(cmd->args + cmd->skip), ERRMSG_CMD_NOT_FOUND, NULL});
+	cmd->exit_code = ERRCODE_CMD_OR_FILE_NOT_FOUND;
 }
 
 static char *get_assembled_bin_path(t_shell *shl, t_cmds *cmd, 
@@ -131,6 +137,8 @@ void	set_env_paths(t_shell *shl)
 {
 	t_lst_str	*paths;
 
+	if (shl->env_paths)
+		free(shl->env_paths);
 	paths = ft_find_node(shl->variables, "PATH", 0, 1);
 	if (!paths)
 		shl->env_paths = NULL;

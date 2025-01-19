@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 03:29:52 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 21:46:35 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,9 @@ file"
 
 // ---- Built-in Error Message -----------------------------------------------------------
 
-# define ERRMSG_CD "cd:"
+# define ERRMSG_CD "cd: "
+# define ERRMSG_NO_VALID_IDENT "\': not a valid identifier\n"
+# define ERRMSG_PATH_IS_DIR ": is a directory\n"
 
 // ---- External Error Message -----------------------------------------------------------
 
@@ -173,7 +175,6 @@ typedef struct s_cmds
 	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
 	int				fd_cls;
 	pid_t			pid;
-	int				exit_order;
 	int				exit_code;
 	struct s_cmds	*next;
 	struct s_cmds	*prev;
@@ -200,7 +201,6 @@ typedef struct s_shell
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
 	int			heredoc_file_no;
 	int			tmp_file_fd;
-	int			last_exited_child;
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
@@ -262,9 +262,10 @@ void		restore_std_fds(t_shell *shl);
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
+int			path_is_dir(char *path);
 void		mini_echo(t_cmds *cmd);
 void		mini_env(t_shell *shl, t_cmds *cmd);
-void		mini_exit(t_shell *shl);
+void		mini_exit(t_shell *shl, t_cmds *cmd);
 int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
@@ -340,7 +341,6 @@ int 		heredoc(t_shell *shell);
 t_cmds		*lst_cmds_newnode(t_shell *shell);
 void		lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
 void 		lst_cmds_freelst(t_shell *shell);
-t_cmds 		*lst_cmds_find_node(t_cmds *cmds, const pid_t pid, const int exit_order);
 
 /* -------------------------- Remove closed quotes -------------------------- */
 

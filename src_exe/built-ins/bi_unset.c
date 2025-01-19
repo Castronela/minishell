@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 18:09:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 19:48:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,12 @@ Static sub-function for export checks and execution if checks pass
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 {
 	checks[0] = is_valid_name(arg);
-	printf("checks[0] = %d\n", checks[0]);
 	checks[1] = 0;
 	checks[2] = 0;
 	if (checks[0] < 0)
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){"minishell: ", 
-				"export: `", arg, "\': not a valid identifier\n", NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
+				"unset: `", arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 	}
 	if (checks[0] == 1)
@@ -145,5 +144,4 @@ static void	remove_variable(t_shell *shl, char *arg)
 	del_local_var = ft_find_node(shl->local_vars, arg, 0, 1);
 	if (del_local_var)
 		ft_remove_node(&shl->local_vars, &del_local_var);
-	printf("This was executed w/o issues\n");
 }

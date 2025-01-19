@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 03:20:19 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 18:53:40 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 	shell->cmds_lst = NULL;
 	shell->heredoc_file_no = 0;
 	shell->tmp_file_fd = -1;
-	shell->last_exited_child = 0;
 	shell->exit_code = 0;
 }
 

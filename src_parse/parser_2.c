@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/17 23:00:12 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/19 21:28:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,15 +97,6 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 
 static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 {
-	int fd_out_file;
-	
-	if (compare_strings(node->key, RD_OUT, 1) 
-		|| compare_strings(node->key, RD_OUT_A, 1))
-	{
-		fd_out_file = open(node->val, O_CREAT);
-		if (fd_out_file != -1)
-			close(fd_out_file);
-	}
 	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
 	{
 		free(node->key);
@@ -113,7 +104,10 @@ static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 		node->val = NULL;
 	}
 	else
+	{
 		expand_homedir_special_char(shell, &node->val);
+		remove_closed_quotes(shell, &node->val);
+	}
 	ft_lst_addback(&new_cmdnode->redirs, node);
 }
 

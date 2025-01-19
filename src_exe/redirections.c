@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/18 22:26:55 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 21:48:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,13 @@ int set_redirs(t_shell *shl, t_cmds *cmd)
 		*pt_fd = open(node->val, flag, 0644);
 		if (*pt_fd < 0)
 		{
-			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
-				": ", strerror(errno), "\n", NULL});
-			if (errno == ENOENT)
-				cmd->exit_code = ERRCODE_CMD_OR_FILE_NOT_FOUND;
-			if (errno == EACCES)
-				cmd->exit_code = ERRCODE_CMD_CNOT_EXEC;
+			if (path_is_dir(node->val))
+				ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
+					ERRMSG_PATH_IS_DIR, NULL});
+			else
+				ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
+					": ", strerror(errno), "\n", NULL});
+			cmd->exit_code = ERRCODE_GENERAL;
 			return (1);
 		}
 		node = node->next;
@@ -85,11 +86,15 @@ int	dup_std_fds(t_shell *shl, t_cmds *cmd)
 	{
 		if ((dup2(cmd->fd_in, STDIN_FILENO)) == -1)
 			return (close(cmd->fd_in), -1);
+		if (ft_close(cmd->fd_in) < 0)
+			return (-1);
 	}
 	if (cmd->fd_out != STDOUT_FILENO)
 	{
 		if ((dup2(cmd->fd_out, STDOUT_FILENO)) == -1)
 			return (close(cmd->fd_out), -1);
+		if (ft_close(cmd->fd_out) < 0)
+			return (-1);
 	}
 	return (0);
 }
@@ -115,13 +120,13 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 	if (mod == 1 && cmd->fd_out != 1 && cmd->fd_out != -1)
 	{
 		if (close(cmd->fd_out) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
+			exit_early(shl, NULL, ERRMSG_CLOSE"2");
 		cmd->fd_out = -1;
 	}
 	if (mod == 2 && cmd->fd_cls != -1)
 	{
 		if (close(cmd->fd_cls) < 0)
-			exit_early(shl, NULL, ERRMSG_CLOSE);
+			exit_early(shl, NULL, ERRMSG_CLOSE"3");
 		cmd->fd_cls = -1;
 	}
 }

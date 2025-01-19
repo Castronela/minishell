@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   indexing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/18 22:48:05 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 22:18:34 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,10 @@ void	index_cmds(t_shell *shl)
 	cmd = shl->cmds_lst;
 	while (cmd)
 	{
+		total++;
 		if (is_command(cmd))
 		{
-			cmd->cmd_index = ++total;
+			cmd->cmd_index = total;
 			if (cmd->args && !is_built_in(cmd))
 				cmd->exc_index = ++ext;
 		}
@@ -69,14 +70,17 @@ int	is_command(t_cmds *cmd)
 	while (args && *args)
 	{
 		eq = 0;
-		if ((*args)[0] == '=')
-			return (1);
-		if (!ft_isalpha((*args)[0]) && (*args)[0] != '_')
-			return (1);
-		if (check_eq_alnum(*args, &eq))
-			return (1);
-		if (!eq)
-			return (1);
+		if ((*args)[0] != '\0')
+		{
+			if ((*args)[0] == '=')
+				return (1);
+			if (!ft_isalpha((*args)[0]) && (*args)[0] != '_')
+				return (1);
+			if (check_eq_alnum(*args, &eq))
+				return (1);
+			if (!eq)
+				return (1);
+		}		
 		args++;
 		(cmd->skip)++;
 	}

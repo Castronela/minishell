@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 17:03:28 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/19 21:35:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ void	mini_echo(t_cmds *cmd)
 	while (*(cmd->args + arg_index))
 	{
 		str = *(cmd->args + arg_index++);
-		write(cmd->fd_out, str, ft_strlen(str));
+		write(STDOUT_FILENO, str, ft_strlen(str));
 		if (*(cmd->args + arg_index))
-			write(cmd->fd_out, " ", 1);
+			write(STDOUT_FILENO, " ", 1);
 	}
 	if (new_line)
-		write(cmd->fd_out, "\n", 1);
+		write(STDOUT_FILENO, "\n", 1);
 }
 
 /*

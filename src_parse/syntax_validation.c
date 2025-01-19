@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 01:17:41 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 19:38:44 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ bool	is_valid_quotation(t_shell *shell)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_EOF, "\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_GENERAL;
+		shell->exit_code = ERRCODE_BUILT_IN;
 		return (false);
 	}
 	return (true);
@@ -63,7 +63,7 @@ bool	is_valid_control_1(t_shell *shell)
 						SYNTX_UNEXP_TOKEN, cmd_node->cmd_separator, "'\n",
 						NULL}))
 					exit_early(shell, NULL, ERRMSG_WRITE);
-				shell->exit_code = ERRCODE_GENERAL;
+				shell->exit_code = ERRCODE_BUILT_IN;
 				return (false);
 			}
 		}
@@ -92,7 +92,7 @@ bool	is_valid_control_2(t_shell *shell)
 				if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 						SYNTX_UNEXP_EOF, "\n", NULL}))
 					exit_early(shell, NULL, ERRMSG_WRITE);
-				shell->exit_code = ERRCODE_GENERAL;
+				shell->exit_code = ERRCODE_BUILT_IN;
 				return (false);
 			}
 		}
@@ -113,7 +113,7 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_TOKEN, "newline'\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_GENERAL;
+		shell->exit_code = ERRCODE_BUILT_IN;
 		return (false);
 	}
 	else if (is_control(redir_target, 0) || is_redir(redir_target, 0)
@@ -122,7 +122,7 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_TOKEN, redir_target, "'\n", NULL}))
 			exit_early(shell, NULL, ERRMSG_WRITE);
-		shell->exit_code = ERRCODE_GENERAL;
+		shell->exit_code = ERRCODE_BUILT_IN;
 		return (false);
 	}
 	return (true);

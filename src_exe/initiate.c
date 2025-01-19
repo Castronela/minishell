@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 03:46:15 by david            ###   ########.fr       */
+/*   Updated: 2025/01/19 22:25:58 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,9 @@ void	start_shell(t_shell *shl)
 		index_cmds(shl);
 		
 		setup_cmd(shl);
+        // test_print_cmdlst(shl, 30);
 		if (shl->cmds_lst)
 			mini_execute(shl);
-        // test_print_cmdlst(shl, 30);
 		reset_cmd_vars(shl, 1);
 	}
 }

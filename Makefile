@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/16 18:14:43 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/19 19:40:05 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ RM			= 	rm -rf
 
 # ----------------- Default Directories ----------------- #
 
-D_BIN		=	bin
+# D_BIN		=	bin
 D_INC		=	include
 D_LIB		=	lib
 D_OBJ		=	obj
@@ -162,7 +162,7 @@ dock:
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."
 	@make -sC $(D_LIB)
-	@$(CC) $(CFLAGS) $(HEADS_FLG) $^ $(LIBS_FLG) -o $(D_BIN)/$@ 
+	@$(CC) $(CFLAGS) $(HEADS_FLG) $^ $(LIBS_FLG) -o $@ 
 
 $(D_OBJ)/%.o: %.c
 	@$(CC) $(CFLAGS) $(HEADS_FLG) $(DEPFLAGS) -c $< -o $@

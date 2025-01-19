@@ -41,8 +41,11 @@ void test_print_cmdlst(t_shell *shell, int spacing)
 		}
 		printf("\n\n%*s%d", spacing, "fd_in : ", cmd_node->fd_in);
 		printf("\n\n%*s%d", spacing, "fd_out : ", cmd_node->fd_out);
-		printf("\n\n%*s%s\n\n", spacing, "cmd_separator : ", cmd_node->cmd_separator ? cmd_node->cmd_separator : "");
-		
+		printf("\n\n%*s%s\n\n", spacing, "cmd_separator : ", cmd_node->cmd_separator ? cmd_node->cmd_separator : "NULL");
+		printf("\n\n%*s%d\n\n", spacing, "cmd exit code : ", cmd_node->exit_code);
+		printf("\n\n%*s%d\n\n", spacing, "total cmds : ", shell->total_cmds);
+		printf("\n\n%*s%s\n\n", spacing, "cmd skip: ", cmd_node->args ? *(cmd_node->args + cmd_node->skip) : "NULL");
+		printf("1st arg is :	%s\n",*cmd_node->args);
 		cmd_node = cmd_node->next;
 	}
 }
@@ -228,3 +231,36 @@ void test_remove_quotes(void)
 	printf("%s\n", str);
 	free(str);
 }
+
+
+/*
+# We need to implement "env with no options or arguments", the output here is optional
+env hello world 
+
+# We need to imlement only "cd with only a relative or absolute path"
+cd 
+cd ~
+
+# Empty export isn't set on `env` but is set on `export`
+export hello
+env | grep hello
+export | grep hello
+
+# This shouldn't break
+unset HOME
+cd ~
+
+# Local variables are options
+aa==vv
+echo $aa
+
+# Open pipe waits for input
+ls |
+
+# Undefined
+<<<
+<<<<
+> '
+echo hi |    |  < >>
+echo hi |  < >>   |  |
+*/
