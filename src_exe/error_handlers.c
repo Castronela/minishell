@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utilities.c                                        :+:      :+:    :+:   */
+/*   error_handlers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:31:34 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 15:56:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ then print an error message and exit
 void	arg_error(char **av)
 {
 	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
-	ft_putstr_fd("Minishell: ", 2);
+	ft_putstr_fd(ERSHL, 2);
 	ft_putstr_fd(av[1], 2);
 	ft_putstr_fd(": Syntax error; too many arguments\n", 2);
 	ft_putstr_fd("Usage: ./<path to minishell executable>\n", 2);

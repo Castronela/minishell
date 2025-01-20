@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 22:18:34 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 14:12:18 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ Function that checks if any of the arguments in the cmd struct is a command
 	was encountered
   - The value at 'skip' is for the purpose of indicating how many arguments to
 	skip to get to the argument where the command and its arguments start
-
-!!! Function too long
 */
 int	is_command(t_cmds *cmd)
 {
@@ -87,6 +85,7 @@ int	is_command(t_cmds *cmd)
 	return (0);
 }
 
+// Helper function for is_command()
 static int	check_eq_alnum(char *arg, int *eq)
 {
 	int	i;
@@ -104,39 +103,6 @@ static int	check_eq_alnum(char *arg, int *eq)
 	}
 	return (0);
 }
-
-// int	is_command_old(t_cmds *cmd)
-// {
-// 	char	**args;
-// 	int		i;
-// 	int		eq;
-
-// 	args = cmd->args;
-// 	while (*args)
-// 	{
-// 		eq = 0;
-// 		if ((*args)[0] == '=')
-// 			return (1);
-// 		if (!ft_isalpha((*args)[0]) && (*args)[0] != '_')
-// 			return (1);
-// 		i = 0;
-// 		while ((*args)[++i])
-// 		{
-// 			if ((*args)[i] == '=')
-// 			{
-// 				eq = 1;
-// 				break ;
-// 			}
-// 			if (!ft_isalnum((*args)[i]) && (*args)[i] != '_')
-// 				return (1);
-// 		}
-// 		if (!eq)
-// 			return (1);
-// 		args++;
-// 		(cmd->skip)++;
-// 	}
-// 	return (0);
-// }
 
 // Function to check whether the command is in the built-in list
 int	is_built_in(t_cmds *cmds)

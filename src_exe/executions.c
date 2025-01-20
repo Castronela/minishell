@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 22:25:19 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 17:07:08 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,11 @@ void	mini_execute(t_shell *shl)
 /*
 Function to execute variable assignments
 
-
 Note:	Here, the cmd->skip parameter should not be used as it is not executing
 		a command but rather variable assignments, which the cmd->skip parameter
 		is designed to skip
+
+!!! !!!	This function looks detached at the moment
 */
 int	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 {

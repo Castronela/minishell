@@ -1,20 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   process_utils.c                                    :+:      :+:    :+:   */
+/*   utils_4.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:48 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:54:07 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 15:53:22 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-// void	create_pids(t_shell *shl);
-// int		get_total_cmds(t_shell *shl, int which);
 void	restore_std_fds(t_shell *shl);
+int		is_bash_reserved(char c);
+// void	create_pids(t_shell *shl);
+// int	get_total_cmds(t_shell *shl, int which);
+
+/*
+Function to restore the STDIN_FILENO and STDOUT_FILENO to point to the terminal
+*/
+void	restore_std_fds(t_shell *shl)
+{
+	if ((dup2(shl->stdio[0], STDIN_FILENO)) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+	if ((dup2(shl->stdio[1], STDOUT_FILENO)) == -1)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+}
+
+/*
+Function to check whether the char parameter is a bash-reserved character
+  - Checks the character c within the array of special characters defined in the
+	header file as bash-reserved characters using ft_strchr()
+  - Returns 0 if the character is not found within the array
+  - Returns 1 if the character is found within the array
+*/
+int	is_bash_reserved(char c)
+{
+	if (ft_strchr((const char []){BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP, 
+			'\0'}, (unsigned int)c) == NULL)
+		return (0);
+	return (1);
+}
 
 // /*
 // Function to malloc a pid_t pointer for the required number of pids
@@ -59,14 +86,3 @@ Function to get the total number of commands
 // 	}
 // 	return (total);
 // }
-
-/*
-Function to restore the STDIN_FILENO and STDOUT_FILENO to point to the terminal
-*/
-void	restore_std_fds(t_shell *shl)
-{
-	if ((dup2(shl->stdio[0], STDIN_FILENO)) == -1)
-		exit_early(shl, NULL, ERRMSG_DUP2);
-	if ((dup2(shl->stdio[1], STDOUT_FILENO)) == -1)
-		exit_early(shl, NULL, ERRMSG_DUP2);
-}

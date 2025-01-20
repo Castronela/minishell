@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 19:46:25 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 15:52:05 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,6 @@ Function for built-in export function
 
 Note:	Here, the upd_str is only freed if checks[2] == 1 which indicates that
 		it is a malloc'd string, otherwise it is simply a borrowed pointer
-
-!!! This fn doesn't yet store env variables in the shl->environ (char **)
--->>	Now it does.
-
-!!! Consider adding functionality for aliases with a simple file or just by
-	adding a list
-
-!!! Use the new ft_fprintf_str() fn instead of multiples writes here.
 */
 int	mini_export(t_shell *shl, t_cmds *cmd)
 {
@@ -167,74 +159,3 @@ int	is_valid_val(char *arg, int *i)
 	}
 	return (1);
 }
-
-
-// int	main(int ac, char **av, char **envp)
-// {
-// 	char	a;
-// 	char	b;
-// 	int		i;
-// 	int		j;
-
-// 	(void)ac;
-// 	(void)av;
-// 	(void)envp;
-
-// 	a = 'l';
-// 	b = '$';
-// 	i = is_bash_reserved(a);
-// 	j = is_bash_reserved(b);
-	
-// 	printf("a = %c	and i = %d\n", a, i);
-// 	printf("b = %c	and i = %d\n\n\n", b, j);
-	
-// 	b = '`';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '!';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '$';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '&';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = ';';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '(';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = ')';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '\'';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '\"';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '|';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '\\';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-	
-// 	b = '@';
-// 	j = is_bash_reserved(b);
-// 	printf("b = %c	and is_bash_reserved gives %d\n", b, j);
-
-	
-// }

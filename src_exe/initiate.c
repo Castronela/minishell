@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 02:17:58 by david            ###   ########.fr       */
+/*   Updated: 2025/01/20 17:11:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	start_shell(t_shell *shl)
 		index_cmds(shl);
 		
 		setup_cmd(shl);
-        // test_print_cmdlst(shl, 30);
+        test_print_cmdlst(shl, 30);
 		if (shl->cmds_lst)
 			mini_execute(shl);
 		reset_cmd_vars(shl, 1);
@@ -129,8 +129,6 @@ void	clearout(t_shell *shl)
 {
 	if (shl->environ != NULL)
 		ft_free2d_safe(&shl->environ);
-	if (shl->env_paths != NULL)
-		ft_free2d_safe(&shl->env_paths);
 	if (shl->variables != NULL)
 		ft_lst_free(&shl->variables);
 	if (shl->local_vars != NULL)

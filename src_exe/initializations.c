@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_shell.c                                       :+:      :+:    :+:   */
+/*   initializations.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 15:52:34 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 16:55:48 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,7 @@ void	init_environ_variables(t_shell *shl, char **envp)
 			ft_free2d(split);
 		}
 	}
-	copy_environ(shl, envp, i - 1);		// Confirm with David
-	// printf("final value of i:	%d\n", i);
-	// printf("total strings in environ:	%d\n", count_pointers(shl->environ));
-	// printf("total strings in envp:		%d\n", count_pointers(envp));
-	
+	copy_environ(shl, envp, i);
 }
 
 /*
@@ -69,8 +65,6 @@ static void	copy_environ(t_shell *shl, char **envp, int size)
 	shl->environ = malloc((size + 1) * sizeof(char *));
 	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	// printf("Size received for allocation:		%d\n", size);
-	// printf("Total spaces allocated for strings:	%d\n", size + 1);
 	i = -1;
 	j = 0;
 	while (envp[++i])
@@ -84,8 +78,6 @@ static void	copy_environ(t_shell *shl, char **envp, int size)
 		}
 	}
 	shl->environ[j] = NULL;
-	// printf("Final value of i:	%d\n", i);
-	// printf("Final value of j:	%d\n", j);
 }
 
 /*
@@ -106,7 +98,10 @@ void	update_shlvl(t_shell *shl)
 	int			index;
 	char		*tmp;
 	
+	// printf("update shlvl called\n");
 	index = find_dptr_index(shl, "SHLVL=", 6);
+	if (index < 0)
+		return ;
 	shlvl = shl->environ[index] + 6;
 	shl->shlvl += ft_atoi(shlvl);
 	tmp = ft_itoa(shl->shlvl);
@@ -121,6 +116,7 @@ void	update_shlvl(t_shell *shl)
 	free(shl->environ[index]);
 	shl->environ[index] = shlvl;
 	store_as_variable(shl, shl->environ[index]);
+	free(tmp);
 }
 
 // void	update_shlvl_old(t_shell *shl)

@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 02:08:21 by david            ###   ########.fr       */
+/*   Updated: 2025/01/20 15:51:13 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
+
+void	mini_exit(t_shell *shl, t_cmds *cmd);
 
 static int 	set_retcode(t_shell *shl, t_cmds *cmd);
 static int	is_valid_numstr(const char *str);

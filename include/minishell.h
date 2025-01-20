@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 04:03:00 by david            ###   ########.fr       */
+/*   Updated: 2025/01/20 15:42:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,11 +252,12 @@ void 		set_binaries(t_shell *shl, t_cmds *cmd);
 void		set_env_paths(t_shell *shl);
 int			is_path(const t_cmds *cmd);
 
-/* ------------------------------ exec_utils.c ------------------------------ */
+/* ------------------------------ utils_4.c ------------------------------ */
 
-// void		create_pids(t_shell *shl);
-// int			get_total_cmds(t_shell *shl, int which);
 void		restore_std_fds(t_shell *shl);
+int			is_bash_reserved(char c);
+// void		create_pids(t_shell *shl);
+// int		get_total_cmds(t_shell *shl, int which);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
@@ -272,9 +273,13 @@ int			mini_unset(t_shell *shl, t_cmds *cmd);
 /* ------------------------------ env_utils.c ------------------------------ */
 
 void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void		store_as_variable(t_shell *shl, char *var);
-void		store_local_variable(t_shell *shl, char *var);
 void		add_to_environ(t_shell *shl, char *var);
+void		store_as_variable(t_shell *shl, char *var);
+
+/* ------------------------------ env_utils.c ------------------------------ */
+
+int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
+void		store_local_variable(t_shell *shl, char *var);
 char		*get_var_component(t_shell *shl, char *arg, int what);
 
 /* ----------------------------- stirng_utils.c ----------------------------- */
@@ -282,10 +287,8 @@ char		*get_var_component(t_shell *shl, char *arg, int what);
 int			compare_strings(const char *str, const char *field, int exact);
 char		**find_string_addr(t_shell *shl, char *str, int	n);
 int			find_dptr_index(t_shell *shl, char *str, int n);
-int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int			count_pointers(char **dp);
 size_t		offset_to_env_value(char *str);
-int			is_bash_reserved(char c);
 
 /* ----------------------------- lst_str_fns.c ----------------------------- */
 

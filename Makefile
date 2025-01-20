@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/20 02:11:54 by david            ###   ########.fr        #
+#    Updated: 2025/01/20 17:12:57 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,16 +54,14 @@ SRC_PARSE	= 	parser_1.c parser_2.c \
 				pipes.c \
 				cmds_lst_utils.c \
 				signal.c \
-				utils_1.c utils_2.c utils_3.c
+				utils_1.c utils_2.c utils_3.c utils_4.c
 SRC_EXE		=	initiate.c \
 				initializations.c \
 				indexing.c \
 				binaries.c \
 				executions.c \
 				redirections.c \
-				process_utils.c \
-				lst_str_fns.c \
-				lst_str_fns_2.c \
+				lst_str_fns.c lst_str_fns_2.c \
 				bi_cd.c \
 				bi_echo.c \
 				bi_env.c \
@@ -71,8 +69,7 @@ SRC_EXE		=	initiate.c \
 				bi_export.c \
 				bi_pwd.c \
 				bi_unset.c \
-				env_utils.c \
-				string_utils.c \
+				env_utils.c env_utils_2.c string_utils.c \
 				error_handlers.c \
 				tests.c
 
@@ -143,7 +140,8 @@ all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
 
 valgrind: $(NAME)
-	valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
+	env -i valgrind $(VALGRIND_OPTS) ./$(NAME)
+# valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
 
 # dock: $(DK_COMP)
 # 	@if [ $(shell docker images | grep -c valgrind) -eq 0 ]; then \

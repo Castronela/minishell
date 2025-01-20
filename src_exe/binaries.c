@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   binaries.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 04:02:10 by david            ###   ########.fr       */
+/*   Updated: 2025/01/20 17:05:32 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	set_env_paths(t_shell *shl)
 	t_lst_str	*paths;
 
 	if (shl->env_paths)
-		free(shl->env_paths);
+		ft_free2d(shl->env_paths);
 	paths = ft_find_node(shl->variables, "PATH", 0, 1);
 	if (!paths)
 		shl->env_paths = NULL;

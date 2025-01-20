@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 19:48:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 16:28:06 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@ Note:	Here, the upd_str is only freed if checks[2] == 1 which indicates that
 
 !!! Needs to be checked for cases when the return code is not zero and also
 	figure out how to handle returning that.
-
-	Does this command work:
-	unset $(env | awk -F= '{print $1}')
-	Caution: it deletes all env variables
 */
 int	mini_unset(t_shell *shl, t_cmds *cmd)
 {
@@ -56,12 +52,11 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 	update_env_var(shl, cmd, UNDERSCORE, upd_str);
 	if (upd_str && checks[2] == 1)
 		free(upd_str);
-	// if (ft_find_node(shl->variables, "PATH", 0, 1) == NULL)
 	return (ret);
 }
 
 /*
-Static sub-function for export checks and execution if checks pass
+Static sub-function for export checks, and execution if checks pass
 */
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 {
@@ -106,7 +101,7 @@ static int	is_valid_name(char *arg)
 }
 
 /*
-Origin file: bi_export.c
+Function to remove a variable from environment
 */
 static void	remove_from_environ(t_shell *shl, char *var_name)
 {

@@ -6,17 +6,17 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 21:42:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 15:45:23 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
-static void	update_wdirs(t_shell *shl, char *new_cwd);
-static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd);
+int			path_is_dir(char *path);
 
-int		path_is_dir(char *path);
+static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd);
+static void	update_wdirs(t_shell *shl, char *new_cwd);
 
 /*
 Built-in cd function
@@ -32,10 +32,6 @@ Built-in cd function
 !!! Oldpwd should only be added once the cd function is executed, otherwise it
 	should be empty
 -->> Done.
-
-!!! Replace the printf and ft_fprintf() fns here with ft_fprintf_str() fn
-
-!!! Other issues present as side comments
 */
 void	mini_cd(t_shell *shl, t_cmds *cmd)
 {
@@ -48,7 +44,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		{
 			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
 				ERRMSG_CD, new_cwd, ": ", strerror(errno), "\n", NULL});
-			cmd->exit_code = ERRCODE_GENERAL;	// (errno =2 [i.e. errno = ENOENT], but for this case, bash exit code = 1)
+			cmd->exit_code = ERRCODE_GENERAL;
 			return ;
 		}
 		new_cwd = getcwd(NULL, 0);
@@ -62,6 +58,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 	// shl->exit_code = 0;
 }
 
+// Helper static fn for mini_cd() fn
 static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 {
 	t_lst_str	*node;
@@ -103,7 +100,7 @@ Function to update env variables pwd and oldpwd
 	chance to free its allocated objects before calling exit_early.
 	This potential leak should be checked through the entire program code. 
 */
-void	update_wdirs(t_shell *shl, char *new_cwd)
+static void	update_wdirs(t_shell *shl, char *new_cwd)
 {
 	char		*old_pwd;
 	char		*new_pwd;

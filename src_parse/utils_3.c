@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 18:53:40 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 17:11:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,20 @@ void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 		remove_tmp_files(shell);
 	if (shell->tmp_file_fd != -1)
 		close(shell->tmp_file_fd);
+	shell->tmp_file_fd = -1;
 	if (shell->cmdline)
 		free(shell->cmdline);
+	shell->cmdline = NULL;
 	if (shell->cmds_lst)
 		lst_cmds_freelst(shell);
+	shell->cmds_lst = NULL;
+	if (shell->env_paths)
+		ft_free2d(shell->env_paths);
+	shell->env_paths = NULL;
 	shell->exit_code_prev = shell->exit_code;
 	shell->total_cmds = 0;
-	shell->cmdline = NULL;
 	shell->open_qt = 0;
-	shell->cmds_lst = NULL;
 	shell->heredoc_file_no = 0;
-	shell->tmp_file_fd = -1;
 	shell->exit_code = 0;
 }
 
