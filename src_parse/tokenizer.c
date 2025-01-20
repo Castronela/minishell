@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/13 18:48:49 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/20 02:17:18 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static int	get_argument_end_index(t_shell *shell, size_t *index_cmd)
 			else if (ret_value == 2)
 				return (1);
 		}
-		else if (shell->cmdline[*index_cmd] == SPACE)
+		else if (is_whitesp(shell->cmdline[*index_cmd]))
 			break ;
 		else if (operator_length_at_index(shell->cmdline, *index_cmd) > 0)
 			break ;

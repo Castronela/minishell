@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 21:35:32 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 02:08:21 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 static int 	set_retcode(t_shell *shl, t_cmds *cmd);
-static int 	is_whitesp(const char c);
 static int	is_valid_numstr(const char *str);
 
 /*
@@ -25,7 +24,7 @@ void	mini_exit(t_shell *shl, t_cmds *cmd)
 {
 	int		ret_code;
 	
-	write(STDOUT_FILENO, "exit\n", 5);
+	// write(STDOUT_FILENO, "exit\n", 5);
 	ret_code = 0;
 	if (cmd->args && *(cmd->args + cmd->skip + 1))
 		ret_code = set_retcode(shl, cmd);
@@ -56,13 +55,6 @@ static int set_retcode(t_shell *shl, t_cmds *cmd)
 	else
 		return (ft_atoi(arg) & 0xff);
 }
-
-static int is_whitesp(const char c)
-{
-	return (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f' 
-		|| c == '\r');
-}
-
 
 static int	is_valid_numstr(const char *str)
 {

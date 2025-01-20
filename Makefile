@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/19 19:40:05 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/20 02:11:54 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -175,7 +175,7 @@ clean:
 	@echo "$(YELLOW)Cleaned Objects & Dependencies$(RESET)"
 
 fclean:
-	@$(RM) $(OBJ) $(DEP) $(D_BIN)/$(NAME)
+	@$(RM) $(OBJ) $(DEP) $(NAME)
 	@make fclean -sC $(D_LIB)
 	@echo "$(YELLOW)Cleaned All$(RESET)"
 

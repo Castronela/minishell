@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 21:48:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 03:56:09 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,8 @@ int set_redirs(t_shell *shl, t_cmds *cmd)
 		*pt_fd = open(node->val, flag, 0644);
 		if (*pt_fd < 0)
 		{
-			if (path_is_dir(node->val))
-				ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
-					ERRMSG_PATH_IS_DIR, NULL});
-			else
-				ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
-					": ", strerror(errno), "\n", NULL});
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
+				": ", strerror(errno), "\n", NULL});
 			cmd->exit_code = ERRCODE_GENERAL;
 			return (1);
 		}

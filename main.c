@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 17:59:37 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:58:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 02:47:20 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,5 @@ int	main(int ac, char **av, char **envp)
 	start_shell(&shl);
 	clearout(&shl);
 	// ft_printf("Finished\n");
-	return (shl.exit_code);
+	return (shl.exit_code_prev);
 }

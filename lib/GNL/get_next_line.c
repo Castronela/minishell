@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 14:37:49 by pamatya           #+#    #+#             */
-/*   Updated: 2024/06/13 13:07:03 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 03:37:20 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/get_next_line.h"
+#include <sys/mman.h>
+#include <unistd.h>
 
 char	*get_next_line(int fd);
 size_t	line_length(char *str);
@@ -21,11 +23,15 @@ char	*extract_rest(char *next_line, char *buffer, int fd);
 char	*get_next_line(int fd)
 {
 	ssize_t		bytes_read;
-	static char	buffer[4096][BUFFER_SIZE + 1];
+	static char	(*buffer)[BUFFER_SIZE + 1] = NULL;
 	char		*next_line;
 	char		*joined_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!buffer)
+		buffer = mmap(NULL, sizeof(char) * 4096 * (BUFFER_SIZE + 1), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	if (buffer == MAP_FAILED)
 		return (NULL);
 	if (!buffer[fd][0])
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 21:28:51 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 03:53:28 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 	else
 	{
 		expand_homedir_special_char(shell, &node->val);
+		var_expansion(shell, &node->val);
 		remove_closed_quotes(shell, &node->val);
 	}
 	ft_lst_addback(&new_cmdnode->redirs, node);

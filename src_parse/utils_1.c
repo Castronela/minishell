@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/07 19:11:48 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 02:09:03 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,22 @@ void	skip_whitespaces(const char *str, size_t *index);
 int		append_to_str(char **str, char *append, int append_len);
 int		ft_fprintf_str(const int fd, const char *str[]);
 int		cursor_mv_back(const int fd);
+int 	is_whitesp(const char c);
 
 bool	is_quote(const char c)
 {
 	return (c == SQ || c == DQ);
 }
 
+int is_whitesp(const char c)
+{
+	return (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f' 
+		|| c == '\r');
+}
+
 void	skip_whitespaces(const char *str, size_t *index)
 {
-	while (str[*index] && str[*index] == SPACE)
+	while (str[*index] && is_whitesp(str[*index]))
 		(*index)++;
 }
 

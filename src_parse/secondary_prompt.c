@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   secondary_prompt.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 17:02:39 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 03:21:23 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,12 +93,22 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	char	*input;
 	int		exit_status;
 
+	signal(SIGINT, SIG_DFL);
 	reset_cmd_vars(shell, 0);
 	clearout(shell);
 	close(fd_pipe[0]);
-	signal(SIGINT, SIG_DFL);
 	exit_status = 0;
-	input = readline(PS2);
+	
+	if (isatty(fileno(stdin)))
+		input = readline(PS2);
+	else
+	{
+		char *line;
+		line = get_next_line(fileno(stdin));
+		input = ft_strtrim(line, "\n");
+		free(line);
+	}
+	// input = readline(PS2);
 	if (input)
 	{
 		if (write(fd_pipe[1], input, ft_strlen(input)) < 0)

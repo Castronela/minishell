@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 22:25:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 02:17:58 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,16 @@ void	start_shell(t_shell *shl)
 	while (1)
 	{
 		set_signal(shl, 1);
-		// shl->cmdline = ft_strdup("ls | grep s | grep src");
-		shl->cmdline = readline(shl->prompt);
-		if (!shl->cmdline)		// Is this required??
+		if (isatty(fileno(stdin)))
+			shl->cmdline = readline(shl->prompt);
+		else
+		{
+			char *line;
+			line = get_next_line(fileno(stdin));
+			shl->cmdline = ft_strtrim(line, "\n");
+			free(line);
+		}
+		if (!shl->cmdline)
 			break ;
 		if (parser(shl))
 		{

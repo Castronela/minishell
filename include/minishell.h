@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/19 21:46:35 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 04:03:00 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ file"
 
 # define ERRMSG_CD "cd: "
 # define ERRMSG_NO_VALID_IDENT "\': not a valid identifier\n"
-# define ERRMSG_PATH_IS_DIR ": is a directory\n"
+# define ERRMSG_PATH_IS_DIR ": Is a directory\n"
 
 // ---- External Error Message -----------------------------------------------------------
 
@@ -204,7 +204,6 @@ typedef struct s_shell
 	int			exit_code_prev;		// Stores the exit code from the last executed command
 	int			exit_code;			// Stores the exit code from current command
 }	t_shell;
-
 
 //--------------------------------------------------------------------------------------//
 //                                 Function Prototypes                                  //
@@ -366,6 +365,7 @@ void 		set_signal(t_shell *shell, const int handler_no);
 bool	 	is_quote(const char c);
 int			ft_fprintf_str(const int fd, const char *str[]);
 int			cursor_mv_back(const int fd);
+int 		is_whitesp(const char c);
 void 		skip_whitespaces(const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
