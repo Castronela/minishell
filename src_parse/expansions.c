@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/20 01:57:07 by david            ###   ########.fr       */
+/*   Updated: 2025/01/20 19:43:37 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,15 @@ void	var_expansion(t_shell *shell, char **str)
 		else if (open_qt == (*str)[index])
 			open_qt = 0;
 		if ((*str)[index] == DOLLAR[0] && !open_qt && (*str)[index + 1])
-			*str = repl_var_w_value(shell, *str, &index);			
-		else if ((*str)[index] == DOLLAR[0] && open_qt != SQ 
-			&& (*str)[index + 1])
+			*str = repl_var_w_value(shell, *str, &index);
+		else if ((*str)[index] == DOLLAR[0] && !open_qt && (*str)[index + 1])
+			*str = repl_var_w_value(shell, *str, &index);
+		else if ((*str)[index] == DOLLAR[0] && open_qt != SQ && (*str)[index
+			+ 1])
 		{
 			if ((*str)[index + 1] == '_' || ft_isalpha((*str)[index + 1])
 				|| is_special_param(*str, index + 1))
-			*str = repl_var_w_value(shell, *str, &index);			
+				*str = repl_var_w_value(shell, *str, &index);
 		}
 		index++;
 	}

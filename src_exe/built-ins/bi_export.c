@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:52:05 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 18:56:06 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,8 +151,8 @@ int	is_valid_val(char *arg, int *i)
 {
 	while (arg[*i])
 	{
-		if (is_bash_reserved(arg[*i]))
-			return (0);
+		// if (is_bash_reserved(arg[*i]))
+		// 	return (0);
 		if (!ft_isprint(arg[*i]))
 			return (-1 * (*i));
 		(*i)++;

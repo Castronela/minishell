@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:42:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 18:08:07 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,6 @@ int			is_built_in(t_cmds *cmds);
 /* ------------------------------ executions.c ------------------------------ */
 
 void		mini_execute(t_shell *shl);
-int			exec_var_assignments(t_shell *shl, t_cmds *cmd);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
 void		exec_pipeline(t_shell *shl, t_cmds *cmd);
 

@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   executions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 17:07:08 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/20 18:27:11 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	mini_execute(t_shell *shl);
-int		exec_var_assignments(t_shell *shl, t_cmds *cmd);
 void	exec_built_in(t_shell *shl, t_cmds *cmd);
 void	exec_pipeline(t_shell *shl, t_cmds *cmd);
 
+static void	exec_var_assignments(t_shell *shl, t_cmds *cmd);
 static void handle_child_exit(t_shell *shl, t_cmds *cmd);
 static void exec_child(t_shell *shl, t_cmds *cmd);
 
@@ -30,7 +30,10 @@ void	mini_execute(t_shell *shl)
 		if (!cmd->exit_code)
 		{
 			dup_std_fds(shl, cmd);
-			exec_built_in(shl, cmd);
+			if (cmd->lvar_assignment)
+				exec_var_assignments(shl, cmd);
+			else
+				exec_built_in(shl, cmd);
 			restore_std_fds(shl);
 		}
 	}
@@ -50,14 +53,14 @@ Note:	Here, the cmd->skip parameter should not be used as it is not executing
 
 !!! !!!	This function looks detached at the moment
 */
-int	exec_var_assignments(t_shell *shl, t_cmds *cmd)
+static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 {
 	char		**args[2];
 	t_lst_str	*var_node;
 	size_t		offset;
 
 	args[0] = cmd->args;
-	while (*(args[0]))
+	while (args[0] && *(args[0]))
 	{
 		args[1] = ft_split(*(args[0]), '=');
 		if (!(args[1]))
@@ -76,7 +79,6 @@ int	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 		ft_free2d(args[1]);
 		(args[0])++;
 	}
-	return (0);
 }
 
 /*
@@ -116,8 +118,11 @@ void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 {
 	init_cmd_pipe(shl, cmd);
 	if (!cmd->exit_code)
+	{
 		cmd->pid = fork();
-	// pa: if (cmd->pid <0) then exit?
+		if (cmd->pid < 0)
+			exit_early(shl, NULL, ERRMSG_FORK);
+	}
 	if (cmd->pid == 0)
 		exec_child(shl, cmd);
 	ft_close_cmd_pipe(shl, cmd, 0);
@@ -149,7 +154,10 @@ static void exec_child(t_shell *shl, t_cmds *cmd)
 		exit_early(shl, NULL, ERRMSG_DUP2);
 	if (!cmd->exc_index)
 	{
-		exec_built_in(shl, cmd);
+		if (cmd->lvar_assignment)
+			exec_var_assignments(shl, cmd);
+		else
+			exec_built_in(shl, cmd);
 		restore_std_fds(shl);			// Don't require this since it's in child
 		reset_cmd_vars(shl, 0);
 		clearout(shl);
