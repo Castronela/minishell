@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 18:56:38 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/22 05:11:09 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void 	init_shell(t_shell *shl, int ac, char **av, char **envp);
 void	start_shell(t_shell *shl);
+char 	*get_input(t_shell *shell, const char *prompt);
 void	clearout(t_shell *shl);
 
 static void setup_cmd(t_shell *shl);
@@ -69,34 +70,47 @@ void	start_shell(t_shell *shl)
 {	
 	while (1)
 	{
-		set_signal(shl, 1);
-		if (isatty(fileno(stdin)))
-			shl->cmdline = readline(shl->prompt);
-		else
-		{
-			char *line;
-			line = get_next_line(fileno(stdin));
-			shl->cmdline = ft_strtrim(line, "\n");
-			free(line);
-		}
+		set_signal(shl);
+		tty_echo_sig(shl, false);
+		shl->cmdline = get_input(shl, shl->prompt);
 		if (!shl->cmdline)
-			break ;
+			break;
 		if (parser(shl))
 		{
-			add_history(shl->cmdline);
+			if (*shl->cmdline)
+				add_history(shl->cmdline);
 			reset_cmd_vars(shl, 1);
 			continue ;
 		}
-		set_signal(shl, 2);
-		add_history(shl->cmdline);
+		if (*shl->cmdline)
+			add_history(shl->cmdline);
+		retokenize_args(shl, shl->cmds_lst);	
 		index_cmds(shl);
-		
 		setup_cmd(shl);
-        // test_print_cmdlst(shl, 30);
 		if (shl->cmds_lst)
 			mini_execute(shl);
 		reset_cmd_vars(shl, 1);
 	}
+}
+
+char *get_input(t_shell *shell, const char *prompt)
+{
+	char *input;
+	char *line;
+	
+	if (isatty(STDIN_FILENO))
+		input = readline(prompt);
+	else
+	{
+		line = get_next_line(STDIN_FILENO);
+		if (!line)
+			return (NULL);
+		input = ft_strtrim(line, "\n");
+		free(line);
+		if (!input)
+			exit_early(shell, NULL, ERRMSG_MALLOC);
+	}
+	return (input);
 }
 
 static void setup_cmd(t_shell *shl)
@@ -107,6 +121,7 @@ static void setup_cmd(t_shell *shl)
 	set_env_paths(shl);
 	while (cmd)
 	{
+		map_args(shl, cmd, remove_closed_quotes);
 		if (!set_redirs(shl, cmd))
 			set_binaries(shl, cmd);
 		cmd = cmd->next;

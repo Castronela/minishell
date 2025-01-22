@@ -3,16 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   parser_1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 16:03:52 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/22 04:28:50 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int			parser(t_shell *shell);
+void		map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *,
+					char **));
+void		retokenize_args(t_shell *shell, t_cmds *cmd);
+
 static int	open_ctr_op(t_shell *shell, t_cmds *cmd_node, size_t *index_cmd);
+static void	add_arg(t_shell *shell, t_cmds *cmd, char *arg);
 
 /*
 (Main FN) Initializes 'shell->cmds_lst':
@@ -62,4 +68,56 @@ static int	open_ctr_op(t_shell *shell, t_cmds *cmd_node, size_t *index_cmd)
 		skip_whitespaces(shell->cmdline, index_cmd);
 	}
 	return (0);
+}
+
+void	retokenize_args(t_shell *shell, t_cmds *cmd)
+{
+	char	*token;
+	size_t	index;
+
+	if (cmd && cmd->args)
+	{
+		map_args(shell, cmd, var_expansion);
+		free(shell->cmdline);
+		shell->cmdline = ft_strdup(*cmd->args);
+		ft_free2d(cmd->args);
+		cmd->args = NULL;
+		if (!shell->cmdline)
+			exit_early(shell, NULL, ERRMSG_MALLOC);
+		index = 0;
+		while (true)
+		{
+			if (get_next_token(shell, &index, &token, 0))
+				exit_early(shell, NULL, ERRMSG_MALLOC);
+			if (!token)
+				break ;
+			add_arg(shell, cmd, token);
+		}
+		map_args(shell, cmd, expand_homedir_special_char);
+	}
+	if (cmd && cmd->next)
+		retokenize_args(shell, cmd->next);
+}
+
+void	map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *, char **))
+{
+	size_t	index;
+
+	index = -1;
+	while (cmd->args && cmd->args[++index])
+		func(shell, &(cmd->args[index]));
+}
+
+static void	add_arg(t_shell *shell, t_cmds *cmd, char *arg)
+{
+	cmd->arg_count++;
+	cmd->args = ft_recalloc(cmd->args, sizeof(*cmd->args) * (cmd->arg_count
+				+ 1), sizeof(*cmd->args) * (cmd->arg_count));
+	if (!cmd->args)
+	{
+		free(arg);
+		exit_early(shell, NULL, ERRMSG_MALLOC);
+	}
+	cmd->args[cmd->arg_count - 1] = arg;
+	cmd->args[cmd->arg_count] = NULL;
 }

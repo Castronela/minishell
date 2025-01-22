@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 18:27:11 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/22 05:18:02 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	mini_execute(t_shell *shl)
 	t_cmds *cmd;
 	
 	cmd = shl->cmds_lst;
-	if (!cmd->exc_index && shl->total_cmds < 2)
+	if (is_built_in(cmd) && shl->total_cmds < 2)
 	{
 		if (!cmd->exit_code)
 		{
@@ -106,8 +106,6 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 		mini_env(shl, cmd);
 	else if (compare_strings(first_arg, "exit", 1))
 		mini_exit(shl, cmd);
-	// else
-	// 	printf("NOT A BUILT-IN COMMAND\n");
 }
 
 /*
@@ -125,8 +123,8 @@ void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 	}
 	if (cmd->pid == 0)
 		exec_child(shl, cmd);
-	ft_close_cmd_pipe(shl, cmd, 0);
-	ft_close_cmd_pipe(shl, cmd, 1);
+	if (ft_close(cmd->fd_in) < 0 || ft_close(cmd->fd_out) < 0)
+		exit_early(shl, NULL, NULL);
 	if (cmd->next)
 		exec_pipeline(shl, cmd->next);
 	if (cmd->pid != -1)
@@ -137,34 +135,43 @@ static void handle_child_exit(t_shell *shl, t_cmds *cmd)
 {
 	int 	ec;
 	
+	signal(SIGINT, SIG_IGN);
 	if (waitpid(cmd->pid, &ec, 0) == -1)
 		exit_early(shl, NULL, ERRMSG_WAITPID);
 	if (WIFSIGNALED(ec))
+	{
+		if (WTERMSIG(ec) == SIGINT)
+			write(STDERR_FILENO, "\n", 1);
+		else if (WTERMSIG(ec) == SIGQUIT)
+			write(STDERR_FILENO, "Quit\n", 5);
 		cmd->exit_code = 128 + WTERMSIG(ec);
+	}
 	else if (WIFEXITED(ec))
 		cmd->exit_code = WEXITSTATUS(ec);
 }
 
 static void exec_child(t_shell *shl, t_cmds *cmd)
 {
+	tty_echo_sig(shl, true);
 	signal(SIGQUIT, SIG_DFL);
-	if (cmd->next && ft_close(cmd->next->fd_in))
+	signal(SIGINT, SIG_DFL);
+	if (cmd->next && ft_close(cmd->next->fd_in) < 0)
 		exit_early(shl, NULL, NULL);	// pa: exit_early if next command exists?
+	ft_close_cmd_pipe(shl, cmd, 1 << 3 | 1 << 2);
 	if (dup_std_fds(shl, cmd) < 0)		// pa: redir_std_fds
 		exit_early(shl, NULL, ERRMSG_DUP2);
-	if (!cmd->exc_index)
+	if (is_built_in(cmd))
 	{
 		if (cmd->lvar_assignment)
 			exec_var_assignments(shl, cmd);
 		else
 			exec_built_in(shl, cmd);
-		restore_std_fds(shl);			// Don't require this since it's in child
 		reset_cmd_vars(shl, 0);
 		clearout(shl);
 		exit(cmd->exit_code);	// Should exit with and exit_code by checking success/failure
 	}
-	// test_print_1cmd(shl, cmd, 30);
 	execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
+	ft_close_cmd_pipe(shl, cmd, 2);
 	reset_cmd_vars(shl, 0);
 	clearout(shl);
 	exit(errno);

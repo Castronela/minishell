@@ -52,7 +52,7 @@ int	mini_export(t_shell *shl, t_cmds *cmd)
 	update_env_var(shl, cmd, UNDERSCORE, upd_str);
 	if (upd_str && checks[2] == 1)
 		free(upd_str);
-	return (ret);	
+	return (ret);
 }
 
 /*
@@ -94,8 +94,8 @@ static int	check_and_export_arg(t_shell *shl, char *arg, int *checks)
 	checks[2] = 0;
 	if (checks[0] < 0)
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
-				"export: `", arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, "export: `",
+					arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 		return (1);
 	}
@@ -143,7 +143,7 @@ Function to check whether the variable value is a valid one
   - Checks if each character in the provided string is not a reserved bash
 	character (is_bash_reserved), and that it is printable (ft_isprint)
   - Returns 0 if the variable value is found to be a reserved bash character
-  - Returns -n when nth character in the argument is found to be non-printable 
+  - Returns -n when nth character in the argument is found to be non-printable
   - Returns 1 if the variable value is found to be valid
   - Used fns: is_bash_reserved(), ft_isprint()
 */

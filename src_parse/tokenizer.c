@@ -6,15 +6,17 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/20 02:17:18 by david            ###   ########.fr       */
+/*   Updated: 2025/01/21 16:38:33 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int				get_next_token(t_shell *shell, size_t *index_cmd, char **token);
+int				get_next_token(t_shell *shell, size_t *index_cmd, char **token,
+					const int do_complex);
 
-static int		get_argument_end_index(t_shell *shell, size_t *index_cmd);
+static int		get_argument_end_index(t_shell *shell, size_t *index_cmd,
+					const int do_complex);
 static void		skip_quoted_str(t_shell *shell, const char *str, size_t *index);
 static size_t	operator_length_at_index(const char *str, const size_t index);
 
@@ -26,7 +28,8 @@ return:
 1 - free all cmd vars and restart main prompt
 2 - free all vars and exit
 */
-int	get_next_token(t_shell *shell, size_t *index_cmd, char **token)
+int	get_next_token(t_shell *shell, size_t *index_cmd, char **token,
+		const int do_complex)
 {
 	size_t	operator_len;
 	size_t	i_start;
@@ -34,9 +37,9 @@ int	get_next_token(t_shell *shell, size_t *index_cmd, char **token)
 	skip_whitespaces(shell->cmdline, index_cmd);
 	i_start = (*index_cmd);
 	operator_len = operator_length_at_index(shell->cmdline, *index_cmd);
-	if (operator_len > 0)
+	if (do_complex && operator_len > 0)
 		(*index_cmd) += operator_len;
-	else if (get_argument_end_index(shell, index_cmd))
+	else if (get_argument_end_index(shell, index_cmd, do_complex))
 	{
 		if (write(STDOUT_FILENO, "\n", 1) < 0)
 			exit_early(shell, NULL, ERRMSG_WRITE);
@@ -57,14 +60,15 @@ int	get_next_token(t_shell *shell, size_t *index_cmd, char **token)
 0 - continue normally
 1 - free all cmd vars and restart main prompt
 */
-static int	get_argument_end_index(t_shell *shell, size_t *index_cmd)
+static int	get_argument_end_index(t_shell *shell, size_t *index_cmd,
+		const int do_complex)
 {
 	int	ret_value;
 
 	while (shell->cmdline[*index_cmd])
 	{
 		skip_quoted_str(shell, shell->cmdline, index_cmd);
-		if (!shell->cmdline[*index_cmd] && shell->open_qt)
+		if (do_complex && !shell->cmdline[*index_cmd] && shell->open_qt)
 		{
 			ret_value = secondary_prompt(shell, 1);
 			if (ret_value == 1)
@@ -74,7 +78,8 @@ static int	get_argument_end_index(t_shell *shell, size_t *index_cmd)
 		}
 		else if (is_whitesp(shell->cmdline[*index_cmd]))
 			break ;
-		else if (operator_length_at_index(shell->cmdline, *index_cmd) > 0)
+		else if (do_complex && operator_length_at_index(shell->cmdline,
+				*index_cmd) > 0)
 			break ;
 		(*index_cmd)++;
 	}

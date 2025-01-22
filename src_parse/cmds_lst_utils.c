@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmds_lst_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:14:00 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 18:52:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/22 05:32:59 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_cmds	*lst_cmds_newnode(t_shell *shell)
 	if (!new_cmd)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	*new_cmd = (t_cmds){.fd_in = STDIN_FILENO, .fd_out = STDOUT_FILENO,
-		.fd_cls = -1, .pid = -1};
+		.pid = -1};
 	return (new_cmd);
 }
 

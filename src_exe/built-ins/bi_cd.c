@@ -21,8 +21,10 @@ static void	update_wdirs(t_shell *shl, char *new_cwd);
 /*
 Built-in cd function
   - Checks first if the path provided is just ".", in which case it does nothing
-  - If the path is only "..", then cwd_up() is called which updates the cwd system variable to one step above
-  - If the path contains anything else, it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
+  - If the path is only "..",
+	then cwd_up() is called which updates the cwd system variable to one step above
+  - If the path contains anything else,
+	it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
 
 !!! !! cd function should not add an entry of PWD after it is unset, until it is
 		explicitly set by export
@@ -35,15 +37,15 @@ Built-in cd function
 */
 void	mini_cd(t_shell *shl, t_cmds *cmd)
 {
-	char		*new_cwd;
+	char	*new_cwd;
 
 	update_env_var(shl, cmd, UNDERSCORE, NULL);
 	if (get_new_cwd(shl, cmd, &new_cwd) == 0)
 	{
 		if (chdir(new_cwd) < 0)
 		{
-			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
-				ERRMSG_CD, new_cwd, ": ", strerror(errno), "\n", NULL});
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, ERRMSG_CD,
+				new_cwd, ": ", strerror(errno), "\n", NULL});
 			cmd->exit_code = ERRCODE_GENERAL;
 			return ;
 		}
@@ -69,13 +71,14 @@ static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 	{
 		node = ft_find_node(shl->variables, "HOME", 0, 1);
 		*new_cwd = node->val;
-	}	
+	}
 	else if (compare_strings(arg, "-", 1))
 	{
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
 		if (!node || !(*node->val))
-			return (shl->exit_code = 1, ft_fprintf_str(STDERR_FILENO, 
-				(const char *[]){"minishell: cd: OLDPWD not set\n", NULL}), -1);
+			return (shl->exit_code = 1, ft_fprintf_str(STDERR_FILENO,
+					(const char *[]){"minishell: cd: OLDPWD not set\n", NULL}),
+				-1);
 		else
 			*new_cwd = node->val;
 	}
@@ -98,7 +101,7 @@ Function to update env variables pwd and oldpwd
 	that may receive malloc'd objects as argument but call exit_early need to
 	be modified to return an exit code so that the calling function gets a
 	chance to free its allocated objects before calling exit_early.
-	This potential leak should be checked through the entire program code. 
+	This potential leak should be checked through the entire program code.
 */
 static void	update_wdirs(t_shell *shl, char *new_cwd)
 {
@@ -137,7 +140,7 @@ int	path_is_dir(char *path)
 {
 	int			i;
 	struct stat	bufr;
-	
+
 	i = stat(path, &bufr);
 	if (i < 0)
 		return (0);

@@ -15,7 +15,7 @@
 void	mini_env(t_shell *shl, t_cmds *cmd);
 int		update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 int		count_pointers(char **dp);
-char	**find_string_addr(t_shell *shl, char *str, int	n);
+char	**find_string_addr(t_shell *shl, char *str, int n);
 
 void	mini_env(t_shell *shl, t_cmds *cmd)
 {

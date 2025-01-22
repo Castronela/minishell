@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/20 17:11:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/22 05:31:02 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
 int			open_hd_tmp_file(t_shell *shell, t_lst_str *node);
+int			cursor_mv_back(const int fd);
 
 static int	get_temp_file_path(t_shell *shell, t_lst_str *cur_node,
 				char *hd_counter);
@@ -110,5 +111,13 @@ static int	get_temp_file_path(t_shell *shell, t_lst_str *cur_node,
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
 	free(hd_counter);
+	return (0);
+}
+
+int	cursor_mv_back(const int fd)
+{
+	if (write(fd, MV_CURSOR_BACK_PREV_LINE, 4) < 0 || write(fd, MV_CURSOR_RIGHT,
+			5) < 0)
+		return (1);
 	return (0);
 }

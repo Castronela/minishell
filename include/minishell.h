@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 18:08:07 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/22 05:26:46 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@
 # define ERRMSG_DUP "Error dup"
 # define ERRMSG_DUP2 "Error dup2"
 # define ERRMSG_UNLINK "Error unlink"
+# define ERRMSG_TCGETATTR "Error tcgetattr"
+# define ERRMSG_TCSETATTR "Error tcsetattr"
 
 // ---- Heredoc Error Messages -----------------------------------------------------------
 
@@ -216,6 +218,7 @@ int			main(int ac, char **av, char **envp);
 /* ------------------------------- initiate.c ------------------------------- */
 
 void		start_shell(t_shell *shl);
+char 		*get_input(t_shell *shell, const char *prompt);
 void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
 void		clearout(t_shell *shl);;
 
@@ -242,7 +245,6 @@ void		exec_pipeline(t_shell *shl, t_cmds *cmd);
 int 		set_redirs(t_shell *shl, t_cmds *cmd);
 int			dup_std_fds(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
-void		ft_close_stdcpy(t_shell *shl, int mod);
 int			ft_close(int fd);
 
 /* ------------------------------- binaries.c ------------------------------- */
@@ -314,10 +316,14 @@ void		exit_early(t_shell *shl, char **double_ptr, char *msg);
 int			parser(t_shell *shell);
 int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, 
 			size_t *index_cmd);
+void 		retokenize_args(t_shell *shell, t_cmds *cmd);
+void 		map_args(t_shell *shell, t_cmds *cmd, 
+			void (*func)(t_shell *, char **));
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
-int			get_next_token(t_shell *shell, size_t *index_cmd, char **token);
+int			get_next_token(t_shell *shell, size_t *index_cmd, char **token,
+			const int do_complex);
 
 /* -------------------------- Secondary prompting -------------------------- */
 
@@ -355,12 +361,12 @@ void		expand_homedir_special_char(t_shell *shell, char **str);
 
 /* ------------------------------- Pipe Setup ------------------------------- */
 
-void 		init_pipes(t_shell *shell);
 void		init_cmd_pipe(t_shell *shell, t_cmds *cmd);
 
 /* -------------------------------- Signals -------------------------------- */
 
-void 		set_signal(t_shell *shell, const int handler_no);
+void		set_signal(t_shell *shell);
+void		tty_echo_sig(t_shell *shell, const bool echo);
 
 /* --------------------------------- Utils ---------------------------------- */
 

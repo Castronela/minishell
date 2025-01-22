@@ -65,8 +65,8 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 	checks[2] = 0;
 	if (checks[0] < 0)
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
-				"unset: `", arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, "unset: `",
+					arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 	}
 	if (checks[0] == 1)
@@ -82,7 +82,7 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 static int	is_valid_name(char *arg)
 {
 	int	i;
-	
+
 	i = 0;
 	if (arg[0] == '=')
 		return (-1);
@@ -122,7 +122,7 @@ static void	remove_from_environ(t_shell *shl, char *var_name)
 			*(envar + dp_index) = *(envar + dp_index + 1);
 			dp_index++;
 		}
-		shl->environ = ft_recalloc(shl->environ, dp_len * sizeof(*shl->environ), 
+		shl->environ = ft_recalloc(shl->environ, dp_len * sizeof(*shl->environ),
 				(dp_len + 1) * sizeof(*shl->environ));
 		shl->environ[dp_len - 1] = NULL;
 	}
@@ -132,7 +132,7 @@ static void	remove_variable(t_shell *shl, char *arg)
 {
 	t_lst_str	*del_var;
 	t_lst_str	*del_local_var;
-	
+
 	del_var = ft_find_node(shl->variables, arg, 0, 1);
 	if (del_var)
 		ft_remove_node(&shl->variables, &del_var);

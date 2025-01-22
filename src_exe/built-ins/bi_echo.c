@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   bi_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:40:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:50:10 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/22 02:51:55 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 void		mini_echo(t_cmds *cmd);
-static void set_echo_flag(const char *str, int *new_line, 
-			int *arg_index, int skp);
+static int	is_flag(const char *arg);
 
 /*
 Built-in echo function
   - Need to check if this is complete/sufficient...
   - if the command contains "-n ", then it writes to fd_out without a newline
-  - if command contains no -n option, then it writes to fd_out followed by a newline
+  - if command contains no -n option,
+	then it writes to fd_out followed by a newline
 
 !!! > 25 lines
 !!! shl->exit_code = 0 at the end of each built-in functions
@@ -30,84 +30,38 @@ Built-in echo function
 */
 void	mini_echo(t_cmds *cmd)
 {
-	char	*str;
-	int		new_line;
-	int		arg_index[2];
+	size_t	index;
+	int		newline;
+	char	**args;
 
-	new_line = 1;
-	arg_index[0] = cmd->skip + 1;
-	arg_index[1] = 1;
-	str = *(cmd->args + arg_index[0]);
-	while (str && *str == '-' && *(str + 1) == 'n')
+	newline = 1;
+	index = -1;
+	args = cmd->args + cmd->skip + 1;
+	while (args[++index] && is_flag(args[index]))
+		newline = 0;
+	while (args[index])
 	{
-		if (*(str + 2) != '\0' && *(str + 2) != 'n')
-			break;
-		(arg_index[1])++;
-		set_echo_flag(str, &new_line, &arg_index[0], arg_index[1]);
-		str = *(cmd->args + arg_index[0]);
-	}
-	while (*(cmd->args + arg_index[0]))
-	{
-		str = *(cmd->args + (arg_index[0])++);
-		write(STDOUT_FILENO, str, ft_strlen(str));
-		if (*(cmd->args + arg_index[0]))
+		write(STDOUT_FILENO, args[index], ft_strlen(args[index]));
+		if (args[index + 1])
 			write(STDOUT_FILENO, " ", 1);
+		index++;
 	}
-	if (new_line)
+	if (newline)
 		write(STDOUT_FILENO, "\n", 1);
 }
 
-/*
-Function to deal with -n flag anomalies
-*/
-static void set_echo_flag(const char *str, int *new_line, int *arg_index, 
-							int skp)
+static int	is_flag(const char *arg)
 {
-	int fl_index;
+	size_t	index;
 
-	fl_index = 0;
-	while(str[++fl_index])
-	{
-		if (str[fl_index] == 'n')
-		{
-			*new_line = 0;
-			*arg_index = skp;
-		}
-		else
-		{
-			*new_line = 1;
-			// *arg_index = 1;
-			break ;
-		}
-	}
+	index = 0;
+	if (arg[index] != '-' || arg[index + 1] != 'n')
+		return (0);
+	else
+		index += 2;
+	while (arg[index] && arg[index] == 'n')
+		index++;
+	if (arg[index] == 0)
+		return (1);
+	return (0);
 }
-
-// void	mini_echo_old(t_cmds *cmd)
-// {
-// 	char	*str;
-// 	int		new_line;
-// 	int		arg_index;
-// 	int		skp;
-
-// 	new_line = 1;
-// 	arg_index = cmd->skip + 1;
-// 	skp = 1;
-// 	str = *(cmd->args + arg_index);
-// 	while (str && *str == '-' && *(str + 1) == 'n')
-// 	{
-// 		if (*(str + 2) != '\0' && *(str + 2) != 'n')
-// 			break;
-// 		skp++;
-// 		set_echo_flag(str, &new_line, &arg_index, skp);
-// 		str = *(cmd->args + arg_index);
-// 	}
-// 	while (*(cmd->args + arg_index))
-// 	{
-// 		str = *(cmd->args + arg_index++);
-// 		write(STDOUT_FILENO, str, ft_strlen(str));
-// 		if (*(cmd->args + arg_index))
-// 			write(STDOUT_FILENO, " ", 1);
-// 	}
-// 	if (new_line)
-// 		write(STDOUT_FILENO, "\n", 1);
-// }

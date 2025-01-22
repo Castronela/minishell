@@ -12,9 +12,9 @@
 
 #include "../../include/minishell.h"
 
-void	mini_exit(t_shell *shl, t_cmds *cmd);
+void		mini_exit(t_shell *shl, t_cmds *cmd);
 
-static int 	set_retcode(t_shell *shl, t_cmds *cmd);
+static int	set_retcode(t_shell *shl, t_cmds *cmd);
 static int	is_valid_numstr(const char *str);
 
 /*
@@ -24,8 +24,8 @@ Function to mimic exit command
 */
 void	mini_exit(t_shell *shl, t_cmds *cmd)
 {
-	int		ret_code;
-	
+	int	ret_code;
+
 	// write(STDOUT_FILENO, "exit\n", 5);
 	ret_code = 0;
 	if (cmd->args && *(cmd->args + cmd->skip + 1))
@@ -35,22 +35,22 @@ void	mini_exit(t_shell *shl, t_cmds *cmd)
 	exit(ret_code);
 }
 
-static int set_retcode(t_shell *shl, t_cmds *cmd)
+static int	set_retcode(t_shell *shl, t_cmds *cmd)
 {
-	char *arg;
+	char	*arg;
 
 	arg = *(cmd->args + cmd->skip + 1);
 	if (count_pointers(cmd->args + cmd->skip) > 2)
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
-			"exit: too many arguments\n", NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+					"exit: too many arguments\n", NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 		return (ERRCODE_GENERAL);
 	}
 	if (!is_valid_numstr(arg))
 	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, 
-			"exit: ", arg, ": numeric argument required\n", NULL})) < 0)
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, "exit: ",
+					arg, ": numeric argument required\n", NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 		return (255);
 	}
@@ -60,7 +60,7 @@ static int set_retcode(t_shell *shl, t_cmds *cmd)
 
 static int	is_valid_numstr(const char *str)
 {
-	size_t 	index;
+	size_t	index;
 	int		digit_count;
 
 	index = 0;

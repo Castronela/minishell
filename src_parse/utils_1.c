@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:15 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/20 02:09:03 by david            ###   ########.fr       */
+/*   Updated: 2025/01/22 05:30:35 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,16 @@ bool	is_quote(const char c);
 void	skip_whitespaces(const char *str, size_t *index);
 int		append_to_str(char **str, char *append, int append_len);
 int		ft_fprintf_str(const int fd, const char *str[]);
-int		cursor_mv_back(const int fd);
-int 	is_whitesp(const char c);
+int		is_whitesp(const char c);
 
 bool	is_quote(const char c)
 {
 	return (c == SQ || c == DQ);
 }
 
-int is_whitesp(const char c)
+int	is_whitesp(const char c)
 {
-	return (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f' 
+	return (c == ' ' || c == '\n' || c == '\t' || c == '\v' || c == '\f'
 		|| c == '\r');
 }
 
@@ -76,13 +75,5 @@ int	ft_fprintf_str(const int fd, const char *str[])
 			return (1);
 		index++;
 	}
-	return (0);
-}
-
-int	cursor_mv_back(const int fd)
-{
-	if (write(fd, MV_CURSOR_BACK_PREV_LINE, 4) < 0 || write(fd, MV_CURSOR_RIGHT,
-			5) < 0)
-		return (1);
 	return (0);
 }

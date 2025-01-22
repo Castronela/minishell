@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:06:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 17:23:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/22 05:34:53 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
+void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name,
+				char *val);
 void		add_to_environ(t_shell *shl, char *var);
 void		store_as_variable(t_shell *shl, char *var);
 
-static void	update_var(t_shell *shl, t_cmds *cmd, char * var_name, char *val);
+static void	update_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
 static int	update_var_val(t_lst_str *var_node, char *var, size_t offset);
 
 /*
@@ -24,7 +25,7 @@ Function to update a variable in both shl->environ and shl->variables
   - cmd is the command that invokes the fn call
   -	var_name is the name of the variable to update
   -	'val' is the value of the variable to update to; if it is set to NULL, it is
-  	the set to the last argument of the previous command. This option is for
+	the set to the last argument of the previous command. This option is for
 	generalizing the fn and making it more able to taylor to each calling fn.
   -	If there is a custom value that the variables list needs to be updated to,
 	then it should be specified with this argument 'val.
@@ -35,9 +36,9 @@ Function to update a variable in both shl->environ and shl->variables
 */
 void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 {
-	char		*tmp_name;
-	char		*var_val;
- 
+	char	*tmp_name;
+	char	*var_val;
+
 	tmp_name = ft_strjoin(var_name, "=");
 	if (!tmp_name)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
@@ -46,7 +47,7 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 		if (cmd->bin_path)
 			var_val = cmd->bin_path;
 		else
-			var_val = cmd->args[count_pointers(cmd->args) -1];
+			var_val = cmd->args[count_pointers(cmd->args) - 1];
 	}
 	else
 		var_val = val;
@@ -61,11 +62,11 @@ void	update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 }
 
 // Static helper function for update_env_var() fn
-static void	update_var(t_shell *shl, t_cmds *cmd, char * var_name, char *val)
+static void	update_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val)
 {
 	t_lst_str	*env_lst[2];
 	char		*var_val;
-	
+
 	if (val == NULL)
 		var_val = cmd->args[count_pointers(cmd->args) - 1];
 	else
@@ -83,7 +84,7 @@ static void	update_var(t_shell *shl, t_cmds *cmd, char * var_name, char *val)
 // 	char		*tmp_name;
 // 	char		*var_val;
 // 	t_lst_str	*env_lst[2];
- 
+
 // 	tmp_name = ft_strjoin(var_name, "=");
 // 	if (!tmp_name)
 // 		exit_early(shl, NULL, ERRMSG_MALLOC);
@@ -127,8 +128,8 @@ void	add_to_environ(t_shell *shl, char *var)
 	if (dp == NULL)
 	{
 		dp_len = count_pointers(shl->environ);
-		shl->environ = ft_recalloc(shl->environ, (dp_len + 2) * 
-				sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
+		shl->environ = ft_recalloc(shl->environ, (dp_len + 2)
+				* sizeof(*shl->environ), (dp_len + 1) * sizeof(*shl->environ));
 		shl->environ[dp_len] = ft_strdup(var);
 		if (!shl->environ[dp_len])
 			exit_early(shl, NULL, ERRMSG_MALLOC);
@@ -153,9 +154,9 @@ Function to add a new varaible to the minishell memory but not to shl->env
   -	The fn does check in the local_vars list first to see if the variable entry
 	already exists when an export call is made.
 		- If yes, it deletes the local variable and creates an entry in
-		  shl->variables list with the updated value.
+			shl->variables list with the updated value.
 		- If no, then it simply creates an entry in shl->variables with the
-		  provided key and value.
+			provided key and value.
 
 Note:	var_node = ft_lst_new(*split, (var + offset)) is used instead of
 		var_node = ft_lst_new(*split, *(split + 1)) ; for cases of arguments

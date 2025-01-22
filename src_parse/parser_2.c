@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/20 03:53:28 by david            ###   ########.fr       */
+/*   Updated: 2025/01/22 05:31:20 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 
 	while (true)
 	{
-		ret_code = get_next_token(shell, index_cmd, &token);
+		ret_code = get_next_token(shell, index_cmd, &token, 1);
 		if (ret_code == 1)
 			return (1);
 		else if (ret_code == 2)
@@ -72,7 +72,7 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 	char		*target;
 	t_lst_str	*node;
 
-	ret_code = get_next_token(shell, index_cmd, &target);
+	ret_code = get_next_token(shell, index_cmd, &target, 1);
 	if (ret_code == 1)
 		return (1);
 	else if (ret_code == 2)
@@ -97,7 +97,7 @@ static int	init_redirs(t_shell *shell, t_cmds *new_cmdnode, char *operator,
 
 static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 {
-	if (!ft_strncmp(node->key, RD_HD, ft_strlen(RD_HD) + 1))
+	if (compare_strings(node->key, RD_HD, 1))
 	{
 		free(node->key);
 		node->key = node->val;
@@ -112,24 +112,15 @@ static void	add_redir_node(t_shell *shell, t_cmds *new_cmdnode, t_lst_str *node)
 	ft_lst_addback(&new_cmdnode->redirs, node);
 }
 
-/*
-Initializes 'new_cmdnode->args' with 'argument':
-	- adds 'argument' and a tailing NULL to 2d array
-*/
 static void	init_args(t_shell *shell, t_cmds *new_cmdnode, char *argument)
 {
-	new_cmdnode->arg_count++;
-	new_cmdnode->args = ft_recalloc(new_cmdnode->args,
-			sizeof(*new_cmdnode->args) * (new_cmdnode->arg_count + 1),
-			sizeof(*new_cmdnode->args) * (new_cmdnode->arg_count));
 	if (!new_cmdnode->args)
+		new_cmdnode->args = ft_calloc(2, sizeof(*new_cmdnode->args));
+	if (!new_cmdnode->args || append_to_str(new_cmdnode->args, argument, -1)
+		|| append_to_str(new_cmdnode->args, " ", -1))
 	{
 		free(argument);
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
-	expand_homedir_special_char(shell, &argument);
-	var_expansion(shell, &argument);
-	remove_closed_quotes(shell, &argument);
-	new_cmdnode->args[new_cmdnode->arg_count - 1] = argument;
-	new_cmdnode->args[new_cmdnode->arg_count] = NULL;
+	free(argument);
 }
