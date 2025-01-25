@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:45:23 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/23 23:31:18 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,11 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		new_cwd = getcwd(NULL, 0);
 		update_wdirs(shl, new_cwd);
 		free(new_cwd);
-		if (compare_strings(*(cmd->args + 1), "-", 1))
+		if (*(cmd->args + 1) && compare_strings(*(cmd->args + 1), "-", 1))
 			printf("%s\n", shl->cur_wd);
 		free(shl->prompt);
 		set_prompt(shl, "<< ", " >> % ");
 	}
-	// shl->exit_code = 0;
 }
 
 // Helper static fn for mini_cd() fn
@@ -77,14 +76,14 @@ static int	get_new_cwd(t_shell *shl, t_cmds *cmd, char **new_cwd)
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
 		if (!node || !(*node->val))
 			return (shl->exit_code = 1, ft_fprintf_str(STDERR_FILENO,
-					(const char *[]){"minishell: cd: OLDPWD not set\n", NULL}),
+					(const char *[]){ERSHL, "cd: OLDPWD not set\n", NULL}),
 				-1);
 		else
 			*new_cwd = node->val;
 	}
 	else
 		*new_cwd = arg;
-	if (compare_strings(arg, ".", 1))
+	if (arg && compare_strings(arg, ".", 1))
 		return (shl->exit_code = 0, 1);
 	return (shl->exit_code = 0, 0);
 }
