@@ -6,11 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-<<<<<<< Updated upstream
-/*   Updated: 2025/01/26 06:21:20 by david            ###   ########.fr       */
-=======
-/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
->>>>>>> Stashed changes
+/*   Updated: 2025/01/26 21:54:53 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +56,8 @@ static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 	char		**args;
 	char		*var_name;
 	t_lst_str	*var_node;
-	size_t		offset;
+	int			append;
+	int			var_name_check;
 
 	args = cmd->args;
 	while (args && *args)
@@ -69,46 +66,48 @@ static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 		if (!var_name)
 			exit_early(shl, NULL, ERRMSG_MALLOC);
 		var_node = ft_find_node(shl->variables, var_name, 0, 1);
-		offset = var_offset(*args, 1);
+		free(var_name);
+		var_name_check = is_valid_name(*args, NULL);
+		append = get_append_flag(var_name_check);
+		// printf("var_name_check:	%d\n", var_name_check);
+		// printf("append:			%d\n", append);
 		if (var_node)
 		{
-			free(var_node->val);
-			var_node->val = ft_strdup((*args + offset));
-			if (!var_node->val)
-				exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
+			store_as_variable(shl, *args, append);
+			add_to_environ(shl, *args, append);
 		}
 		else
-			store_local_variable(shl, *args);
-		free(var_name);
+			store_local_variable(shl, *args, append);
 		args++;
 	}
 }
 
 // static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 // {
-// 	char		**args[2];
+// 	char		**args;
+// 	char		*var_name;
 // 	t_lst_str	*var_node;
 // 	size_t		offset;
 
-// 	args[0] = cmd->args;
-// 	while (args[0] && *(args[0]))
+// 	args = cmd->args;
+// 	while (args && *args)
 // 	{
-// 		args[1] = ft_split(*(args[0]), '=');
-// 		if (!(args[1]))
+// 		var_name = ft_substr(*args, 0, var_offset(*args, 0));
+// 		if (!var_name)
 // 			exit_early(shl, NULL, ERRMSG_MALLOC);
-// 		var_node = ft_find_node(shl->variables, *(args[1]), 0, 1);
-// 		offset = var_offset(*(args[0]), 1);
+// 		var_node = ft_find_node(shl->variables, var_name, 0, 1);
+// 		offset = var_offset(*args, 1);
 // 		if (var_node)
 // 		{
 // 			free(var_node->val);
-// 			var_node->val = ft_strdup((*(args[0]) + offset));
+// 			var_node->val = ft_strdup((*args + offset));
 // 			if (!var_node->val)
-// 				exit_early(shl, args[1], ERRMSG_MALLOC);
+// 				exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
 // 		}
 // 		else
-// 			store_local_variable(shl, *(args[0]));
-// 		ft_free2d(args[1]);
-// 		(args[0])++;
+// 			store_local_variable(shl, *args);
+// 		free(var_name);
+// 		args++;
 // 	}
 // }
 
@@ -121,7 +120,7 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 	
 	if (!cmd->args || !*(cmd->args + cmd->skip))
 		return ;
-	// update_env_var(shl, cmd, UNDERSCORE, NULL);
+	update_env_var(shl, cmd, UNDERSCORE, NULL);
 	first_arg = *(cmd->args + cmd->skip);
 	if (compare_strings(first_arg, "echo", 1))
 		mini_echo(cmd);

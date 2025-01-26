@@ -6,17 +6,19 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 15:08:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 22:55:51 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
-void		store_local_variable(t_shell *shl, char *var);
+void		store_local_variable(t_shell *shl, char *var, int append);
 char		*get_var_component(t_shell *shl, char *arg, int what);
 void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
 
+static int	add_append_lvar_ifvar_exists(t_lst_str	*var_node, char *var, 
+				size_t offset, int append);
 static int	lst_count_nodes(t_lst_str *elm);
 static void	get_indexed_arch_list(t_lst_str *list, t_lst_str **indices);
 /*
@@ -56,33 +58,76 @@ Note:	var_node = ft_lst_new(*split, (var + offset)) is used instead of
 		with multiple '=' character which would also be splitted by ft_split().
 		eg.: abc=456=oiu54
 */
-void	store_local_variable(t_shell *shl, char *var)
+void	store_local_variable(t_shell *shl, char *var, int append)
 {
 	t_lst_str	*var_node;
-	char		**split;
+	char		*var_name;
 	size_t		offset;
 
 	offset = var_offset(var, 1);
-	split = ft_split(var, '=');
-	if (!split)
+	var_name = ft_substr(var, 0, var_offset(var, 0));
+	if (!var_name)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-	var_node = ft_find_node(shl->local_vars, *split, 0, 1);
+	var_node = ft_find_node(shl->local_vars, var_name, 0, 1);
 	if (var_node == NULL)
 	{
-		var_node = ft_lst_new(*split, (var + offset));
+		var_node = ft_lst_new(var_name, (var + offset));
 		if (!var_node)
-			exit_early(shl, split, ERRMSG_MALLOC);
+			exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
 		ft_lst_addback(&shl->local_vars, var_node);
 	}
 	else
-	{
-		free(var_node->val);
-		var_node->val = ft_strdup((var + offset));
-		if (!var_node->val)
-			exit_early(shl, split, ERRMSG_MALLOC);
-	}
-	ft_free2d(split);
+		if (add_append_lvar_ifvar_exists(var_node, var, offset, append) == -1)
+			exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
+	free(var_name);
 }
+
+// Helper static fn for store_local_variable() fn
+static int	add_append_lvar_ifvar_exists(t_lst_str	*var_node, char *var, 
+				size_t offset, int append)
+{
+	char	*new_val;
+	
+	new_val = NULL;
+	if (append == 0)
+		new_val = ft_strdup((var + offset));
+	else if (append == 1)
+		new_val = concat_strings((const char *[]){var_node->val,
+					(var + offset), NULL});
+	if (!new_val)
+		return (-1);	
+	free(var_node->val);
+	var_node->val = new_val;
+	return (0);
+}
+
+// void	store_local_variable(t_shell *shl, char *var)
+// {
+// 	t_lst_str	*var_node;
+// 	char		**split;
+// 	size_t		offset;
+
+// 	offset = var_offset(var, 1);
+// 	split = ft_split(var, '=');
+// 	if (!split)
+// 		exit_early(shl, NULL, ERRMSG_MALLOC);
+// 	var_node = ft_find_node(shl->local_vars, *split, 0, 1);
+// 	if (var_node == NULL)
+// 	{
+// 		var_node = ft_lst_new(*split, (var + offset));
+// 		if (!var_node)
+// 			exit_early(shl, split, ERRMSG_MALLOC);
+// 		ft_lst_addback(&shl->local_vars, var_node);
+// 	}
+// 	else
+// 	{
+// 		free(var_node->val);
+// 		var_node->val = ft_strdup((var + offset));
+// 		if (!var_node->val)
+// 			exit_early(shl, split, ERRMSG_MALLOC);
+// 	}
+// 	ft_free2d(split);
+// }
 
 /*
 Function to get variable component

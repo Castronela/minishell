@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 19:07:44 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks);
-static int	is_valid_name(char *arg);
+static int	is_valid_unset_name(char *arg);
 static void	remove_from_environ(t_shell *shl, char *var_name);
 static void	remove_variable(t_shell *shl, char *arg);
 
@@ -60,7 +60,7 @@ Static sub-function for export checks, and execution if checks pass
 */
 static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 {
-	checks[0] = is_valid_name(arg);
+	checks[0] = is_valid_unset_name(arg);
 	checks[1] = 0;
 	checks[2] = 0;
 	if (checks[0] < 0)
@@ -79,7 +79,7 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 		checks[2] = 1;
 }
 
-static int	is_valid_name(char *arg)
+static int	is_valid_unset_name(char *arg)
 {
 	int	i;
 

@@ -6,7 +6,7 @@
 #    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/25 19:44:11 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/26 23:18:05 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -117,7 +117,7 @@ VALGRIND_OPTS	= 	--suppressions=ignore_readline.supp \
 					--trace-children=yes \
 					--track-fds=yes \
 					-s \
-					# --child-silent-after-fork=yes \
+# --child-silent-after-fork=yes
 # Leak Sanitizer for leak check on Mac (run: make LEAK=1)
 LEAKSAN			=	liblsan.dylib
 LEAKSAN_DIR		=	/Users/dstinghe/LeakSanitizer

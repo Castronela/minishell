@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:45:26 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 20:06:24 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void		init_environ_variables(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
 
-static void	copy_environ(t_shell *shl, char **envp, int size);
+static void	copy_environ(t_shell *shl, char **envp);
 static char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 
@@ -26,12 +26,6 @@ Copies the environment variables to the shell struct
   - Frees allocations and exits the program if malloc fails
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
-  
-!!! Here it is required to be 'i' and not 'i - 1' (side annotation below)
--->>	Because when OLDPWD is not already there, i for OLDPWD will not be 
-		skipped, and so the 'i' passed in this case to copy_environ() fn will be
-		one less than the number of env vars to be copied. This will result in a
-		seg-fault.
 */
 void	init_environ_variables(t_shell *shl, char **envp)
 {
@@ -51,50 +45,75 @@ void	init_environ_variables(t_shell *shl, char **envp)
 			ft_free2d(sp);
 		}
 		else
+		{
 			new_node = ft_lst_new("OLDPWD", NULL);
+			printf("OLDPWD detected:	%s\n", envp[i]);
+		}
 		if (!new_node)
 			exit_early(shl, NULL, ERRMSG_MALLOC);
 		ft_lst_addback(&shl->variables, new_node);
 	}
-	copy_environ(shl, envp, i);		// Read comment above on 'i' or 'i - 1'
+	copy_environ(shl, envp);
 	shl->home_dir = ft_strdup(ft_find_node(shl->variables, "HOME", 0, 1)->val);
 	if (!shl->home_dir)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 }
 
+/*
+Copies the environment variables to the shell struct
+  - Copies the environment variables into shl->env and shl->variables as lists
+  - Frees allocations and exits the program if malloc fails
+  - Lists are created using ft_lst_new and ft_lst_addback
+  - Memories and errors are handled by exit_early function in case of failure
+  
+!!! Here it is required to be 'i' and not 'i - 1' (side annotation below)
+-->>	Because when OLDPWD is not already there, i for OLDPWD will not be 
+		skipped, and so the 'i' passed in this case to copy_environ() fn will be
+		one less than the number of env vars to be copied. This will result in a
+		seg-fault.
+*/
 // void	init_environ_variables(t_shell *shl, char **envp)
 // {
 // 	int 		i;
 // 	t_lst_str	*new_node;
-// 	char		**split;
+// 	char		**sp;
 
 // 	i = -1;
 // 	while (envp[++i])
 // 	{
 // 		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
 // 		{
-// 			split = ft_split(envp[i], '=');
-// 			if (!split)
-// 				exit_early(shl, NULL, "Could not split for new variable");
-// 			new_node =ft_lst_new(split[0], split[1]);
+// 			sp = ft_split(envp[i], '=');
+// 			if (!sp)
+// 				exit_early(shl, NULL, ERRMSG_MALLOC);
+// 			new_node = ft_lst_new(sp[0], (envp[i] + var_offset(envp[i], 1)));
+// 			ft_free2d(sp);
 // 			if (!new_node)
-// 				exit_early(shl, split, "Could not malloc t_lst_str new_node");
+// 				exit_early(shl, NULL, ERRMSG_MALLOC);
 // 			ft_lst_addback(&shl->variables, new_node);
-// 			ft_free2d(split);
 // 		}
 // 	}
-// 	copy_environ(shl, envp, i);
+// 	copy_environ(shl, envp, i);		// Read comment above on 'i' or 'i - 1'
+// 	shl->home_dir = ft_strdup(ft_find_node(shl->variables, "HOME", 0, 1)->val);
+// 	if (!shl->home_dir)
+// 		exit_early(shl, NULL, ERRMSG_MALLOC);
 // }
 
 /*
 Function to copy envp variables as double char pointers (as required by execve)
 */
-static void	copy_environ(t_shell *shl, char **envp, int size)
+static void	copy_environ(t_shell *shl, char **envp)
 {
 	int i;
 	int	j;
+	int	count;
 	
-	shl->environ = malloc((size + 1) * sizeof(char *));
+	count = 0;
+	i = -1;
+	while (envp[++i])
+		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+			count++;
+	shl->environ = malloc((count + 1) * sizeof(char *));
 	if (!shl->environ)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	i = -1;
@@ -111,6 +130,29 @@ static void	copy_environ(t_shell *shl, char **envp, int size)
 	}
 	shl->environ[j] = NULL;
 }
+
+// static void	copy_environ(t_shell *shl, char **envp, int size)
+// {
+// 	int i;
+// 	int	j;
+
+// 	shl->environ = malloc((size + 1) * sizeof(char *));
+// 	if (!shl->environ)
+// 		exit_early(shl, NULL, ERRMSG_MALLOC);
+// 	i = -1;
+// 	j = 0;
+// 	while (envp[++i])
+// 	{
+// 		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+// 		{
+// 			shl->environ[j] = ft_strdup(envp[i]);
+// 			if (!shl->environ[j])
+// 				exit_early(shl, NULL, ERRMSG_MALLOC);
+// 			j++;
+// 		}
+// 	}
+// 	shl->environ[j] = NULL;
+// }
 
 /*
 Updates the SHLVL environment variable

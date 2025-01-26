@@ -6,19 +6,20 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:33:08 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 18:58:20 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int					mini_export(t_shell *shl, t_cmds *cmd);
+int			mini_export(t_shell *shl, t_cmds *cmd);
+int			is_valid_name(char *arg, int *i);
+int			get_append_flag(int check);
 
-static void			print_quoted_env(t_shell *shl);
-static int			check_and_export_arg(t_shell *shl, char *arg, int *chex);
-static int			is_valid_name(char *arg, int *i);
-static int			is_valid_val(char *arg, int *i);
-static void			add_update_envar(t_shell *shl, char *arg, int *chex);
+static void	print_quoted_env(t_shell *shl);
+static int	check_and_export_arg(t_shell *shl, char *arg, int *chex);
+static int	is_valid_val(char *arg, int *i);
+// static void	add_update_envar(t_shell *shl, char *arg, int *chex);
 
 // static t_lst_str	*get_next_lexico_var(t_shell *shl, t_lst_str *prev);
 // static t_lst_str	*get_next_var_alphabetically(t_shell *shl, t_lst_str *prev);
@@ -156,6 +157,7 @@ Static sub-function for export-chex and execution if chex pass
 static int	check_and_export_arg(t_shell *shl, char *arg, int *chex)
 {
 	int	i;
+	int	append;
 
 	i = 0;
 	chex[0] = is_valid_name(arg, &i);
@@ -170,36 +172,56 @@ static int	check_and_export_arg(t_shell *shl, char *arg, int *chex)
 	}
 	// if (chex[0] >= 0 && chex[0] != 2 && chex[1] == 1)
 	if (chex[0] >= 0 && chex[0] != 2 && chex[1] >= 0)
-		add_update_envar(shl, arg, chex);
+	{
+		// add_update_envar(shl, arg, chex);
+		append = get_append_flag(chex[0]);
+		add_to_environ(shl, arg, append);
+		store_as_variable(shl, arg, append);
+		chex[2] = 1;
+	}
 	if (chex[0] == 2)
 		chex[2] = 1;
 	return (0);
 }
 
-/*
-Static helper function for check_and_export_arg() fn that adds or appends a
-variable to shl->variables and/or shl->environ depending on the values of chex
-	chex[1] == 0 -->> only add to variables (for lack of '=' char in var. name)
-	chex[0] == 0 -->> append = -1 :	NULL the node->val
-	chex[0] == 1 -->> append =  0 :	only add, do not append
-	chex[0] == 3 -->> append =  1 :	append to the variable
-*/
-static void	add_update_envar(t_shell *shl, char *arg, int *chex)
+// /*
+// Static helper function for check_and_export_arg() fn that adds or appends a
+// variable to shl->variables and/or shl->environ depending on the values of chex
+// 	chex[1] == 0 -->> only add to variables (for lack of '=' char in var. name)
+// 	chex[0] == 0 -->> append = -1 :	NULL the node->val
+// 	chex[0] == 1 -->> append =  0 :	only add, do not append
+// 	chex[0] == 3 -->> append =  1 :	append to the variable
+// */
+// static void	add_update_envar(t_shell *shl, char *arg, int *chex)
+// {
+// 	int	append;
+
+// 	append = 0;
+// 	if (chex[0] == 0)
+// 		append = -1;
+// 	else if (chex[0] == 1)
+// 		append = 0;
+// 	else if (chex[0] == 3)
+// 		append = 1;
+// 	// if (chex[1] == 1 && chex[0] != 0)
+// 	// if (chex[1] >= 0)
+// 	add_to_environ(shl, arg, append);
+// 	store_as_variable(shl, arg, append);
+// 	chex[2] = 1;
+// }
+
+int	get_append_flag(int check)
 {
 	int	append;
 
 	append = 0;
-	if (chex[0] == 0)
+	if (check == 0)
 		append = -1;
-	else if (chex[0] == 1)
+	else if (check == 1)
 		append = 0;
-	else if (chex[0] == 3)
+	else if (check == 3)
 		append = 1;
-	// if (chex[1] == 1 && chex[0] != 0)
-	// if (chex[1] >= 0)
-	add_to_environ(shl, arg, append);
-	store_as_variable(shl, arg, append);
-	chex[2] = 1;
+	return (append);
 }
 
 /*
@@ -212,8 +234,16 @@ Function to check whether variable name is valid
   - Returns 2 if the variable name is just "_"
   - Used fns: ft_isalpha(), ft_isalnum()
 */
-static int	is_valid_name(char *arg, int *i)
+int	is_valid_name(char *arg, int *i)
 {
+	int	*index;
+	int	local_i;
+	
+	local_i = 0;
+	if (i != NULL)
+		index = i;
+	else
+		index = &local_i;
 	if (arg[0] == '=')
 		return (-1);
 	if (!ft_isalpha(arg[0]) && arg[0] != '_')
@@ -221,14 +251,14 @@ static int	is_valid_name(char *arg, int *i)
 	if ((arg[0] == '_' && arg[1] == '=') || 
 			(arg[0] == '_' && arg[1] == '+' && arg[2] == '='))
 		return (2);
-	while (arg[++(*i)])
+	while (arg[++(*index)])
 	{
-		if (arg[*i] == '=')
-			return (++(*i), 1);
-		if (arg[*i] == '+' && arg[*i + 1] == '=')
-			return (*i = *i + 2, 3);
-		if (!ft_isalnum(arg[*i]) && arg[*i] != '_')
-			return (-1 * (*i));
+		if (arg[*index] == '=')
+			return (++(*index), 1);
+		if (arg[*index] == '+' && arg[*index + 1] == '=')
+			return (*index = *index + 2, 3);
+		if (!ft_isalnum(arg[*index]) && arg[*index] != '_')
+			return (-1 * (*index));
 	}
 	return (0);
 }
@@ -242,7 +272,7 @@ Function to check whether the variable value is a valid one
   - Returns 1 if the variable value is found to be valid
   - Used fns: is_bash_reserved(), ft_isprint()
 */
-int	is_valid_val(char *arg, int *i)
+static int	is_valid_val(char *arg, int *i)
 {
 	if (arg[*i] == '\0')
 		return (0);

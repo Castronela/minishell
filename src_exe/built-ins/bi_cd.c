@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 15:42:58 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 22:59:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		new_cwd = getcwd(NULL, 0);
 		update_wdirs(shl, new_cwd);
 		free(new_cwd);
-		if (compare_strings(arg, "-", 1) == 0)
+		if (compare_strings(arg, "-", 1) == 1)
 			printf("%s\n", shl->cur_wd);
 		free(shl->prompt);
 		set_prompt(shl, "<< ", " >> % ");

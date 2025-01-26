@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 20:14:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,10 +267,15 @@ int			is_bash_reserved(char c);
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
 int			path_is_dir(char *path);
+
 void		mini_echo(t_cmds *cmd);
 void		mini_env(t_shell *shl, t_cmds *cmd);
 void		mini_exit(t_shell *shl, t_cmds *cmd);
+
 int			mini_export(t_shell *shl, t_cmds *cmd);
+int			is_valid_name(char *arg, int *i);
+int			get_append_flag(int check);
+
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
@@ -283,7 +288,7 @@ void		store_as_variable(t_shell *shl, char *var, int append);
 /* ------------------------------ env_utils.c ------------------------------ */
 
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
-void		store_local_variable(t_shell *shl, char *var);
+void		store_local_variable(t_shell *shl, char *var, int append);
 char		*get_var_component(t_shell *shl, char *arg, int what);
 void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
 
