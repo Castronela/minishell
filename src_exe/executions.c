@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/22 05:18:02 by david            ###   ########.fr       */
+/*   Updated: 2025/01/26 06:21:20 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,8 +155,7 @@ static void exec_child(t_shell *shl, t_cmds *cmd)
 	tty_echo_sig(shl, true);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
-	if (cmd->next && ft_close(cmd->next->fd_in) < 0)
-		exit_early(shl, NULL, NULL);	// pa: exit_early if next command exists?
+	// pa: exit_early if next command exists?
 	ft_close_cmd_pipe(shl, cmd, 1 << 3 | 1 << 2);
 	if (dup_std_fds(shl, cmd) < 0)		// pa: redir_std_fds
 		exit_early(shl, NULL, ERRMSG_DUP2);
@@ -166,12 +165,12 @@ static void exec_child(t_shell *shl, t_cmds *cmd)
 			exec_var_assignments(shl, cmd);
 		else
 			exec_built_in(shl, cmd);
-		reset_cmd_vars(shl, 0);
-		clearout(shl);
-		exit(cmd->exit_code);	// Should exit with and exit_code by checking success/failure
+		if (cmd->next && ft_close(cmd->next->fd_in) < 0)
+			exit_early(shl, NULL, NULL);
+		errno = cmd->exit_code;	// Should exit with and exit_code by checking success/failure
 	}
-	execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-	ft_close_cmd_pipe(shl, cmd, 2);
+	else
+		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
 	reset_cmd_vars(shl, 0);
 	clearout(shl);
 	exit(errno);
