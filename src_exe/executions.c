@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   executions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
+<<<<<<< Updated upstream
 /*   Updated: 2025/01/26 06:21:20 by david            ###   ########.fr       */
+=======
+/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
+>>>>>>> Stashed changes
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,36 +54,63 @@ Function to execute variable assignments
 Note:	Here, the cmd->skip parameter should not be used as it is not executing
 		a command but rather variable assignments, which the cmd->skip parameter
 		is designed to skip
-
-!!! !!!	This function looks detached at the moment
 */
 static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 {
-	char		**args[2];
+	char		**args;
+	char		*var_name;
 	t_lst_str	*var_node;
 	size_t		offset;
 
-	args[0] = cmd->args;
-	while (args[0] && *(args[0]))
+	args = cmd->args;
+	while (args && *args)
 	{
-		args[1] = ft_split(*(args[0]), '=');
-		if (!(args[1]))
+		var_name = ft_substr(*args, 0, var_offset(*args, 0));
+		if (!var_name)
 			exit_early(shl, NULL, ERRMSG_MALLOC);
-		var_node = ft_find_node(shl->variables, *(args[1]), 0, 1);
-		offset = offset_to_env_value(*(args[0]));
+		var_node = ft_find_node(shl->variables, var_name, 0, 1);
+		offset = var_offset(*args, 1);
 		if (var_node)
 		{
 			free(var_node->val);
-			var_node->val = ft_strdup((*(args[0]) + offset));
+			var_node->val = ft_strdup((*args + offset));
 			if (!var_node->val)
-				exit_early(shl, args[1], ERRMSG_MALLOC);
+				exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
 		}
 		else
-			store_local_variable(shl, *(args[0]));
-		ft_free2d(args[1]);
-		(args[0])++;
+			store_local_variable(shl, *args);
+		free(var_name);
+		args++;
 	}
 }
+
+// static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
+// {
+// 	char		**args[2];
+// 	t_lst_str	*var_node;
+// 	size_t		offset;
+
+// 	args[0] = cmd->args;
+// 	while (args[0] && *(args[0]))
+// 	{
+// 		args[1] = ft_split(*(args[0]), '=');
+// 		if (!(args[1]))
+// 			exit_early(shl, NULL, ERRMSG_MALLOC);
+// 		var_node = ft_find_node(shl->variables, *(args[1]), 0, 1);
+// 		offset = var_offset(*(args[0]), 1);
+// 		if (var_node)
+// 		{
+// 			free(var_node->val);
+// 			var_node->val = ft_strdup((*(args[0]) + offset));
+// 			if (!var_node->val)
+// 				exit_early(shl, args[1], ERRMSG_MALLOC);
+// 		}
+// 		else
+// 			store_local_variable(shl, *(args[0]));
+// 		ft_free2d(args[1]);
+// 		(args[0])++;
+// 	}
+// }
 
 /*
 Function to execute built-in functions
@@ -128,7 +159,7 @@ void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 	if (cmd->next)
 		exec_pipeline(shl, cmd->next);
 	if (cmd->pid != -1)
-		handle_child_exit(shl, cmd);	
+		handle_child_exit(shl, cmd);
 }
 
 static void handle_child_exit(t_shell *shl, t_cmds *cmd)
@@ -155,9 +186,8 @@ static void exec_child(t_shell *shl, t_cmds *cmd)
 	tty_echo_sig(shl, true);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGINT, SIG_DFL);
-	// pa: exit_early if next command exists?
 	ft_close_cmd_pipe(shl, cmd, 1 << 3 | 1 << 2);
-	if (dup_std_fds(shl, cmd) < 0)		// pa: redir_std_fds
+	if (dup_std_fds(shl, cmd) < 0)
 		exit_early(shl, NULL, ERRMSG_DUP2);
 	if (is_built_in(cmd))
 	{
@@ -167,7 +197,7 @@ static void exec_child(t_shell *shl, t_cmds *cmd)
 			exec_built_in(shl, cmd);
 		if (cmd->next && ft_close(cmd->next->fd_in) < 0)
 			exit_early(shl, NULL, NULL);
-		errno = cmd->exit_code;	// Should exit with and exit_code by checking success/failure
+		errno = cmd->exit_code;
 	}
 	else
 		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);

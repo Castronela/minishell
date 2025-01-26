@@ -6,19 +6,18 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 16:55:48 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 13:45:26 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-
 void		init_environ_variables(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
 void		set_prompt(t_shell *shl, char *prefix, char *separator);
 
-static char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 static void	copy_environ(t_shell *shl, char **envp, int size);
+static char	*assemble_prompt(char *prefix, char *cwd, char *separator);
 
 
 /*
@@ -28,31 +27,64 @@ Copies the environment variables to the shell struct
   - Lists are created using ft_lst_new and ft_lst_addback
   - Memories and errors are handled by exit_early function in case of failure
   
-!!! Confirm with David why this was required to be i and not i - 1 (side annotation below)
+!!! Here it is required to be 'i' and not 'i - 1' (side annotation below)
+-->>	Because when OLDPWD is not already there, i for OLDPWD will not be 
+		skipped, and so the 'i' passed in this case to copy_environ() fn will be
+		one less than the number of env vars to be copied. This will result in a
+		seg-fault.
 */
 void	init_environ_variables(t_shell *shl, char **envp)
 {
 	int 		i;
 	t_lst_str	*new_node;
-	char		**split;
+	char		**sp;
 
 	i = -1;
 	while (envp[++i])
 	{
 		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
 		{
-			split = ft_split(envp[i], '=');
-			if (!split)
-				exit_early(shl, NULL, "Could not split for new variable");
-			new_node =ft_lst_new(split[0], split[1]);
-			if (!new_node)
-				exit_early(shl, split, "Could not malloc t_lst_str new_node");
-			ft_lst_addback(&shl->variables, new_node);
-			ft_free2d(split);
+			sp = ft_split(envp[i], '=');
+			if (!sp)
+				exit_early(shl, NULL, ERRMSG_MALLOC);
+			new_node = ft_lst_new(sp[0], (envp[i] + var_offset(envp[i], 1)));
+			ft_free2d(sp);
 		}
+		else
+			new_node = ft_lst_new("OLDPWD", NULL);
+		if (!new_node)
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		ft_lst_addback(&shl->variables, new_node);
 	}
-	copy_environ(shl, envp, i);
+	copy_environ(shl, envp, i);		// Read comment above on 'i' or 'i - 1'
+	shl->home_dir = ft_strdup(ft_find_node(shl->variables, "HOME", 0, 1)->val);
+	if (!shl->home_dir)
+		exit_early(shl, NULL, ERRMSG_MALLOC);
 }
+
+// void	init_environ_variables(t_shell *shl, char **envp)
+// {
+// 	int 		i;
+// 	t_lst_str	*new_node;
+// 	char		**split;
+
+// 	i = -1;
+// 	while (envp[++i])
+// 	{
+// 		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
+// 		{
+// 			split = ft_split(envp[i], '=');
+// 			if (!split)
+// 				exit_early(shl, NULL, "Could not split for new variable");
+// 			new_node =ft_lst_new(split[0], split[1]);
+// 			if (!new_node)
+// 				exit_early(shl, split, "Could not malloc t_lst_str new_node");
+// 			ft_lst_addback(&shl->variables, new_node);
+// 			ft_free2d(split);
+// 		}
+// 	}
+// 	copy_environ(shl, envp, i);
+// }
 
 /*
 Function to copy envp variables as double char pointers (as required by execve)
@@ -98,12 +130,13 @@ void	update_shlvl(t_shell *shl)
 	int			index;
 	char		*tmp;
 	
-	// printf("update shlvl called\n");
 	index = find_dptr_index(shl, "SHLVL=", 6);
 	if (index < 0)
 		return ;
 	shlvl = shl->environ[index] + 6;
 	shl->shlvl += ft_atoi(shlvl);
+	if (shl->shlvl < 0)
+		shl->shlvl = 0;
 	tmp = ft_itoa(shl->shlvl);
 	if (!tmp)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
@@ -115,7 +148,7 @@ void	update_shlvl(t_shell *shl)
 	}
 	free(shl->environ[index]);
 	shl->environ[index] = shlvl;
-	store_as_variable(shl, shl->environ[index]);
+	store_as_variable(shl, shl->environ[index], 0);
 	free(tmp);
 }
 
@@ -170,7 +203,7 @@ void	set_prompt(t_shell *shl, char *prefix, char *separator)
 
 	split = ft_split(shl->cur_wd, '/');
 	if (!split)
-		exit_early(shl, NULL, "Could not split cwd");
+		exit_early(shl, NULL, ERRMSG_MALLOC);
 	i = -1;
 	while (split[++i])
 	{
@@ -178,7 +211,7 @@ void	set_prompt(t_shell *shl, char *prefix, char *separator)
 		{
 			shl->prompt = assemble_prompt(prefix, split[i], separator);
 			if (!shl->prompt)
-				exit_early(shl, split, "Could not assemble prompt");
+				exit_early(shl, split, ERRMSG_MALLOC);
 			break ;
 		}
 	}

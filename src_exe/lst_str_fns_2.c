@@ -1,26 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lst_str_fns copy.c                                 :+:      :+:    :+:   */
+/*   lst_str_fns_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:55:21 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 01:36:50 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+void		ft_swap_nodes(t_lst_str **root, t_lst_str *e1, t_lst_str *e2);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 void		ft_del_node(t_lst_str **node);
 
+// Function to swap the position of two nodes in the linked list
+void	ft_swap_nodes(t_lst_str **root, t_lst_str *e1, t_lst_str *e2)
+{
+	t_lst_str	*pen1[2];
+	t_lst_str	*pen2[2];
+	
+	pen1[0] = e1->prev;
+	pen1[1] = e1->next;
+	pen2[0] = e2->prev;
+	pen2[1] = e2->next;;
+	if (!e1->prev)
+		*root = e2;
+	else if (!e2->prev)
+		*root = e1;
+
+	if (pen1[0] && pen1[0] != e2)
+		pen1[0]->next = e2;
+	if (pen1[1] && pen1[1] != e2)
+		pen1[1]->prev = e2;
+	if (pen2[0] && pen2[0] != e1)
+		pen2[0]->next = e1;
+	if (pen2[1] && pen2[1] != e1)
+		pen2[1]->prev = e1;
+	e1->prev = e2->prev;
+	e1->next = e2->next;
+	e2->prev = pen1[0];
+	e2->next = pen1[1];
+}
+
 /*
 Function to search through the linked list using provided str and return
-the pointer to that node, such that the manipulation of that node like adding-to
-or its deletion is possible.
+the pointer to that node
   - The list is of type t_lst_str so it has multiple fields, hence search-field
 	argument is required to specify which field in the list to search
   - Search field can be 0 or 1, 0 meant for 'key' field and 1 meant for 'val'
@@ -29,6 +58,7 @@ or its deletion is possible.
 	then it searches for the 'str' in the specified field of list even if the
 	field is a larger string than 'str'. The function uses compare_strings to
 	find the node so the 'mod' toggle is fed as the 'exact' parameter for that fn.
+  - Returns NULL if a match isn't found in the list
 */
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 {
@@ -39,12 +69,12 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 		if (searchfield == 0)
 		{
 			if (compare_strings(str, list->key, mod))
-				return (/*printf("Found this zero:	%s\n", list->key), */list);
+				return (list);
 		}
 		else if (searchfield == 1)
 		{
 			if (compare_strings(str, list->val, mod))
-				return (/*printf("Found this one:	%s\n", list->val), */list);	
+				return (list);	
 		}
 		list = list->next;
 	}

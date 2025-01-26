@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 16:28:06 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ static void	remove_from_environ(t_shell *shl, char *var_name)
 
 	dp_len = count_pointers(shl->environ);
 	envar = shl->environ;
-	var_len = offset_to_env_value(var_name);
+	var_len = var_offset(var_name, 1);
 	dp_index = find_dptr_index(shl, var_name, var_len);
 	if (dp_index >= 0)
 	{

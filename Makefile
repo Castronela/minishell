@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/20 19:09:43 by dstinghe         ###   ########.fr        #
+#    Updated: 2025/01/25 19:44:11 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -69,7 +69,10 @@ SRC_EXE		=	initiate.c \
 				bi_export.c \
 				bi_pwd.c \
 				bi_unset.c \
-				env_utils.c env_utils_2.c string_utils.c \
+				environment.c \
+				variables.c \
+				env_utils.c env_utils_2.c \
+				string_utils.c string_utils_2.c \
 				error_handlers.c \
 				tests.c
 
@@ -140,8 +143,10 @@ all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
 
 valgrind: $(NAME)
+	valgrind $(VALGRIND_OPTS) ./$(NAME)
+
+valgrind_n: $(NAME)
 	env -i valgrind $(VALGRIND_OPTS) ./$(NAME)
-# valgrind $(VALGRIND_OPTS) ./$(D_BIN)/$(NAME)
 
 # dock: $(DK_COMP)
 # 	@if [ $(shell docker images | grep -c valgrind) -eq 0 ]; then \

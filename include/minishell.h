@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/22 05:26:46 by david            ###   ########.fr       */
+/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@
 # define ERRMSG_FORK "Error fork"
 # define ERRMSG_READ "Error read"
 # define ERRMSG_WRITE "Error write"
+# define ERRMSG_PRINTF "Error printf"
 # define ERRMSG_OPEN "Error open"
 # define ERRMSG_CLOSE "Error close"
 # define ERRMSG_EXECVE "Error execve"
@@ -192,6 +193,8 @@ typedef struct s_shell
 	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
 	t_lst_str	*local_vars;		// Stores only local variables
 	int			shlvl;				// Stores the current shell level
+	char		*home_dir;
+	char		*old_wd;
 	char		*cur_wd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
 
@@ -211,7 +214,7 @@ typedef struct s_shell
 //                                 Function Prototypes                                  //
 //--------------------------------------------------------------------------------------//
 
-int			main(int ac, char **av, char **envp);
+// int			main(int ac, char **av, char **envp);
 
 /* ============================== src_exe/... ============================== */
 
@@ -274,22 +277,27 @@ int			mini_unset(t_shell *shl, t_cmds *cmd);
 /* ------------------------------ env_utils.c ------------------------------ */
 
 void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void		add_to_environ(t_shell *shl, char *var);
-void		store_as_variable(t_shell *shl, char *var);
+void		add_to_environ(t_shell *shl, char *var, int	append);
+void		store_as_variable(t_shell *shl, char *var, int append);
 
 /* ------------------------------ env_utils.c ------------------------------ */
 
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 void		store_local_variable(t_shell *shl, char *var);
 char		*get_var_component(t_shell *shl, char *arg, int what);
+void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
 
 /* ----------------------------- stirng_utils.c ----------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
-char		**find_string_addr(t_shell *shl, char *str, int	n);
+char		**find_string_addr(t_shell *shl, char *str, int	n, int add_eq);
 int			find_dptr_index(t_shell *shl, char *str, int n);
 int			count_pointers(char **dp);
-size_t		offset_to_env_value(char *str);
+size_t		var_offset(char *str, int skip_separator);
+
+/* ----------------------------- stirng_utils.c ----------------------------- */
+
+char		*concat_strings(const char *str[]);
 
 /* ----------------------------- lst_str_fns.c ----------------------------- */
 
@@ -301,6 +309,7 @@ void		ft_lst_free(t_lst_str **root);
 
 /* ---------------------------- lst_str_fns_2.c ---------------------------- */
 
+void		ft_swap_nodes(t_lst_str **root, t_lst_str *n1, t_lst_str *n2);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_remove_node(t_lst_str **root, t_lst_str **node);
@@ -310,6 +319,8 @@ void		ft_del_node(t_lst_str **node);
 
 void		arg_error(char **av);
 void		exit_early(t_shell *shl, char **double_ptr, char *msg);
+void		exit_early2(t_shell *shl, char **double_ptr, char *s_ptr,
+				char *msg);
 
 /* ============================= src_parse/... ============================= */
 

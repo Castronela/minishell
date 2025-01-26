@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:56:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/24 14:44:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	arg_error(char **av);
 void	exit_early(t_shell *shl, char **double_ptr, char *msg);
+void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 
 // void	ft_free2dint(int **memory);
-// void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 
 /*
 Function to check if there are more than necessary args from user; if there is
@@ -52,27 +52,29 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 	if (msg && *msg)
 		perror(msg);
 	else if (msg && !*msg)
-		strerror(errno);
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){strerror(errno), "\n",
+			NULL});
 	exit(errno);
 }
 
-// void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg)
-// {
-// 	if (double_ptr)
-// 		ft_free2d(double_ptr);
-// 	if (s_ptr)
-// 		free(s_ptr);
-// 	if (shl)
-// 	{
-// 		reset_cmd_vars(shl, 1);
-// 		clearout(shl);
-// 	}
-// 	if (msg && *msg)
-// 		perror(msg);
-// 	else if (msg && !*msg)
-// 		ft_fprintf_str(STDERR_FILENO, (const char *[]){strerror(errno), NULL});
-// 	exit(errno);
-// }
+void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg)
+{
+	if (double_ptr)
+		ft_free2d(double_ptr);
+	if (s_ptr)
+		free(s_ptr);
+	if (shl)
+	{
+		reset_cmd_vars(shl, 1);
+		clearout(shl);
+	}
+	if (msg && *msg)
+		perror(msg);
+	else if (msg && !*msg)
+		ft_fprintf_str(STDERR_FILENO, (const char *[]){strerror(errno), "\n",
+			NULL});
+	exit(errno);
+}
 
 // /*
 // Function to free a 2D int pointer

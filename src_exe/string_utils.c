@@ -6,17 +6,17 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:38:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/26 15:39:43 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int		compare_strings(const char *str, const char *field, int exact);
-char	**find_string_addr(t_shell *shl, char *str, int	n);
+char	**find_string_addr(t_shell *shl, char *str, int	n, int add_eq);
 int		find_dptr_index(t_shell *shl, char *str, int n);
 int		count_pointers(char **dp);
-size_t	offset_to_env_value(char *str);
+size_t	var_offset(char *str, int skip_separator);
 
 /*
 The function is meant to compare two strings, and return 1 if they are same;
@@ -55,16 +55,29 @@ int	compare_strings(const char *str, const char *field, int exact)
 Function to return the pointer to a string in a double pointer that matches the 
 provided string
   - 'n' is the number of characters to match while finding the pointer
+  - if 'add_eq' is 1, then one more character after the nth char is compared 
+  	with '='
+  - returns the address that stores the string if a match is found
+  - returns NULL if no match is found
 */
-char	**find_string_addr(t_shell *shl, char *str, int	n)
+char	**find_string_addr(t_shell *shl, char *str, int	n, int add_eq)
 {
 	int	i;
-	
+
 	i = -1;
 	while (shl->environ[++i])
 	{
-		if (ft_strncmp(shl->environ[i], str, n) == 0)
-			return (&(shl->environ[i]));
+		if (add_eq == 0)
+		{
+			if (ft_strncmp(shl->environ[i], str, n) == 0)
+				return (&(shl->environ[i]));
+		}
+		else if (add_eq == 1)
+		{
+			if (ft_strncmp(shl->environ[i], str, n) == 0 &&
+					shl->environ[i][n] == '=')
+				return (&(shl->environ[i]));
+		}
 	}
 	return (NULL);
 }
@@ -108,21 +121,36 @@ int	count_pointers(char **dp)
 	return (i); 
 }
 
-// Function to get the length of the variable name upto '=' or '\0', whichever
-// occurs first, including the '=' character if it occurs within 'str'.
-size_t	offset_to_env_value(char *str)
+/*
+Function to skip the variable name in a variable-string.
+  - Returns the total number of chars offset to skip the var_name
+  - If 'skip_separator' is 1, the function also skips the separator encountered.
+	Meaning, it returns the offset directly to the var. value.
+	Possible separators: '=' and "+="
+  - If 'skip_separator' is 0, the function only returns the offset to the
+	separator and not the var. value
+*/
+size_t	var_offset(char *str, int skip_separator)
 {
 	int	i;
 
 	i = 0;
 	if (!str)
 		return (0);
-	while (*str && *str != '=')
+	while (*str && *str != '+' && *str != '=')
 	{
 		i++;
 		str++;
 	}
-	if (*str == '=')
-		i++;
+	if (skip_separator == 1)
+	{
+		if (*str == '+')
+		{
+			i++;
+			str++;
+		}
+		if (*str == '=')
+			i++;
+	}
 	return (i);
 }

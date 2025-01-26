@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/22 05:11:09 by david            ###   ########.fr       */
+/*   Updated: 2025/01/26 15:43:27 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	start_shell(t_shell *shl)
 			add_history(shl->cmdline);
 		retokenize_args(shl, shl->cmds_lst);	
 		index_cmds(shl);
+		// test_print_cmdlst(shl, 30);
 		setup_cmd(shl);
 		if (shl->cmds_lst)
 			mini_execute(shl);
@@ -148,6 +149,10 @@ void	clearout(t_shell *shl)
 		ft_lst_free(&shl->variables);
 	if (shl->local_vars != NULL)
 		ft_lst_free(&shl->local_vars);
+	if (shl->home_dir != NULL)
+		ft_free_safe((void **)(&(shl->home_dir)));
+	if (shl->old_wd != NULL)
+		ft_free_safe((void **)(&(shl->old_wd)));
 	if (shl->cur_wd != NULL)
 		ft_free_safe((void **)(&(shl->cur_wd)));
 	if (shl->prompt != NULL)

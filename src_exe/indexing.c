@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   indexing.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/22 04:09:54 by david            ###   ########.fr       */
+/*   Updated: 2025/01/24 14:34:46 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	is_command(t_cmds *cmd)
 				return (1);
 			if (check_eq_alnum(*args, &eq))
 				return (1);
-			if (!eq)
+			if (!eq)		// !!! !!! !!! Relent this condition in mini_export()
 				return (1);
 		}		
 		args++;
@@ -93,7 +93,7 @@ static int	check_eq_alnum(char *arg, int *eq)
 	i = 0;
 	while (arg[++i])
 	{
-		if (arg[i] == '=')
+		if (arg[i] == '=' || (arg[i] == '+' && arg[i + 1] == '='))
 		{
 			*eq = 1;
 			break ;
