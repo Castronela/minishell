@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 15:43:27 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/29 00:04:09 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ void 	init_shell(t_shell *shl, int ac, char **av, char **envp);
 void	start_shell(t_shell *shl);
 char 	*get_input(t_shell *shell, const char *prompt);
 void	clearout(t_shell *shl);
-
-static void setup_cmd(t_shell *shl);
 
 // static int	skip_assignments(t_cmds *cmd);
 
@@ -70,27 +68,20 @@ void	start_shell(t_shell *shl)
 {	
 	while (1)
 	{
+		shl->exit_code_prev = shl->exit_code;
+		reset_cmd_vars(shl, 1, 0);
 		set_signal(shl);
 		tty_echo_sig(shl, false);
 		shl->cmdline = get_input(shl, shl->prompt);
 		if (!shl->cmdline)
 			break;
 		if (parser(shl))
-		{
-			if (*shl->cmdline)
-				add_history(shl->cmdline);
-			reset_cmd_vars(shl, 1);
 			continue ;
-		}
-		if (*shl->cmdline)
-			add_history(shl->cmdline);
 		retokenize_args(shl, shl->cmds_lst);	
 		index_cmds(shl);
-		// test_print_cmdlst(shl, 30);
-		setup_cmd(shl);
+		set_env_paths(shl);
 		if (shl->cmds_lst)
 			mini_execute(shl);
-		reset_cmd_vars(shl, 1);
 	}
 }
 
@@ -112,21 +103,6 @@ char *get_input(t_shell *shell, const char *prompt)
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
 	return (input);
-}
-
-static void setup_cmd(t_shell *shl)
-{
-	t_cmds *cmd;
-
-	cmd = shl->cmds_lst;
-	set_env_paths(shl);
-	while (cmd)
-	{
-		map_args(shl, cmd, remove_closed_quotes);
-		if (!set_redirs(shl, cmd))
-			set_binaries(shl, cmd);
-		cmd = cmd->next;
-	}
 }
 
 /*

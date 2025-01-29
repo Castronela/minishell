@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handlers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/24 14:44:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/28 23:27:43 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	exit_early(t_shell *shl, char **double_ptr, char *msg)
 		ft_free2d(double_ptr);
 	if (shl)
 	{
-		reset_cmd_vars(shl, 1);
+		reset_cmd_vars(shl, 1, 1);
 		clearout(shl);
 	}
 	if (msg && *msg)
@@ -65,7 +65,7 @@ void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg)
 		free(s_ptr);
 	if (shl)
 	{
-		reset_cmd_vars(shl, 1);
+		reset_cmd_vars(shl, 1, 1);
 		clearout(shl);
 	}
 	if (msg && *msg)

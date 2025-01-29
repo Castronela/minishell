@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:35:34 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/13 17:53:32 by dstinghe         ###   ########.fr       */
+/*   Updated: 2025/01/28 23:35:07 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 bool	is_redir(const char *str, const size_t index);
 bool	is_control(const char *str, const size_t index);
 bool	is_special_param(const char *str, const size_t index);
-bool	is_command_sep(const char *str, const size_t index);
 size_t	find_longest_match_length(const char *str, const char *pattern[]);
+void	map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *, char **));
 
 bool	is_redir(const char *str, const size_t index)
 {
@@ -34,12 +34,6 @@ bool	is_special_param(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index], (const char *[]){DOLLAR,
 			QUESTION_MARK, POUND, NULL}));
-}
-
-bool	is_command_sep(const char *str, const size_t index)
-{
-	return (find_longest_match_length(&str[index], (const char *[]){CS_SMICOL,
-			CS_NEWLNE, NULL}));
 }
 
 /*
@@ -64,4 +58,13 @@ size_t	find_longest_match_length(const char *str, const char *pattern[])
 		}
 	}
 	return (highest_len);
+}
+
+void	map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *, char **))
+{
+	size_t	index;
+
+	index = -1;
+	while (cmd->args && cmd->args[++index])
+		func(shell, &(cmd->args[index]));
 }

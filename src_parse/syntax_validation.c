@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_validation.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:39:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/19 19:38:44 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/28 23:32:18 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,7 @@ bool	is_redir_target_valid(t_shell *shell, const char *redir_target)
 		shell->exit_code = ERRCODE_BUILT_IN;
 		return (false);
 	}
-	else if (is_control(redir_target, 0) || is_redir(redir_target, 0)
-		|| is_command_sep(redir_target, 0))
+	else if (is_control(redir_target, 0) || is_redir(redir_target, 0))
 	{
 		if (ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
 				SYNTX_UNEXP_TOKEN, redir_target, "'\n", NULL}))

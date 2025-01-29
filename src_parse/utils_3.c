@@ -6,13 +6,13 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/22 05:31:02 by david            ###   ########.fr       */
+/*   Updated: 2025/01/29 00:03:54 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline);
 int			open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			cursor_mv_back(const int fd);
 
@@ -25,13 +25,18 @@ Nullifies all command variables
 	- if 'free_before' > 0 then frees command variables
 	before nullifying them
 */
-void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
+void	reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline)
 {
 	if (rm_tmp)
 		remove_tmp_files(shell);
 	if (shell->tmp_file_fd != -1)
 		close(shell->tmp_file_fd);
 	shell->tmp_file_fd = -1;
+	if (free_prev_cmdline && shell->prev_cmdline)
+	{
+		free(shell->prev_cmdline);
+		shell->prev_cmdline = NULL;
+	}
 	if (shell->cmdline)
 		free(shell->cmdline);
 	shell->cmdline = NULL;
@@ -41,7 +46,6 @@ void	reset_cmd_vars(t_shell *shell, const int rm_tmp)
 	if (shell->env_paths)
 		ft_free2d(shell->env_paths);
 	shell->env_paths = NULL;
-	shell->exit_code_prev = shell->exit_code;
 	shell->total_cmds = 0;
 	shell->open_qt = 0;
 	shell->heredoc_file_no = 0;

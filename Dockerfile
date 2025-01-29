@@ -7,8 +7,13 @@ libreadline-dev \
 nano \
 lldb \
 build-essential \
+sudo \
 curl \
-git \
-&& bash -c "$(curl -fsSL https://raw.githubusercontent.com/zstenger93/42_minishell_tester/master/install.sh)"  \
-&& cp -R /usr/include/readline /usr/local/include/readline \
-&& echo "settings set target.disable-aslr false" >> ~/.lldbinit
+ncurses-base \
+git ;\
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/zstenger93/42_minishell_tester/master/install.sh)";  \
+cp -R /usr/include/readline /usr/local/include/readline; \
+echo "settings set target.disable-aslr false" >> ~/.lldbinit; \
+useradd -m -s /bin/bash user \
+&& usermod -aG sudo user \
+&& echo 'user ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/user \

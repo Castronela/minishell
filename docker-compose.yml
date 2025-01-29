@@ -4,6 +4,9 @@ services:
     container_name: valgrind
     build: .
     volumes:
+      - ~/.bashrc:/home/user/.bashrc
       - .:/project
     environment:
-      - USER=${USER}
+      - TERM=xterm-256color
+    user: "user"
+    command: bash -c "sudo chmod -R 777 /project && exec bash"

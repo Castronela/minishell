@@ -6,17 +6,16 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/22 04:28:50 by david            ###   ########.fr       */
+/*   Updated: 2025/01/28 23:54:40 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int			parser(t_shell *shell);
-void		map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *,
-					char **));
 void		retokenize_args(t_shell *shell, t_cmds *cmd);
 
+static void update_history(t_shell *shell);
 static int	open_ctr_op(t_shell *shell, t_cmds *cmd_node, size_t *index_cmd);
 static void	add_arg(t_shell *shell, t_cmds *cmd, char *arg);
 
@@ -44,15 +43,26 @@ int	parser(t_shell *shell)
 			if (!is_valid_control_1(shell))
 				return (1);
 		}
-		if (heredoc(shell))
-			return (1);
-		if (index_cmd >= ft_strlen2(shell->cmdline) && open_ctr_op(shell,
-				new_cmdnode, &index_cmd))
+		if (heredoc(shell) || (index_cmd >= ft_strlen2(shell->cmdline) 
+			&& open_ctr_op(shell, new_cmdnode, &index_cmd)))
 			return (1);
 	}
+	update_history(shell);
 	if (!is_valid_quotation(shell) || !is_valid_control_2(shell))
 		return (1);
 	return (0);
+}
+
+static void update_history(t_shell *shell)
+{
+	if (*shell->cmdline
+		&& compare_strings(shell->cmdline, shell->prev_cmdline, 1) < 1)
+		add_history(shell->cmdline);
+	if (shell->prev_cmdline)
+		free(shell->prev_cmdline);
+	shell->prev_cmdline = ft_strdup(shell->cmdline);
+	if (!shell->prev_cmdline)
+		exit_early(shell, NULL, ERRMSG_MALLOC);
 }
 
 static int	open_ctr_op(t_shell *shell, t_cmds *cmd_node, size_t *index_cmd)
@@ -97,15 +107,6 @@ void	retokenize_args(t_shell *shell, t_cmds *cmd)
 	}
 	if (cmd && cmd->next)
 		retokenize_args(shell, cmd->next);
-}
-
-void	map_args(t_shell *shell, t_cmds *cmd, void (*func)(t_shell *, char **))
-{
-	size_t	index;
-
-	index = -1;
-	while (cmd->args && cmd->args[++index])
-		func(shell, &(cmd->args[index]));
 }
 
 static void	add_arg(t_shell *shell, t_cmds *cmd, char *arg)

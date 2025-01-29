@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 18:58:20 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/29 00:14:19 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,13 @@ static void	print_quoted_env(t_shell *shl)
 		vr = get_next_var_alphabetically(shl, vr);
 		if (!vr)
 			break;
-		if (!vr->val)
+		if (!compare_strings(vr->key, "_", 1) && !vr->val)
 		{
 			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ", 
 					vr->key, "\n", NULL}) == 1)
 				exit_early(shl, NULL, ERRMSG_WRITE);
 		}
-		else
+		else if (!compare_strings(vr->key, "_", 1))
 		{
 			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ", 
 					vr->key, "=\"", vr->val, "\"\n", NULL}) == 1)

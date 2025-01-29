@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 19:07:44 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/29 01:31:34 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
-static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks);
+static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg, 
+			int *checks);
 static int	is_valid_unset_name(char *arg);
 static void	remove_from_environ(t_shell *shl, char *var_name);
 static void	remove_variable(t_shell *shl, char *arg);
@@ -39,11 +40,11 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 	ret = 0;
 	arguments = cmd->args + cmd->skip;
 	if (*(arguments + 1) == NULL)
-		return (write(STDOUT_FILENO, "\n", 1), 0);
+		return (0);
 	while (*(++arguments))
 	{
 		upd_str = *arguments;
-		check_and_unset_arg(shl, *arguments, checks);
+		check_and_unset_arg(shl, cmd, *arguments, checks);
 		if (*(arguments + 1) == NULL && checks[2] == 1)
 			upd_str = get_var_component(shl, *arguments, 0);
 		if (checks[0] < 1)
@@ -58,7 +59,8 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 /*
 Static sub-function for export checks, and execution if checks pass
 */
-static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
+static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg, 
+	int *checks)
 {
 	checks[0] = is_valid_unset_name(arg);
 	checks[1] = 0;
@@ -68,6 +70,7 @@ static void	check_and_unset_arg(t_shell *shl, char *arg, int *checks)
 		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, "unset: `",
 					arg, ERRMSG_NO_VALID_IDENT, NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
+		cmd->exit_code = ERRCODE_GENERAL;
 	}
 	if (checks[0] == 1)
 	{

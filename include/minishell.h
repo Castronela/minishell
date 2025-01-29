@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 20:14:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/28 23:34:41 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,6 @@
 
 # define CT_PIPE "|"			// pipe control
 # define CT_AND "&&"			// pipe control
-
-// ---- Command Separators ---------------------------------------------------------------
-
-# define CS_SMICOL ";"
-# define CS_NEWLNE "\n"
 
 // ---- Special Parameters ---------------------------------------------------------------
 
@@ -201,6 +196,7 @@ typedef struct s_shell
 	//	Cmd vars; will be reset on every new command prompt
 	// pid_t		*pid;				// This stores the pid of all the processes forked during execution
 	int			total_cmds;			// Stores the total number of commands received from a command-line input
+	char		*prev_cmdline;			// Stores the command line input from the user
 	char		*cmdline;			// Stores the command line input from the user
 	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
 	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
@@ -394,9 +390,8 @@ void 		skip_whitespaces(const char *str, size_t *index);
 bool 		is_redir(const char *str, const size_t index);
 bool 		is_control(const char *str, const size_t index);
 bool 		is_special_param(const char *str, const size_t index);
-bool		is_command_sep(const char *str, const size_t index);
 size_t 		find_longest_match_length(const char *str, const char *pattern[]);
-void		reset_cmd_vars(t_shell *shell, const int rm_tmp);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline);
 int 		open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			append_to_str(char **str, char *append, int append_len);
 

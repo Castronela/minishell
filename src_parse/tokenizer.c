@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 20:46:06 by castronela        #+#    #+#             */
-/*   Updated: 2025/01/21 16:38:33 by david            ###   ########.fr       */
+/*   Updated: 2025/01/28 23:40:26 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,5 @@ Returns length of longest operator that matches 'str' from 'index' or 0,
 static size_t	operator_length_at_index(const char *str, const size_t index)
 {
 	return (find_longest_match_length(&str[index], (const char *[]){RD_IN,
-			RD_OUT, RD_OUT_A, RD_HD, CT_PIPE, CT_AND, CS_SMICOL, CS_NEWLNE,
-			NULL}));
+			RD_OUT, RD_OUT_A, RD_HD, CT_PIPE, CT_AND, NULL}));
 }

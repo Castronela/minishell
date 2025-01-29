@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initializations.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 20:06:24 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/30 00:30:54 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,33 +30,30 @@ Copies the environment variables to the shell struct
 void	init_environ_variables(t_shell *shl, char **envp)
 {
 	int 		i;
-	t_lst_str	*new_node;
 	char		**sp;
+	t_lst_str	*new_node;
 
 	i = -1;
 	while (envp[++i])
 	{
-		if (ft_strncmp(envp[i], "OLDPWD=", 7) != 0)
-		{
-			sp = ft_split(envp[i], '=');
-			if (!sp)
-				exit_early(shl, NULL, ERRMSG_MALLOC);
-			new_node = ft_lst_new(sp[0], (envp[i] + var_offset(envp[i], 1)));
-			ft_free2d(sp);
-		}
+		sp = ft_split(envp[i], '=');
+		if (!sp)
+			exit_early(shl, NULL, ERRMSG_MALLOC);
+		if (!ft_strncmp(envp[i], "OLDPWD=", 7))
+			new_node = ft_lst_new(sp[0], NULL);
 		else
-		{
-			new_node = ft_lst_new("OLDPWD", NULL);
-			printf("OLDPWD detected:	%s\n", envp[i]);
-		}
+			new_node = ft_lst_new(sp[0], (envp[i] + var_offset(envp[i], 1)));
+		ft_free2d(sp);
 		if (!new_node)
 			exit_early(shl, NULL, ERRMSG_MALLOC);
 		ft_lst_addback(&shl->variables, new_node);
+		if (compare_strings("HOME", new_node->key, 1))
+		{
+			if (append_to_str(&shl->home_dir, new_node->val, -1))
+				exit_early(shl, NULL, ERRMSG_MALLOC);
+		}
 	}
 	copy_environ(shl, envp);
-	shl->home_dir = ft_strdup(ft_find_node(shl->variables, "HOME", 0, 1)->val);
-	if (!shl->home_dir)
-		exit_early(shl, NULL, ERRMSG_MALLOC);
 }
 
 /*

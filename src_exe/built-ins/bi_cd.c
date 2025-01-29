@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 22:59:56 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/30 01:09:58 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ void	mini_cd(t_shell *shl, t_cmds *cmd)
 		free(shl->prompt);
 		set_prompt(shl, "<< ", " >> % ");
 	}
-	// shl->exit_code = 0;
+	else
+		cmd->exit_code = ERRCODE_GENERAL;
 }
 
 // Helper static fn for mini_cd() fn
@@ -79,14 +80,6 @@ static int	get_new_cwd(t_shell *shl, char *arg, char **new_cwd)
 			return (shl->exit_code = 1, ft_fprintf_str(STDERR_FILENO,
 					(const char *[]){ERSHL, "cd: HOME not set\n", NULL}), -1);
 		*new_cwd = node->val;
-	}
-	else if (compare_strings(arg, "~", 1))
-	{
-		node = ft_find_node(shl->variables, "HOME", 0, 1);
-		if (!node)
-			*new_cwd = shl->home_dir;
-		else
-			*new_cwd = node->val;
 	}
 	else
 		if (get_new_cwd_helper(shl, arg, new_cwd) == -1)

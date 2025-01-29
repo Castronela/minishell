@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/22 03:37:48 by david            ###   ########.fr       */
+/*   Updated: 2025/01/28 23:28:32 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static void	prompt_child(t_shell *shell, int fd_pipe[], const bool append_nl)
 	int		exit_status;
 
 	signal(SIGINT, SIG_DFL);
-	reset_cmd_vars(shell, 0);
+	reset_cmd_vars(shell, 0, 1);
 	clearout(shell);
 	close(fd_pipe[0]);
 	exit_status = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executions.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:46 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 21:54:53 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/30 04:15:22 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,19 @@ void	mini_execute(t_shell *shl)
 {
 	t_cmds *cmd;
 	
+	
 	cmd = shl->cmds_lst;
 	if (is_built_in(cmd) && shl->total_cmds < 2)
 	{
 		if (!cmd->exit_code)
 		{
+			map_args(shl, cmd, remove_closed_quotes);
+			if (!set_redirs(shl, cmd))
+				set_binaries(shl, cmd);
 			dup_std_fds(shl, cmd);
-			if (cmd->lvar_assignment)
+			if (!cmd->exit_code && cmd->lvar_assignment)
 				exec_var_assignments(shl, cmd);
-			else
+			else if (!cmd->exit_code)
 				exec_built_in(shl, cmd);
 			restore_std_fds(shl);
 		}
@@ -82,35 +86,6 @@ static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
 	}
 }
 
-// static void	exec_var_assignments(t_shell *shl, t_cmds *cmd)
-// {
-// 	char		**args;
-// 	char		*var_name;
-// 	t_lst_str	*var_node;
-// 	size_t		offset;
-
-// 	args = cmd->args;
-// 	while (args && *args)
-// 	{
-// 		var_name = ft_substr(*args, 0, var_offset(*args, 0));
-// 		if (!var_name)
-// 			exit_early(shl, NULL, ERRMSG_MALLOC);
-// 		var_node = ft_find_node(shl->variables, var_name, 0, 1);
-// 		offset = var_offset(*args, 1);
-// 		if (var_node)
-// 		{
-// 			free(var_node->val);
-// 			var_node->val = ft_strdup((*args + offset));
-// 			if (!var_node->val)
-// 				exit_early2(shl, NULL, var_name, ERRMSG_MALLOC);
-// 		}
-// 		else
-// 			store_local_variable(shl, *args);
-// 		free(var_name);
-// 		args++;
-// 	}
-// }
-
 /*
 Function to execute built-in functions
 */
@@ -144,7 +119,12 @@ void	exec_built_in(t_shell *shl, t_cmds *cmd)
 */
 void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 {
+	map_args(shl, cmd, remove_closed_quotes);
+	if (!set_redirs(shl, cmd))
+		set_binaries(shl, cmd);
 	init_cmd_pipe(shl, cmd);
+	if (shl->total_cmds < 2)
+		update_env_var(shl, cmd, UNDERSCORE, NULL);
 	if (!cmd->exit_code)
 	{
 		cmd->pid = fork();
@@ -159,6 +139,31 @@ void	exec_pipeline(t_shell *shl, t_cmds *cmd)
 		exec_pipeline(shl, cmd->next);
 	if (cmd->pid != -1)
 		handle_child_exit(shl, cmd);
+}
+
+static void exec_child(t_shell *shl, t_cmds *cmd)
+{
+	tty_echo_sig(shl, true);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	if (cmd->next && ft_close(cmd->next->fd_in) < 0)
+		exit_early(shl, NULL, NULL);
+	ft_close_cmd_pipe(shl, cmd, 1 << 3 | 1 << 2);
+	if (dup_std_fds(shl, cmd) < 0)
+		exit_early(shl, NULL, ERRMSG_DUP2);
+	if (is_built_in(cmd))
+	{
+		if (cmd->lvar_assignment)
+			exec_var_assignments(shl, cmd);
+		else
+			exec_built_in(shl, cmd);
+		errno = cmd->exit_code;
+	}
+	else
+		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
+	reset_cmd_vars(shl, 0, 1);
+	clearout(shl);
+	exit(errno);
 }
 
 static void handle_child_exit(t_shell *shl, t_cmds *cmd)
@@ -178,29 +183,4 @@ static void handle_child_exit(t_shell *shl, t_cmds *cmd)
 	}
 	else if (WIFEXITED(ec))
 		cmd->exit_code = WEXITSTATUS(ec);
-}
-
-static void exec_child(t_shell *shl, t_cmds *cmd)
-{
-	tty_echo_sig(shl, true);
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGINT, SIG_DFL);
-	ft_close_cmd_pipe(shl, cmd, 1 << 3 | 1 << 2);
-	if (dup_std_fds(shl, cmd) < 0)
-		exit_early(shl, NULL, ERRMSG_DUP2);
-	if (is_built_in(cmd))
-	{
-		if (cmd->lvar_assignment)
-			exec_var_assignments(shl, cmd);
-		else
-			exec_built_in(shl, cmd);
-		if (cmd->next && ft_close(cmd->next->fd_in) < 0)
-			exit_early(shl, NULL, NULL);
-		errno = cmd->exit_code;
-	}
-	else
-		execve(cmd->bin_path, (cmd->args + cmd->skip), shl->environ);
-	reset_cmd_vars(shl, 0);
-	clearout(shl);
-	exit(errno);
 }

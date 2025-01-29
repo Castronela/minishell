@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:49:37 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/22 05:31:41 by david            ###   ########.fr       */
+/*   Updated: 2025/01/29 00:59:43 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,31 +141,4 @@ static char	*get_var_value(t_shell *shell, char *var_name)
 	if (!var_value)
 		exit_early(shell, NULL, ERRMSG_MALLOC);
 	return (var_value);
-}
-
-void	expand_homedir_special_char(t_shell *shell, char **str)
-{
-	t_lst_str	*lst_node;
-	size_t		index;
-	char		*new_str;
-
-	new_str = NULL;
-	if (compare_strings("~", *str, 1) || compare_strings("~/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "HOME", 0, 1);
-	else if (compare_strings("~+", *str, 1) || compare_strings("~+/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "PWD", 0, 1);
-	else if (compare_strings("~-", *str, 1) || compare_strings("~-/", *str, 0))
-		lst_node = ft_find_node(shell->variables, "OLDPWD", 0, 1);
-	else
-		return ;
-	if (!lst_node || !lst_node->val)
-		return ;
-	index = 1;
-	while ((*str)[index] && (*str)[index] != '/')
-		index++;
-	if (append_to_str(&new_str, lst_node->val, -1) || append_to_str(&new_str,
-			&(*str)[index], -1))
-		exit_early(shell, NULL, ERRMSG_MALLOC);
-	free(*str);
-	*str = new_str;
 }

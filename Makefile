@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
+#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/26 23:18:05 by pamatya          ###   ########.fr        #
+#    Updated: 2025/01/29 01:01:04 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,7 @@ SRC_PARSE	= 	parser_1.c parser_2.c \
 				syntax_validation.c \
 				heredoc.c \
 				expansions.c \
+				tilde_expansion.c \
 				remove_quotes.c \
 				pipes.c \
 				cmds_lst_utils.c \

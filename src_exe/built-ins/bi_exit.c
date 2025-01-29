@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:51:13 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/01/29 01:23:22 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	mini_exit(t_shell *shl, t_cmds *cmd)
 	ret_code = 0;
 	if (cmd->args && *(cmd->args + cmd->skip + 1))
 		ret_code = set_retcode(shl, cmd);
-	reset_cmd_vars(shl, 1);
+	reset_cmd_vars(shl, 1, 1);
 	clearout(shl);
 	exit(ret_code);
 }
@@ -40,19 +40,19 @@ static int	set_retcode(t_shell *shl, t_cmds *cmd)
 	char	*arg;
 
 	arg = *(cmd->args + cmd->skip + 1);
-	if (count_pointers(cmd->args + cmd->skip) > 2)
-	{
-		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
-					"exit: too many arguments\n", NULL})) < 0)
-			exit_early(shl, NULL, ERRMSG_WRITE);
-		return (ERRCODE_GENERAL);
-	}
 	if (!is_valid_numstr(arg))
 	{
 		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, "exit: ",
 					arg, ": numeric argument required\n", NULL})) < 0)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 		return (255);
+	}
+	if (count_pointers(cmd->args + cmd->skip) > 2)
+	{
+		if ((ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL,
+					"exit: too many arguments\n", NULL})) < 0)
+			exit_early(shl, NULL, ERRMSG_WRITE);
+		return (ERRCODE_GENERAL);
 	}
 	else
 		return (ft_atoi(arg) & 0xff);

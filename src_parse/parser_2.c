@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/22 05:31:20 by david            ###   ########.fr       */
+/*   Updated: 2025/01/28 23:32:07 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 		if (!token)
 			break ;
-		if (is_control(token, 0) || is_command_sep(token, 0))
+		if (is_control(token, 0))
 		{
 			new_cmdnode->cmd_separator = token;
 			break ;
