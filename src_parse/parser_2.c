@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 20:45:23 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/28 23:32:07 by david            ###   ########.fr       */
+/*   Updated: 2025/02/01 13:03:31 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ int	init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, size_t *index_cmd)
 	{
 		ret_code = get_next_token(shell, index_cmd, &token, 1);
 		if (ret_code == 1)
+		{
+			shell->exit_code = ERRCODE_GENERAL;
 			return (1);
+		}
 		else if (ret_code == 2)
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 		if (!token)

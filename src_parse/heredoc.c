@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 15:23:48 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/15 01:43:33 by david            ###   ########.fr       */
+/*   Updated: 2025/02/01 13:04:31 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	heredoc(t_shell *shell)
 		{
 			if (write(STDOUT_FILENO, "\n", 1) < 0)
 				exit_early(shell, NULL, ERRMSG_WRITE);
+			shell->exit_code = ERRCODE_GENERAL;
 			return (1);
 		}
 		shell->heredoc_file_no++;

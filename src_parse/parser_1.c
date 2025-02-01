@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/02/01 06:22:31 by david            ###   ########.fr       */
+/*   Updated: 2025/02/01 13:04:50 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static int	open_ctr_op(t_shell *shell, t_cmds *cmd_node, size_t *index_cmd)
 		{
 			if (write(STDOUT_FILENO, "\n", 1) < 0)
 				exit_early(shell, NULL, ERRMSG_WRITE);
+			shell->exit_code = ERRCODE_GENERAL;
 			return (1);
 		}
 		skip_whitespaces(shell->cmdline, index_cmd);
