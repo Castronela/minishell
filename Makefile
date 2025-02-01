@@ -6,7 +6,7 @@
 #    By: david <david@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/01/29 01:01:04 by david            ###   ########.fr        #
+#    Updated: 2025/02/01 12:28:35 by david            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,9 @@ RM			= 	rm -rf
 D_INC		=	include
 D_LIB		=	lib
 D_OBJ		=	obj
+D_PARSE		=	src_parse
+D_EXEC		=	src_exe
+D_BUILTIN	=	$(D_EXEC)/built-ins
 
 # ----------------- Docker files ----------------- #
 
@@ -42,8 +45,7 @@ IMAGE_NAME = valgrind
 
 # ----------------- Source, Object and Dependency files ----------------- #
 
-SRC_MAIN	=	main.c test_fn.c
-# SRC_MAIN	=	test_fn.c
+SRC_MAIN	=	main.c
 SRC_PARSE	= 	parser_1.c parser_2.c \
 				tokenizer.c \
 				secondary_prompt.c \
@@ -77,7 +79,7 @@ SRC_EXE		=	initiate.c \
 				error_handlers.c \
 				tests.c
 
-VPATH		+=	src_parse src_exe src_exe/built-ins
+VPATH		+=	$(D_PARSE) $(D_EXEC) $(D_BUILTIN)
 
 SRC			=	$(SRC_MAIN) $(SRC_PARSE) $(SRC_EXE)
 OBJ 		+= 	$(addprefix $(D_OBJ)/, $(SRC:.c=.o))
@@ -143,26 +145,6 @@ BLUE 		= 	\033[34m
 all: $(NAME)
 	@echo "$(GREEN)Compilation finished$(RESET)"
 
-valgrind: $(NAME)
-	valgrind $(VALGRIND_OPTS) ./$(NAME)
-
-valgrind_n: $(NAME)
-	env -i valgrind $(VALGRIND_OPTS) ./$(NAME)
-
-# dock: $(DK_COMP)
-# 	@if [ $(shell docker images | grep -c valgrind) -eq 0 ]; then \
-#         echo "Building valgrind image..."; \
-#         docker-compose build -q; \
-#     fi
-# 	@docker-compose run --rm -build valgrind
-
-# Target to execute the dock_build.sh script and run the Docker container
-dock:
-	@docker-compose run --rm $(IMAGE_NAME)
-# @echo "Executing dock_build.sh script..."
-# @./$(DOCK_BUILD_SCRIPT)
-# @echo "Running Docker container..."
-
 $(NAME): $(OBJ)
 	@echo "Compiling minishell..."
 	@make -sC $(D_LIB)
@@ -185,20 +167,37 @@ fclean:
 
 re: fclean all
 
-# valgpt: re
-# 	@valgrind --leak-check=full --gen-suppressions=all --suppressions=<(
-# 	cat <<EOF
-# 	{
-# 	readline_leak
-# 	Memcheck:Leak
-# 	match-leak-kinds: reachable
-# 	fun:malloc
-# 	fun:xmalloc
-# 	fun:rl_malloc
-# 	fun:_rl_init_line_state
-# 	fun:readline
-# 	}
-# 	EOF
-# 	) ./$(DIR_BIN)/$(NAME)
+valgrind: $(NAME)
+	@valgrind $(VALGRIND_OPTS) ./$(NAME)
 
-.PHONY: all clean fclean re
+valgrind_n: $(NAME)
+	@env -i valgrind $(VALGRIND_OPTS) ./$(NAME)
+
+norm:
+	@/bin/bash -c 'NORM="$$(norminette main.c src_parse/*.c src_exe/*.c src_exe/built-ins/*.c include/*.h)"; \
+	IFS=$$'\''\n'\''; \
+	for i in $$NORM; do \
+		if [[ "$$j" =~ ^Error:.*$$ && ! "$$i" =~ ^Error:.*$$ ]]; then \
+			read INPUT; \
+		fi; \
+		if [[ ! "$$i" =~ .*OK! ]]; then \
+			if [[ "$$i" =~ .*Error!$$ ]]; then \
+				echo -e "$(RED)$$i$(RESET)"; \
+			else \
+				echo "$$i"; \
+			fi; \
+		else \
+			echo -e "$(GREEN)$$i$(RESET)"; \
+		fi; \
+		j="$$i"; \
+	done'
+
+format:
+	@c_formatter_42 main.c $(D_PARSE)/*.c $(D_EXEC)/*.c $(D_BUILTIN)/*.c $(D_INC)/*.h
+
+dock:
+	@docker build -t $(IMAGE_NAME) .
+	@docker-compose run --rm $(IMAGE_NAME)
+
+.PHONY: all clean fclean re valgrind valgrind_n norm format dock
+

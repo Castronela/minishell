@@ -8,5 +8,4 @@ services:
       - .:/project
     environment:
       - TERM=xterm-256color
-    user: "user"
-    command: bash -c "sudo chmod -R 777 /project && exec bash"
+      - USER=user

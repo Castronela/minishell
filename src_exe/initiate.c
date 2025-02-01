@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/29 00:04:09 by david            ###   ########.fr       */
+/*   Updated: 2025/02/01 06:22:19 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	start_shell(t_shell *shl);
 char 	*get_input(t_shell *shell, const char *prompt);
 void	clearout(t_shell *shl);
 
+static void update_history(t_shell *shell);
 // static int	skip_assignments(t_cmds *cmd);
 
 /*
@@ -76,7 +77,11 @@ void	start_shell(t_shell *shl)
 		if (!shl->cmdline)
 			break;
 		if (parser(shl))
+		{
+			update_history(shl);
 			continue ;
+		}
+		update_history(shl);
 		retokenize_args(shl, shl->cmds_lst);	
 		index_cmds(shl);
 		set_env_paths(shl);
@@ -103,6 +108,18 @@ char *get_input(t_shell *shell, const char *prompt)
 			exit_early(shell, NULL, ERRMSG_MALLOC);
 	}
 	return (input);
+}
+
+static void update_history(t_shell *shell)
+{
+	if (*shell->cmdline
+		&& compare_strings(shell->cmdline, shell->prev_cmdline, 1) < 1)
+		add_history(shell->cmdline);
+	if (shell->prev_cmdline)
+		free(shell->prev_cmdline);
+	shell->prev_cmdline = ft_strdup(shell->cmdline);
+	if (!shell->prev_cmdline)
+		exit_early(shell, NULL, ERRMSG_MALLOC);
 }
 
 /*

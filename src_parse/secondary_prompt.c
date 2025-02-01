@@ -6,7 +6,7 @@
 /*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/04 14:15:41 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/28 23:28:32 by david            ###   ########.fr       */
+/*   Updated: 2025/02/01 06:34:49 by david            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,21 @@ int	secondary_prompt(t_shell *shell, const bool prepend_nl)
 	char	*input;
 	int		fds[2];
 
-	if (prepend_nl)
-		append_to_str(&shell->cmdline, "\n", -1);
-	else
-		append_to_str(&shell->cmdline, " ", -1);
-	if (!shell->cmdline)
-		exit_early(shell, NULL, ERRMSG_MALLOC);
 	if (prep_prompt(shell, &fds, 0))
 		return (2);
 	input = prompt_read(shell, fds[0]);
 	close(fds[0]);
 	if (!input)
 		return (1);
+	if (prepend_nl)
+		append_to_str(&shell->cmdline, "\n", -1);
+	else
+		append_to_str(&shell->cmdline, " ", -1);
+	if (!shell->cmdline)
+	{
+		free(input);
+		exit_early(shell, NULL, ERRMSG_MALLOC);
+	}
 	append_to_str(&shell->cmdline, input, -1);
 	if (input)
 		free(input);
