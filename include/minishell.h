@@ -6,15 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 18:48:26 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 20:36:14 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-
-// # include "../lib/Libft/include/libft.h"
 # include "../lib/includes/libft.h"
 # include <errno.h>
 # include <stdbool.h>
@@ -46,9 +44,9 @@
 # define HD_TMP_FILE_NAME ".minishell_heredoc_"
 # define HD_TMP_FILE_EXT ".tmp"
 
-//--------------------------------------------------------------------------------------//
-//                              Recognized Meta Characters                              //
-//--------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//                          Recognized Meta Characters                        //
+//----------------------------------------------------------------------------//
 
 # define NEWLINE '\n'
 # define SPACE ' '
@@ -60,25 +58,25 @@
 # define MV_CURSOR_RIGHT "\033[2C"
 # define UNDERSCORE "_"
 
-// ---- Redirection Operators ------------------------------------------------------------
+// ---- Redirection Operators --------------------------------------------------
 
 # define RD_IN "<"				// input redirection
 # define RD_OUT ">"				// output redirection
 # define RD_OUT_A ">>"			// append output redirection
 # define RD_HD "<<"				// heredoc redirection
 
-// ---- Control Operators ----------------------------------------------------------------
+// ---- Control Operators ------------------------------------------------------
 
 # define CT_PIPE "|"			// pipe control
 # define CT_AND "&&"			// pipe control
 
-// ---- Special Parameters ---------------------------------------------------------------
+// ---- Special Parameters -----------------------------------------------------
 
 # define DOLLAR "$"
 # define QUESTION_MARK "?"
 # define POUND "#"
 
-// ---- Reserved Bash Characters ---------------------------------------------------------
+// ---- Reserved Bash Characters -----------------------------------------------
 
 # define BT '`'
 # define BN '!'
@@ -90,13 +88,13 @@
 # define BS '\\'
 # define PP '|'
 
-//--------------------------------------------------------------------------------------//
-//                                    Error Messages                                    //
-//--------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//                                Error Messages                              //
+//----------------------------------------------------------------------------//
 
 # define ERSHL "\033[31mminishell: \033[0m"
 
-// ---- Function Error Message -----------------------------------------------------------
+// ---- Function Error Message -------------------------------------------------
 
 # define ERRMSG_MALLOC "Error malloc"
 # define ERRMSG_PIPE "Error pipe"
@@ -115,62 +113,62 @@
 # define ERRMSG_TCGETATTR "Error tcgetattr"
 # define ERRMSG_TCSETATTR "Error tcsetattr"
 
-// ---- Heredoc Error Messages -----------------------------------------------------------
+// ---- Heredoc Error Messages -------------------------------------------------
 
 # define HD_ACCESS_DIR_TMP_FILE "cannot access directory for here-document temp\
 file"
 # define HD_CREATE_TMP_FILE "cannot create temp file for here-document"
 
-// ---- Built-in Error Message -----------------------------------------------------------
+// ---- Built-in Error Message -------------------------------------------------
 
 # define ERRMSG_CD "cd: "
 # define ERRMSG_NO_VALID_IDENT "\': not a valid identifier\n"
 # define ERRMSG_PATH_IS_DIR ": Is a directory\n"
 
-// ---- External Error Message -----------------------------------------------------------
+// ---- External Error Message -------------------------------------------------
 
 # define ERRMSG_CMD_NOT_FOUND ": command not found\n"
 
-// ---- Syntax Error Message -------------------------------------------------------------
+// ---- Syntax Error Message ---------------------------------------------------
 
 # define SYNTX_UNEXP_EOF "syntax error: unexpected end of file"
 # define SYNTX_UNEXP_EOF_MATCH "unexpected EOF while looking for matching `"
 # define SYNTX_UNEXP_TOKEN "syntax error near unexpected token `"
 
-//--------------------------------------------------------------------------------------//
-//                                     Error Codes                                      //
-//--------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//                                Error Codes                                 //
+//----------------------------------------------------------------------------//
 
-# define ERRCODE_GENERAL 1          		// General error
-# define ERRCODE_BUILT_IN 2         		// Error in a built-in command
-# define ERRCODE_CMD_CNOT_EXEC 126  		// Command found but is not executable
-# define ERRCODE_CMD_OR_FILE_NOT_FOUND 127  // Command not found
+# define ERRCODE_GENERAL 1
+# define ERRCODE_BUILT_IN 2
+# define ERRCODE_CMD_CNOT_EXEC 126
+# define ERRCODE_CMD_OR_FILE_NOT_FOUND 127
 
-//--------------------------------------------------------------------------------------//
-//                                   Type Definitions                                   //
-//--------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//                              Type Definitions                              //
+//----------------------------------------------------------------------------//
 
 typedef struct s_lst_str
 {
-	char				*key;		// Field introduced to replace str field, which will store the whole variable and value in case of shl->env, but will store these variables as key-value pair in separate fields for shl->variables.
-	char				*val;		// This field will store the values of the variables whose names are stored by key. In case of shl->env and shl->env_paths, this field should be defaulted to NULL. This separation is done for easy extraction of variables as well as storage of other variables as users make them in the minishell.
-    struct s_lst_str	*prev;
-    struct s_lst_str	*next;
-}   t_lst_str;
+	char				*key;
+	char				*val;
+	struct s_lst_str	*prev;
+	struct s_lst_str	*next;
+}	t_lst_str;
 
 typedef struct s_cmds
 {
-	int				cmd_index;		// Field to indicate the index of the external command; should default to 0, but tagged from 1 for first command and so on...
-	int				exc_index;		// Field to indicate the index of the external command; should default to 0 if command is built-in
-	int				lvar_assignment;// Field to indicate that this is a local variable assignment
+	int				cmd_index;
+	int				exc_index;
+	int				lvar_assignment;
 	int				skip;
-	char			*bin_path;		// Should be constructed by looking for valid path and combining with the command call
-	char			**args;			// Double char pointer to the whole command call including command its flags and its args
+	char			*bin_path;
+	char			**args;
 	int				arg_count;
-	int				fd_in;			// Defaults to STDINFILENO
-	int				fd_out;			// Defaults to STDOUTFILENO
+	int				fd_in;
+	int				fd_out;
 	t_lst_str		*redirs;
-	char			*cmd_separator;	// Control operator (specifies interaction between current and succeeding command)
+	char			*cmd_separator;
 	int				fd_cls;
 	pid_t			pid;
 	int				exit_code;
@@ -183,45 +181,43 @@ typedef struct s_shell
 	int			ac;
 	char		**av;
 	int			stdio[2];
-	char		**environ;			// Copy of **envp, as required by execve fn
+	char		**environ;
 	char		**env_paths;
-	t_lst_str	*variables;			// Stores a backup of the env variables from the calling shell
-	t_lst_str	*local_vars;		// Stores only local variables
-	int			shlvl;				// Stores the current shell level
+	t_lst_str	*variables;
+	t_lst_str	*local_vars;
+	int			shlvl;
 	char		*home_dir;
 	char		*owd;
-	char		*cwd;			// Stores the current working directory
-	char		*prompt;			// Stores the prompt string for the minishell
+	char		*cwd;
+	char		*prompt;
 
-	//	Cmd vars; will be reset on every new command prompt
-	// pid_t		*pid;				// This stores the pid of all the processes forked during execution
-	int			total_cmds;			// Stores the total number of commands received from a command-line input
-	char		*prev_cmdline;			// Stores the command line input from the user
-	char		*cmdline;			// Stores the command line input from the user
-	char		open_qt;			// Stores any existing open quote or 0 if none exist or all quotes are closed
-	t_cmds		*cmds_lst;			// Stores all commands and their systemetized info about related pipes and redirections, all parsed from the command line input
+	int			total_cmds;
+	char		*prev_cmdline;
+	char		*cmdline;
+	char		open_qt;
+	t_cmds		*cmds_lst;
 	int			heredoc_file_no;
 	int			tmp_file_fd;
-	int			exit_code_prev;		// Stores the exit code from the last executed command
-	int			exit_code;			// Stores the exit code from current command
+	int			exit_code_prev;
+	int			exit_code;
 }	t_shell;
 
-//--------------------------------------------------------------------------------------//
-//                                 Function Prototypes                                  //
-//--------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//                            Function Prototypes                             //
+//----------------------------------------------------------------------------//
 
-// int			main(int ac, char **av, char **envp);
+int			main(int ac, char **av, char **envp);
 
-/* ============================== src_exe/... ============================== */
+/* =============================== src_exe/... ============================== */
 
 /* ------------------------------- initiate.c ------------------------------- */
 
+void		init_shell(t_shell *shl, int ac, char **av, char **envp);
 void		start_shell(t_shell *shl);
-char 		*get_input(t_shell *shell, const char *prompt);
-void 		init_shell(t_shell *shl, int ac, char **av, char **envp);
-void		clearout(t_shell *shl);;
+char		*get_input(t_shell *shell, const char *prompt);
+void		clearout(t_shell *shl);
 
-/* ------------------------------ initialize.c ------------------------------ */
+/* --------------------------- initializations.c ---------------------------- */
 
 void		init_environ_variables(t_shell *shl, char **envp);
 void		update_shlvl(t_shell *shl);
@@ -240,32 +236,25 @@ void		exec_built_in(t_shell *shl, t_cmds *cmd);
 void		exec_pipeline(t_shell *shl, t_cmds *cmd);
 void		exec_var_assignments(t_shell *shl, t_cmds *cmd);
 
-/* ------------------------------ child_fns.c ------------------------------ */
+/* ------------------------------- child_fns.c ------------------------------ */
 
 void		handle_child_exit(t_shell *shl, t_cmds *cmd);
 void		exec_child(t_shell *shl, t_cmds *cmd);
 
 /* ----------------------------- redirections.c ----------------------------- */
 
-int 		set_redirs(t_shell *shl, t_cmds *cmd);
+int			set_redirs(t_shell *shl, t_cmds *cmd);
 int			dup_std_fds(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 int			ft_close(int fd);
 
 /* ------------------------------- binaries.c ------------------------------- */
 
-void 		set_binaries(t_shell *shl, t_cmds *cmd);
+void		set_binaries(t_shell *shl, t_cmds *cmd);
 void		set_env_paths(t_shell *shl);
 int			is_path(const t_cmds *cmd);
 
-/* ------------------------------ utils_4.c ------------------------------ */
-
-void		restore_std_fds(t_shell *shl);
-int			path_is_dir(char *path);
-int			is_valid_name(char *arg, int *i);
-int			get_append_flag(int check);
-
-/* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
+/* -------------- src_exe/built_ins.c and src_exe/built_ins/.c -------------- */
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
 void		mini_echo(t_cmds *cmd);
@@ -275,46 +264,46 @@ int			mini_export(t_shell *shl, t_cmds *cmd);
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
-/* ------------------------------ env_utils.c ------------------------------ */
-
-void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name, char *val);
-void		add_to_environ(t_shell *shl, char *var, int	append);
-void		store_as_variable(t_shell *shl, char *var, int append);
-
-/* ------------------------------ env_utils.c ------------------------------ */
+/* ------------------------------- env_utils.c ------------------------------ */
 
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
-void		store_local_variable(t_shell *shl, char *var, int append);
 char		*get_var_component(t_shell *shl, char *arg, int what);
-// void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
+void		update_env_var(t_shell *shl, t_cmds *cmd, char *var_name,
+				char *val);
 
-/* ----------------------------- stirng_utils.c ----------------------------- */
+/* ----------------------- variables and environment.c ---------------------- */
+
+void		add_to_environ(t_shell *shl, char *var, int append);
+void		store_as_variable(t_shell *shl, char *var, int append);
+void		store_local_variable(t_shell *shl, char *var, int append);
+
+/* ----------------------------- stirng_utils*.c ---------------------------- */
 
 int			compare_strings(const char *str, const char *field, int exact);
-char		**find_string_addr(t_shell *shl, char *str, int	n, int add_eq);
+char		**find_string_addr(t_shell *shl, char *str, int n, int add_eq);
 int			find_dptr_index(t_shell *shl, char *str, int n);
 int			count_pointers(char **dp);
 size_t		var_offset(char *str, int skip_separator);
-
-/* ----------------------------- stirng_utils.c ----------------------------- */
-
 char		*concat_strings(const char *str[]);
 
-/* ----------------------------- lst_str_fns.c ----------------------------- */
+/* ----------------------------- lst_str_fns*.c ----------------------------- */
 
 t_lst_str	*ft_lst_new(char *key, char *val);
 t_lst_str	*ft_lst_last(t_lst_str *list);
 void		ft_lst_addback(t_lst_str **root, t_lst_str *new);
 int			ft_lst_size(t_lst_str *root);
 void		ft_lst_free(t_lst_str **root);
-
-/* ---------------------------- lst_str_fns_2.c ---------------------------- */
-
-// void		ft_swap_nodes(t_lst_str **root, t_lst_str *n1, t_lst_str *n2);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 void		ft_del_node(t_lst_str **node);
+
+/* -------------------------------- utils_4.c ------------------------------- */
+
+void		restore_std_fds(t_shell *shl);
+int			path_is_dir(char *path);
+int			is_valid_name(char *arg, int *i);
+int			get_append_flag(int check);
 
 /* ---------------------------- error_handlers.c ---------------------------- */
 
@@ -326,22 +315,22 @@ void		exit_early2(t_shell *shl, char **double_ptr, char *s_ptr,
 /* ============================= src_parse/... ============================= */
 
 int			parser(t_shell *shell);
-int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode, 
-			size_t *index_cmd);
-void 		retokenize_args(t_shell *shell, t_cmds *cmd);
-void 		map_args(t_shell *shell, t_cmds *cmd, 
-			void (*func)(t_shell *, char **));
+int			init_cmd_lst(t_shell *shell, t_cmds *new_cmdnode,
+				size_t *index_cmd);
+void		retokenize_args(t_shell *shell, t_cmds *cmd);
+void		map_args(t_shell *shell, t_cmds *cmd,
+				void (*func)(t_shell *, char **));
 
 /* ------------------------------- Tokenizer ------------------------------- */
 
 int			get_next_token(t_shell *shell, size_t *index_cmd, char **token,
-			const int do_complex);
+				const int do_complex);
 
 /* -------------------------- Secondary prompting -------------------------- */
 
 int			secondary_prompt(t_shell *shell, const bool prepend_nl);
-int			prep_prompt(t_shell *shell, int (*hd_pipe)[2], 
-			const bool append_nl);
+int			prep_prompt(t_shell *shell, int (*hd_pipe)[2],
+				const bool append_nl);
 char		*prompt_read(t_shell *shell, int fd_read);
 
 /* ---------------------------- Syntax Checker ---------------------------- */
@@ -353,13 +342,13 @@ bool		is_redir_target_valid(t_shell *shell, const char *redir_target);
 
 /* -------------------------------- Heredoc -------------------------------- */
 
-int 		heredoc(t_shell *shell);
+int			heredoc(t_shell *shell);
 
 /* -------------------------- Cmds list functions -------------------------- */
 
 t_cmds		*lst_cmds_newnode(t_shell *shell);
 void		lst_cmds_addback(t_shell *shell, t_cmds *new_cmdnode);
-void 		lst_cmds_freelst(t_shell *shell);
+void		lst_cmds_freelst(t_shell *shell);
 
 /* -------------------------- Remove closed quotes -------------------------- */
 
@@ -368,7 +357,7 @@ size_t		count_closed_quotes(char *str);
 
 /* --------------------------- Variable expansion --------------------------- */
 
-void 		var_expansion(t_shell *shell, char **str);
+void		var_expansion(t_shell *shell, char **str);
 void		expand_homedir_special_char(t_shell *shell, char **str);
 
 /* ------------------------------- Pipe Setup ------------------------------- */
@@ -382,29 +371,30 @@ void		tty_echo_sig(t_shell *shell, const bool echo);
 
 /* --------------------------------- Utils ---------------------------------- */
 
-bool	 	is_quote(const char c);
+bool		is_quote(const char c);
 int			ft_fprintf_str(const int fd, const char *str[]);
 int			cursor_mv_back(const int fd);
-int 		is_whitesp(const char c);
-void 		skip_whitespaces(const char *str, size_t *index);
-bool 		is_redir(const char *str, const size_t index);
-bool 		is_control(const char *str, const size_t index);
-bool 		is_special_param(const char *str, const size_t index);
-size_t 		find_longest_match_length(const char *str, const char *pattern[]);
-void		reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline);
-int 		open_hd_tmp_file(t_shell *shell, t_lst_str *node);
+int			is_whitesp(const char c);
+void		skip_whitespaces(const char *str, size_t *index);
+bool		is_redir(const char *str, const size_t index);
+bool		is_control(const char *str, const size_t index);
+bool		is_special_param(const char *str, const size_t index);
+size_t		find_longest_match_length(const char *str, const char *pattern[]);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp,
+				const int free_prev_cmdline);
+int			open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			append_to_str(char **str, char *append, int append_len);
 
 /* ----------------------------- Test functions ----------------------------- */
 
 void		test_by_print(t_shell *shl);
 void		ft_print_lst(t_lst_str *root);
-void 		test_print_cmdlst(t_shell *shell, int spacing);
+void		test_print_cmdlst(t_shell *shell, int spacing);
 void		test_print_1cmd(t_shell *shell, t_cmds *cmd_node, int spacing);
-void 		test_free_cmds(t_shell *shell);
-void 		test_var_exp(char **envp);
-void 		test_remove_quotes(void);
-void 		test_print_envariables(t_shell *shell);
+void		test_free_cmds(t_shell *shell);
+void		test_var_exp(char **envp);
+void		test_remove_quotes(void);
+void		test_print_envariables(t_shell *shell);
 
 /* ======================== End Function Prototypes ======================== */
 

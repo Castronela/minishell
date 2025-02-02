@@ -6,14 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 13:55:41 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 13:31:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 20:15:34 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void		add_to_environ(t_shell *shl, char *var, int append);
-
 static void	add_append_ifvar_null(t_shell *shl, char *var, t_lst_str *lvar_node,
 				int append);
 static void	update_append_ifvar_exists(t_shell *shl, char *var, char **dp,

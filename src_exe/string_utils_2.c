@@ -6,11 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:48:40 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 16:04:52 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 20:19:04 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+char	*concat_strings(const char *str[]);
 
 /*
 Function to malloc a total string by combining all the strings provided
