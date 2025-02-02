@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 17:44:42 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 18:48:26 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,8 +189,8 @@ typedef struct s_shell
 	t_lst_str	*local_vars;		// Stores only local variables
 	int			shlvl;				// Stores the current shell level
 	char		*home_dir;
-	char		*old_wd;
-	char		*cur_wd;			// Stores the current working directory
+	char		*owd;
+	char		*cwd;			// Stores the current working directory
 	char		*prompt;			// Stores the prompt string for the minishell
 
 	//	Cmd vars; will be reset on every new command prompt

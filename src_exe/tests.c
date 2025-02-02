@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 17:53:52 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 18:48:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	ft_print_lst(t_lst_str *root)
 
 // static void	print_cwd(t_shell *shl)
 // {
-// 	ft_printf("cwd: %s\n", shl->cur_wd);
+// 	ft_printf("cwd: %s\n", shl->cwd);
 // 	write(1, "\n", 1);
 // 	write(1, "\n", 1);
 // }

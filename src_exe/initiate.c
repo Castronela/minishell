@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 15:36:10 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 18:48:56 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 	}
 	init_environ_variables(shl, envp);
 	update_shlvl(shl);
-	shl->cur_wd = getcwd(NULL, 0);
-	if (!shl->cur_wd)
+	shl->cwd = getcwd(NULL, 0);
+	if (!shl->cwd)
 		exit_early(shl, NULL, "getcwd");
 	set_prompt(shl, "<< ", " >> % ");
 }
@@ -136,10 +136,10 @@ void	clearout(t_shell *shl)
 		ft_lst_free(&shl->local_vars);
 	if (shl->home_dir != NULL)
 		ft_free_safe((void **)(&(shl->home_dir)));
-	if (shl->old_wd != NULL)
-		ft_free_safe((void **)(&(shl->old_wd)));
-	if (shl->cur_wd != NULL)
-		ft_free_safe((void **)(&(shl->cur_wd)));
+	if (shl->owd != NULL)
+		ft_free_safe((void **)(&(shl->owd)));
+	if (shl->cwd != NULL)
+		ft_free_safe((void **)(&(shl->cwd)));
 	if (shl->prompt != NULL)
 		ft_free_safe((void **)(&(shl->prompt)));
 	rl_clear_history();

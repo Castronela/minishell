@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 03:40:07 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 14:50:49 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 18:48:37 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ void	set_prompt(t_shell *shl, char *prefix, char *separator)
 	char	**split;
 	int		i;
 
-	split = ft_split(shl->cur_wd, '/');
+	split = ft_split(shl->cwd, '/');
 	if (!split)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
 	i = -1;
@@ -149,7 +149,7 @@ void	set_prompt(t_shell *shl, char *prefix, char *separator)
 		}
 	}
 	if (split[0] == NULL)
-		shl->prompt = assemble_prompt(prefix, shl->cur_wd, separator);
+		shl->prompt = assemble_prompt(prefix, shl->cwd, separator);
 	ft_free2d(split);
 }
 

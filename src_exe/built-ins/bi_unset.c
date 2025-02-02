@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 12:49:11 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 19:22:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,11 @@ static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg,
 		remove_from_environ(shl, arg);
 		remove_variable(shl, arg);
 		checks[2] = 1;
+		if (compare_strings(arg, "OLDPWD", 1) == 1)
+		{
+			free(shl->owd);
+			shl->owd = NULL;
+		}
 	}
 	if (checks[0] == 2)
 		checks[2] = 1;
