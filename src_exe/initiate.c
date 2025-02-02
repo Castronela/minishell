@@ -3,22 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   initiate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 21:46:09 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/01 06:22:19 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 15:36:10 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void 	init_shell(t_shell *shl, int ac, char **av, char **envp);
-void	start_shell(t_shell *shl);
-char 	*get_input(t_shell *shell, const char *prompt);
-void	clearout(t_shell *shl);
+void		init_shell(t_shell *shl, int ac, char **av, char **envp);
+void		start_shell(t_shell *shl);
+char		*get_input(t_shell *shell, const char *prompt);
+void		clearout(t_shell *shl);
 
-static void update_history(t_shell *shell);
-// static int	skip_assignments(t_cmds *cmd);
+static void	update_history(t_shell *shell);
 
 /*
 Initializes the elements of the shell struct "t_shell"
@@ -28,14 +27,10 @@ Initializes the elements of the shell struct "t_shell"
   - Sets the current working directory
   - Sets the prompt
   - Frees all malloc's and exits the program if any of the above steps fail
-
-!!! Need to look into update_shlvl for leaks and other potential problems
--->>	Potentially totally fixed. Haven't checked with valgrind yet.
--->>	No issues with valgrind so far
 */
 void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 {
-	*shl = (t_shell) {
+	*shl = (t_shell){
 		.ac = ac,
 		.av = av,
 		.stdio[0] = dup(STDIN_FILENO),
@@ -61,12 +56,9 @@ void	init_shell(t_shell *shl, int ac, char **av, char **envp)
 
 /*
 Function to start shell execution
-
-!!!	Confirm the annotation on the break condition (on the presence of break 
-	statement)
 */
 void	start_shell(t_shell *shl)
-{	
+{
 	while (1)
 	{
 		shl->exit_code_prev = shl->exit_code;
@@ -75,14 +67,14 @@ void	start_shell(t_shell *shl)
 		tty_echo_sig(shl, false);
 		shl->cmdline = get_input(shl, shl->prompt);
 		if (!shl->cmdline)
-			break;
+			break ;
 		if (parser(shl))
 		{
 			update_history(shl);
 			continue ;
 		}
 		update_history(shl);
-		retokenize_args(shl, shl->cmds_lst);	
+		retokenize_args(shl, shl->cmds_lst);
 		index_cmds(shl);
 		set_env_paths(shl);
 		if (shl->cmds_lst)
@@ -90,11 +82,11 @@ void	start_shell(t_shell *shl)
 	}
 }
 
-char *get_input(t_shell *shell, const char *prompt)
+char	*get_input(t_shell *shell, const char *prompt)
 {
-	char *input;
-	char *line;
-	
+	char	*input;
+	char	*line;
+
 	if (isatty(STDIN_FILENO))
 		input = readline(prompt);
 	else
@@ -110,7 +102,7 @@ char *get_input(t_shell *shell, const char *prompt)
 	return (input);
 }
 
-static void update_history(t_shell *shell)
+static void	update_history(t_shell *shell)
 {
 	if (*shell->cmdline
 		&& compare_strings(shell->cmdline, shell->prev_cmdline, 1) < 1)

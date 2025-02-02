@@ -6,46 +6,16 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 21:10:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 15:38:21 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void		ft_swap_nodes(t_lst_str **root, t_lst_str *e1, t_lst_str *e2);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_remove_node(t_lst_str **root, t_lst_str **node);
 void		ft_del_node(t_lst_str **node);
-
-// Function to swap the position of two nodes in the linked list
-void	ft_swap_nodes(t_lst_str **root, t_lst_str *e1, t_lst_str *e2)
-{
-	t_lst_str	*pen1[2];
-	t_lst_str	*pen2[2];
-	
-	pen1[0] = e1->prev;
-	pen1[1] = e1->next;
-	pen2[0] = e2->prev;
-	pen2[1] = e2->next;;
-	if (!e1->prev)
-		*root = e2;
-	else if (!e2->prev)
-		*root = e1;
-
-	if (pen1[0] && pen1[0] != e2)
-		pen1[0]->next = e2;
-	if (pen1[1] && pen1[1] != e2)
-		pen1[1]->prev = e2;
-	if (pen2[0] && pen2[0] != e1)
-		pen2[0]->next = e1;
-	if (pen2[1] && pen2[1] != e1)
-		pen2[1]->prev = e1;
-	e1->prev = e2->prev;
-	e1->next = e2->next;
-	e2->prev = pen1[0];
-	e2->next = pen1[1];
-}
 
 /*
 Function to search through the linked list using provided str and return
@@ -57,7 +27,8 @@ the pointer to that node
   - The toggle 'mod' can be either 0 or 1. 1 means exact search, and if mod is 0
 	then it searches for the 'str' in the specified field of list even if the
 	field is a larger string than 'str'. The function uses compare_strings to
-	find the node so the 'mod' toggle is fed as the 'exact' parameter for that fn.
+	find the node so the 'mod' toggle is fed as the 'exact' parameter for that
+	fn.
   - Returns NULL if a match isn't found in the list
 */
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
@@ -74,7 +45,7 @@ t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod)
 		else if (searchfield == 1)
 		{
 			if (compare_strings(str, list->val, mod))
-				return (list);	
+				return (list);
 		}
 		list = list->next;
 	}
@@ -101,20 +72,20 @@ of the old node
 */
 void	ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new)
 {
-	if (!(*old)->prev && !(*old)->next)		// Case 1: is first & last node
+	if (!(*old)->prev && !(*old)->next)
 		shl->variables = new;
-	else if (!(*old)->prev && (*old)->next)	// Case 2: first node of many
+	else if (!(*old)->prev && (*old)->next)
 	{
 		shl->variables = new;
 		(*old)->next->prev = new;
 		new->next = (*old)->next;
 	}
-	else if ((*old)->prev && !(*old)->next)	// Case 2: is last node of many
+	else if ((*old)->prev && !(*old)->next)
 	{
 		(*old)->prev->next = new;
 		new->prev = (*old)->prev;
 	}
-	else									// Case 3: is middle node
+	else
 	{
 		(*old)->prev->next = new;
 		(*old)->next->prev = new;
@@ -136,18 +107,18 @@ void	ft_remove_node(t_lst_str **root, t_lst_str **node)
 {
 	if (!root || !*root || !node)
 		return ;
-	if (!(*node)->prev && !(*node)->next)			// Case 1: is first & only node
+	if (!(*node)->prev && !(*node)->next)
 		ft_lst_free(root);
 	else
 	{
-		if (!(*node)->prev && (*node)->next)		// Case 2: first node of many
+		if (!(*node)->prev && (*node)->next)
 		{
 			(*node)->next->prev = NULL;
 			*root = (*node)->next;
 		}
-		else if ((*node)->prev && !(*node)->next)	// Case 2: is last node
+		else if ((*node)->prev && !(*node)->next)
 			(*node)->prev->next = NULL;
-		else										// Case 3: is middle node
+		else
 		{
 			(*node)->prev->next = (*node)->next;
 			(*node)->next->prev = (*node)->prev;
@@ -171,7 +142,6 @@ Function to delete a single node in the list of t_lst_str type:
 */
 void	ft_del_node(t_lst_str **node)
 {
-	// if (!node || !*node)
 	if (!*node)
 		return ;
 	if ((*node)->key)

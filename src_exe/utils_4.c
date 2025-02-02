@@ -6,16 +6,16 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:48 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 15:53:22 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 17:46:02 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void	restore_std_fds(t_shell *shl);
-int		is_bash_reserved(char c);
-// void	create_pids(t_shell *shl);
-// int	get_total_cmds(t_shell *shl, int which);
+int		path_is_dir(char *path);
+int		is_valid_name(char *arg, int *i);
+int		get_append_flag(int check);
 
 /*
 Function to restore the STDIN_FILENO and STDOUT_FILENO to point to the terminal
@@ -29,60 +29,80 @@ void	restore_std_fds(t_shell *shl)
 }
 
 /*
-Function to check whether the char parameter is a bash-reserved character
-  - Checks the character c within the array of special characters defined in the
-	header file as bash-reserved characters using ft_strchr()
-  - Returns 0 if the character is not found within the array
-  - Returns 1 if the character is found within the array
+Function to check whether the given path is a valid path or not
+  - Returns 1 if it is a valid path
+  - Returns 0 if the path is invalid, or if the path results in a file
 */
-int	is_bash_reserved(char c)
+int	path_is_dir(char *path)
 {
-	if (ft_strchr((const char []){BT, BN, DL, AD, SC, PO, PC, SQ, DQ, BS, PP, 
-			'\0'}, (unsigned int)c) == NULL)
+	int			i;
+	struct stat	bufr;
+
+	i = stat(path, &bufr);
+	if (i < 0)
 		return (0);
-	return (1);
+	else if (i == 0)
+	{
+		if (S_ISREG(bufr.st_mode))
+			return (0);
+		else if (S_ISDIR(bufr.st_mode))
+			return (1);
+	}
+	return (0);
 }
 
-// /*
-// Function to malloc a pid_t pointer for the required number of pids
-// */
-// void	create_pids(t_shell *shl)
-// {
-// 	int	total_ext;
+/*
+Function to get the append flag for type of append to be performed
+*/
+int	get_append_flag(int check)
+{
+	int	append;
 
-// 	total_ext = get_total_cmds(shl, 0);
-// 	shl->pid = malloc(total_ext * sizeof(pid_t));
-// 	if (!shl->pid)
-// 		exit_early(shl, NULL, "PID malloc failed");
-// }
+	append = 0;
+	if (check == 0)
+		append = -1;
+	else if (check == 1)
+		append = 0;
+	else if (check == 3)
+		append = 1;
+	return (append);
+}
 
 /*
-Function to get the total number of commands
-  - Does so by fetching the cmd_index or exc_index of the last command in the list
-  - Does not recount the indices
-  - If 'which' is 0, returns total number of (internal + external) commands
-  - If 'which' is 1, return total number of external commands only
-  - Returns -1 for any other value of 'which'
-// */
-// int	get_total_cmds(t_shell *shl, int which)
-// {
-// 	int		total;
-// 	t_cmds	*cmd;
+Function to check whether variable name is valid
+  - chex if the name starts with alphabet or '_', and that the characters
+	following that are alphanumeric
+  - Returns 1 if the name is valid
+  - Returns 0 if no '=' sign is found in the argument
+  - Returns -n if the nth char in the var_name string is found to be invalid
+  - Returns 2 if the variable name is just "_"
+  - Used fns: ft_isalpha(), ft_isalnum()
+*/
+int	is_valid_name(char *arg, int *i)
+{
+	int	*index;
+	int	local_i;
 
-// 	total = 0;
-// 	cmd = shl->cmds_lst;
-// 	while (cmd)
-// 	{
-// 		if (which == 0)
-// 				total = cmd->cmd_index;
-// 		else if (which == 1)
-// 		{
-// 			if (total < cmd->exc_index)
-// 				total = cmd->exc_index;
-// 		}
-// 		else
-// 			return (-1);
-// 		cmd = cmd->next;
-// 	}
-// 	return (total);
-// }
+	local_i = 0;
+	if (i != NULL)
+		index = i;
+	else
+		index = &local_i;
+	if (arg[0] == '=')
+		return (-1);
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
+		return (-1);
+	if ((arg[0] == '_' && arg[1] == '=')
+		|| (arg[0] == '_' && arg[1] == '+' && arg[2] == '='))
+		return (2);
+	while (arg[++(*index)])
+	{
+		if (arg[*index] == '=')
+			return (++(*index), 1);
+		if (arg[*index] == '+' && arg[*index + 1] == '=')
+			return (*index = *index + 2, 3);
+		if (!ft_isalnum(arg[*index]) && arg[*index] != '_')
+			return (-1 * (*index));
+	}
+	return (0);
+}

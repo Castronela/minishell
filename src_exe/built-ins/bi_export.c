@@ -3,27 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   bi_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:28 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/29 00:14:19 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 14:39:08 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-int			mini_export(t_shell *shl, t_cmds *cmd);
-int			is_valid_name(char *arg, int *i);
-int			get_append_flag(int check);
+int					mini_export(t_shell *shl, t_cmds *cmd);
 
-static void	print_quoted_env(t_shell *shl);
-static int	check_and_export_arg(t_shell *shl, char *arg, int *chex);
-static int	is_valid_val(char *arg, int *i);
-// static void	add_update_envar(t_shell *shl, char *arg, int *chex);
-
-// static t_lst_str	*get_next_lexico_var(t_shell *shl, t_lst_str *prev);
-// static t_lst_str	*get_next_var_alphabetically(t_shell *shl, t_lst_str *prev);
-static t_lst_str *get_next_var_alphabetically(t_shell *shl, t_lst_str *prev);
+static void			print_quoted_env(t_shell *shl);
+static int			check_and_export_arg(t_shell *shl, char *arg, int *chex);
+static int			is_valid_val(char *arg, int *i);
+static t_lst_str	*get_next_var_alphabetically(t_shell *shl, t_lst_str *prev);
 
 /*
 Function for built-in export function
@@ -73,82 +67,42 @@ static void	print_quoted_env(t_shell *shl)
 	{
 		vr = get_next_var_alphabetically(shl, vr);
 		if (!vr)
-			break;
+			break ;
 		if (!compare_strings(vr->key, "_", 1) && !vr->val)
 		{
-			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ", 
+			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ",
 					vr->key, "\n", NULL}) == 1)
 				exit_early(shl, NULL, ERRMSG_WRITE);
 		}
 		else if (!compare_strings(vr->key, "_", 1))
 		{
-			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ", 
+			if (ft_fprintf_str(STDOUT_FILENO, (const char *[]){"declare -x ",
 					vr->key, "=\"", vr->val, "\"\n", NULL}) == 1)
-				exit_early(shl, NULL, ERRMSG_WRITE);	
+				exit_early(shl, NULL, ERRMSG_WRITE);
 		}
 	}
 }
 
-// static t_lst_str	*get_next_lexico_var(t_shell *shl, t_lst_str *prev)
-// {
-// 	t_lst_str	*node;
-// 	t_lst_str	*next;
-
-// 	next = NULL;
-// 	node = shl->variables;
-// 	while (node)
-// 	{
-// 		// if (node->key && (!prev || ft_strcmp(node->key, prev->key) > 0)
-// 		// 		&& (!next || ft_strcmp(node->key, next->key) < 0))
-// 		if (node->key && (!prev || ft_strncmp(node->key, prev->key,
-// 				ft_strlen(prev->key) + 1) > 0) && (!next ||
-// 				ft_strncmp(node->key, next->key, ft_strlen(node->key) + 1) < 0))
-// 			next = node;
-// 		node = node->next;
-// 	}
-// 	return (next);
-// }
-
-// static t_lst_str	*get_next_var_alphabetically(t_shell *shl, t_lst_str *prev)
-// {
-// 	t_lst_str	*node;
-// 	t_lst_str	*next;
-
-// 	next = NULL;
-// 	node = shl->variables;
-// 	while (node)
-// 	{
-// 		// if (node->key && (!prev || ft_strcmp(node->key, prev->key) > 0)
-// 		// 		&& (!next || ft_strcmp(node->key, next->key) < 0))
-// 		if (node->key && (!prev || ft_strncmp(node->key, prev->key,
-// 				ft_strlen(prev->key) + 1) > 0) && (!next ||
-// 				ft_strncmp(node->key, next->key, ft_strlen(node->key) + 1) < 0))
-// 			next = node;
-// 		node = node->next;
-// 	}
-// 	return (next);
-// }
-
-static t_lst_str *get_next_var_alphabetically(t_shell *shl, t_lst_str *prev)
+static t_lst_str	*get_next_var_alphabetically(t_shell *shl, t_lst_str *prev)
 {
-    t_lst_str *node;
-    t_lst_str *next;
+	t_lst_str	*node;
+	t_lst_str	*next;
 
 	next = NULL;
-    node = shl->variables;
-    while (node)
-    {
-        if (node->key
-            && (!prev 
-			|| ft_strncmp(node->key, prev->key, ft_strlen(prev->key) + 1) > 0)
-            && (!next 
-			|| ft_strncmp(node->key, next->key, ft_strlen(node->key) + 1) < 0))
-        {
-            next = node;
-        }
-        node = node->next;
-    }
-    return next;
+	node = shl->variables;
+	while (node)
+	{
+		if (node->key
+			&& (!prev || ft_strncmp(node->key, prev->key,
+					ft_strlen(prev->key) + 1) > 0) && (!next
+				|| ft_strncmp(node->key, next->key,
+					ft_strlen(node->key) + 1) < 0))
+		{
+			next = node;
+		}
+		node = node->next;
+	}
+	return (next);
 }
 
 /*
@@ -170,10 +124,8 @@ static int	check_and_export_arg(t_shell *shl, char *arg, int *chex)
 			exit_early(shl, NULL, ERRMSG_WRITE);
 		return (1);
 	}
-	// if (chex[0] >= 0 && chex[0] != 2 && chex[1] == 1)
 	if (chex[0] >= 0 && chex[0] != 2 && chex[1] >= 0)
 	{
-		// add_update_envar(shl, arg, chex);
 		append = get_append_flag(chex[0]);
 		add_to_environ(shl, arg, append);
 		store_as_variable(shl, arg, append);
@@ -181,85 +133,6 @@ static int	check_and_export_arg(t_shell *shl, char *arg, int *chex)
 	}
 	if (chex[0] == 2)
 		chex[2] = 1;
-	return (0);
-}
-
-// /*
-// Static helper function for check_and_export_arg() fn that adds or appends a
-// variable to shl->variables and/or shl->environ depending on the values of chex
-// 	chex[1] == 0 -->> only add to variables (for lack of '=' char in var. name)
-// 	chex[0] == 0 -->> append = -1 :	NULL the node->val
-// 	chex[0] == 1 -->> append =  0 :	only add, do not append
-// 	chex[0] == 3 -->> append =  1 :	append to the variable
-// */
-// static void	add_update_envar(t_shell *shl, char *arg, int *chex)
-// {
-// 	int	append;
-
-// 	append = 0;
-// 	if (chex[0] == 0)
-// 		append = -1;
-// 	else if (chex[0] == 1)
-// 		append = 0;
-// 	else if (chex[0] == 3)
-// 		append = 1;
-// 	// if (chex[1] == 1 && chex[0] != 0)
-// 	// if (chex[1] >= 0)
-// 	add_to_environ(shl, arg, append);
-// 	store_as_variable(shl, arg, append);
-// 	chex[2] = 1;
-// }
-
-int	get_append_flag(int check)
-{
-	int	append;
-
-	append = 0;
-	if (check == 0)
-		append = -1;
-	else if (check == 1)
-		append = 0;
-	else if (check == 3)
-		append = 1;
-	return (append);
-}
-
-/*
-Function to check whether variable name is valid
-  - chex if the name starts with alphabet or '_', and that the characters
-	following that are alphanumeric
-  - Returns 1 if the name is valid
-  - Returns 0 if no '=' sign is found in the argument
-  - Returns -n if the nth char in the var_name string is found to be invalid
-  - Returns 2 if the variable name is just "_"
-  - Used fns: ft_isalpha(), ft_isalnum()
-*/
-int	is_valid_name(char *arg, int *i)
-{
-	int	*index;
-	int	local_i;
-	
-	local_i = 0;
-	if (i != NULL)
-		index = i;
-	else
-		index = &local_i;
-	if (arg[0] == '=')
-		return (-1);
-	if (!ft_isalpha(arg[0]) && arg[0] != '_')
-		return (-1);
-	if ((arg[0] == '_' && arg[1] == '=') || 
-			(arg[0] == '_' && arg[1] == '+' && arg[2] == '='))
-		return (2);
-	while (arg[++(*index)])
-	{
-		if (arg[*index] == '=')
-			return (++(*index), 1);
-		if (arg[*index] == '+' && arg[*index + 1] == '=')
-			return (*index = *index + 2, 3);
-		if (!ft_isalnum(arg[*index]) && arg[*index] != '_')
-			return (-1 * (*index));
-	}
 	return (0);
 }
 
@@ -278,8 +151,6 @@ static int	is_valid_val(char *arg, int *i)
 		return (0);
 	while (arg[*i])
 	{
-		// if (is_bash_reserved(arg[*i]))
-		// 	return (0);
 		if (!ft_isprint(arg[*i]))
 			return (-1 * (*i));
 		(*i)++;

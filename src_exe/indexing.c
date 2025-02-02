@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 00:47:44 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/24 14:34:46 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 14:36:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ int	is_command(t_cmds *cmd)
 				return (1);
 			if (check_eq_alnum(*args, &eq))
 				return (1);
-			if (!eq)		// !!! !!! !!! Relent this condition in mini_export()
+			if (!eq)
 				return (1);
-		}		
+		}
 		args++;
 		(cmd->skip)++;
 	}
@@ -89,7 +89,7 @@ int	is_command(t_cmds *cmd)
 static int	check_eq_alnum(char *arg, int *eq)
 {
 	int	i;
-	
+
 	i = 0;
 	while (arg[++i])
 	{
@@ -108,14 +108,14 @@ static int	check_eq_alnum(char *arg, int *eq)
 int	is_built_in(t_cmds *cmds)
 {
 	char	*arg;
-	
+
 	if (!cmds->args)
 		return (1);
 	arg = *(cmds->args + cmds->skip);
-	if (compare_strings(arg, "echo", 1) || compare_strings(arg, "cd", 1) ||
-		compare_strings(arg, "pwd", 1) || compare_strings(arg, "export", 1) ||
-		compare_strings(arg, "unset", 1) || compare_strings(arg, "env", 1) ||
-		compare_strings(arg, "exit", 1))
+	if (compare_strings(arg, "echo", 1) || compare_strings(arg, "cd", 1)
+		|| compare_strings(arg, "pwd", 1) || compare_strings(arg, "export", 1)
+		|| compare_strings(arg, "unset", 1) || compare_strings(arg, "env", 1)
+		|| compare_strings(arg, "exit", 1))
 		return (1);
 	else
 		return (0);

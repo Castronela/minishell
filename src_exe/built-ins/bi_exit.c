@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/29 01:23:22 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 12:25:01 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,12 @@ static int	is_valid_numstr(const char *str);
 
 /*
 Function to mimic exit command
-
-!!! lst_cmds_freelst() fn call is causing seg-fault at the moment
 */
 void	mini_exit(t_shell *shl, t_cmds *cmd)
 {
 	int	ret_code;
 
-	// write(STDOUT_FILENO, "exit\n", 5);
+	write(STDOUT_FILENO, "exit\n", 5);
 	ret_code = 0;
 	if (cmd->args && *(cmd->args + cmd->skip + 1))
 		ret_code = set_retcode(shl, cmd);

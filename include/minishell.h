@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 00:22:58 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/28 23:34:41 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 17:44:42 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,12 @@ int			is_built_in(t_cmds *cmds);
 void		mini_execute(t_shell *shl);
 void		exec_built_in(t_shell *shl, t_cmds *cmd);
 void		exec_pipeline(t_shell *shl, t_cmds *cmd);
+void		exec_var_assignments(t_shell *shl, t_cmds *cmd);
+
+/* ------------------------------ child_fns.c ------------------------------ */
+
+void		handle_child_exit(t_shell *shl, t_cmds *cmd);
+void		exec_child(t_shell *shl, t_cmds *cmd);
 
 /* ----------------------------- redirections.c ----------------------------- */
 
@@ -255,23 +261,17 @@ int			is_path(const t_cmds *cmd);
 /* ------------------------------ utils_4.c ------------------------------ */
 
 void		restore_std_fds(t_shell *shl);
-int			is_bash_reserved(char c);
-// void		create_pids(t_shell *shl);
-// int		get_total_cmds(t_shell *shl, int which);
+int			path_is_dir(char *path);
+int			is_valid_name(char *arg, int *i);
+int			get_append_flag(int check);
 
 /* ------------- src_exe/built_ins.c and src_exe/built_ins/.c ------------- */
 
 void		mini_cd(t_shell *shl, t_cmds *cmd);
-int			path_is_dir(char *path);
-
 void		mini_echo(t_cmds *cmd);
 void		mini_env(t_shell *shl, t_cmds *cmd);
 void		mini_exit(t_shell *shl, t_cmds *cmd);
-
 int			mini_export(t_shell *shl, t_cmds *cmd);
-int			is_valid_name(char *arg, int *i);
-int			get_append_flag(int check);
-
 int			mini_pwd(t_shell *shl, t_cmds *cmd);
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
@@ -286,7 +286,7 @@ void		store_as_variable(t_shell *shl, char *var, int append);
 int			update_environ(char **var_ptr_addr, char *var_name, char *new_val);
 void		store_local_variable(t_shell *shl, char *var, int append);
 char		*get_var_component(t_shell *shl, char *arg, int what);
-void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
+// void		sort_lst_nodes(t_shell *shl, t_lst_str **root);
 
 /* ----------------------------- stirng_utils.c ----------------------------- */
 
@@ -310,7 +310,7 @@ void		ft_lst_free(t_lst_str **root);
 
 /* ---------------------------- lst_str_fns_2.c ---------------------------- */
 
-void		ft_swap_nodes(t_lst_str **root, t_lst_str *n1, t_lst_str *n2);
+// void		ft_swap_nodes(t_lst_str **root, t_lst_str *n1, t_lst_str *n2);
 t_lst_str	*ft_find_node(t_lst_str *list, char *str, int searchfield, int mod);
 void		ft_replace_node(t_shell *shl, t_lst_str **old, t_lst_str *new);
 void		ft_remove_node(t_lst_str **root, t_lst_str **node);

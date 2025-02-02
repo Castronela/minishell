@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:42:30 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/30 01:09:58 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 17:58:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,21 @@ static int	get_new_cwd(t_shell *shl, char *arg, char **new_cwd);
 static int	get_new_cwd_helper(t_shell *shl, char *arg, char **new_cwd);
 static void	update_wdirs(t_shell *shl, char *new_cwd);
 
-int			path_is_dir(char *path);
-
 /*
 Built-in cd function
   - Checks first if the path provided is just ".", in which case it does nothing
   - If the path is only "..",
-	then cwd_up() is called which updates the cwd system variable to one step above
-  - If the path contains anything else,
-	it checks whether the path is valid and then updates the cwd system variable with the current provided path including necessary expansions from "." or ".." present within the path
+	then cwd_up() is called which updates the cwd system variable to one step
+	above
+  - If the path contains anything else, it checks whether the path is valid and
+  	then updates the cwd system variable with the current provided path
+	including necessary expansions from "." or ".." present within the path
 
 !!! !! cd function should not add an entry of PWD after it is unset, until it is
 		explicitly set by export
 		But OLDPWD still cycles between the prev folder like usual even though
-		PWD is not present in the environment; maybe this can be done using shl->cur_wd
+		PWD is not present in the environment; maybe this can be done using 
+		shl->cur_wd
 
 !!! Oldpwd should only be added once the cd function is executed, otherwise it
 	should be empty
@@ -91,7 +92,7 @@ static int	get_new_cwd(t_shell *shl, char *arg, char **new_cwd)
 static int	get_new_cwd_helper(t_shell *shl, char *arg, char **new_cwd)
 {
 	t_lst_str	*node;
-	
+
 	if (compare_strings(arg, "-", 1))
 	{
 		node = ft_find_node(shl->variables, "OLDPWD", 0, 1);
@@ -109,17 +110,6 @@ static int	get_new_cwd_helper(t_shell *shl, char *arg, char **new_cwd)
 
 /*
 Function to update env variables pwd and oldpwd
-  - Updates
-
-!!! Potential leak: eg. in case of fn store_as_variable(); if there is an
-	internal error like failed malloc inside this function when called from a
-	funciton that sends another locally malloc'd object as argument to
-	to it (here: new_pwd), store_as_variable() will exit by calling exit_early()
-	fn which is not able to free the new_pwd pointer. In this case, such fns
-	that may receive malloc'd objects as argument but call exit_early need to
-	be modified to return an exit code so that the calling function gets a
-	chance to free its allocated objects before calling exit_early.
-	This potential leak should be checked through the entire program code.
 */
 static void	update_wdirs(t_shell *shl, char *new_cwd)
 {
@@ -149,29 +139,4 @@ static void	update_wdirs(t_shell *shl, char *new_cwd)
 	shl->cur_wd = getcwd(NULL, 0);
 	if (!shl->cur_wd)
 		exit_early(shl, NULL, ERRMSG_MALLOC);
-}
-
-/*
-Function to check whether the given path is a valid path or not
-  - Returns 1 if it is a valid path
-  - Returns 0 if the path is invalid, or if the path results in a file
-
-!!! Move this to a different file as it is not used within this file
-*/
-int	path_is_dir(char *path)
-{
-	int			i;
-	struct stat	bufr;
-
-	i = stat(path, &bufr);
-	if (i < 0)
-		return (0);
-	else if (i == 0)
-	{
-		if (S_ISREG(bufr.st_mode))
-			return (0);
-		else if (S_ISDIR(bufr.st_mode))
-			return (1);
-	}
-	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 00:52:33 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/16 16:53:59 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 15:39:17 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,15 @@ void		ft_lst_free(t_lst_str **root);
 /*
 Creates a new node of type t_lst_str for variable type list
   - Returns a new node of t_lst_str type struct
-  - Mallocs memory for new node and uses ft_strdup to allocate memory for args. key and val
+  - Mallocs memory for new node and uses ft_strdup to allocate memory for
+  	args. key and val
   - Returns NULL if malloc fails
-  - The fields ’next’ and 'prev' are initialized to NULL, used for creating links
-  - The fields 'key' and 'val' are initialized from values received as parameters key and val
-  - If any of the parameter is passed as NULL, the fields are also initialized as NULL
+  - The fields ’next’ and 'prev' are initialized to NULL, used for creating
+  	links
+  - The fields 'key' and 'val' are initialized from values received as
+  	parameters key and val
+  - If any of the parameter is passed as NULL, the fields are also initialized
+  	as NULL
 */
 t_lst_str	*ft_lst_new(char *key, char *val)
 {

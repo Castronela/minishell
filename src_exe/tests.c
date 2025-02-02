@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 14:26:50 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/17 22:55:31 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 17:53:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,8 @@ void	test_by_print(t_shell *shl)
 {
 	printf("no. of cmds:	%d\n", shl->total_cmds);
 	printf("no. of pids:	%d\n", shl->total_cmds);
-	// print_env(shl);
-	// print_env_paths(shl);
-	// print_cwd(shl);
-	// print_shlvl(shl);	
-	
 }
-	
+
 void	ft_print_lst(t_lst_str *root)
 {
 	while (root)
@@ -30,7 +25,7 @@ void	ft_print_lst(t_lst_str *root)
 		ft_printf("%s:	%s\n", root->key, root->val);
 		root = root->next;
 	}
-}	
+}
 
 // static void	print_env(t_shell *shl)
 // {

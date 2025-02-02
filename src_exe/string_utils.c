@@ -6,14 +6,14 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 16:04:22 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 15:39:43 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 16:07:18 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 int		compare_strings(const char *str, const char *field, int exact);
-char	**find_string_addr(t_shell *shl, char *str, int	n, int add_eq);
+char	**find_string_addr(t_shell *shl, char *str, int n, int add_eq);
 int		find_dptr_index(t_shell *shl, char *str, int n);
 int		count_pointers(char **dp);
 size_t	var_offset(char *str, int skip_separator);
@@ -60,7 +60,7 @@ provided string
   - returns the address that stores the string if a match is found
   - returns NULL if no match is found
 */
-char	**find_string_addr(t_shell *shl, char *str, int	n, int add_eq)
+char	**find_string_addr(t_shell *shl, char *str, int n, int add_eq)
 {
 	int	i;
 
@@ -74,8 +74,8 @@ char	**find_string_addr(t_shell *shl, char *str, int	n, int add_eq)
 		}
 		else if (add_eq == 1)
 		{
-			if (ft_strncmp(shl->environ[i], str, n) == 0 &&
-					shl->environ[i][n] == '=')
+			if (ft_strncmp(shl->environ[i], str, n) == 0
+				&& shl->environ[i][n] == '=')
 				return (&(shl->environ[i]));
 		}
 	}
@@ -93,7 +93,7 @@ Function to return the index of the string in shl->environ
 int	find_dptr_index(t_shell *shl, char *str, int n)
 {
 	int		i;
-	
+
 	i = -1;
 	while (shl->environ[++i])
 	{
@@ -118,7 +118,7 @@ int	count_pointers(char **dp)
 	i = 0;
 	while (dp[i])
 		i++;
-	return (i); 
+	return (i);
 }
 
 /*

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: david <david@student.42.fr>                +#+  +:+       +#+         #
+#    By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: Invalid date        by                   #+#    #+#              #
-#    Updated: 2025/02/01 12:28:35 by david            ###   ########.fr        #
+#    Updated: 2025/02/02 14:27:03 by pamatya          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,7 +62,7 @@ SRC_EXE		=	initiate.c \
 				initializations.c \
 				indexing.c \
 				binaries.c \
-				executions.c \
+				executions.c child_fns.c \
 				redirections.c \
 				lst_str_fns.c lst_str_fns_2.c \
 				bi_cd.c \
@@ -73,8 +73,8 @@ SRC_EXE		=	initiate.c \
 				bi_pwd.c \
 				bi_unset.c \
 				environment.c \
-				variables.c \
-				env_utils.c env_utils_2.c \
+				variables.c variables_local.c \
+				env_utils.c \
 				string_utils.c string_utils_2.c \
 				error_handlers.c \
 				tests.c

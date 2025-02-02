@@ -6,14 +6,13 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 13:39:39 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 13:40:45 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 17:50:21 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
 void		store_as_variable(t_shell *shl, char *var, int append);
-
 static int	get_new_varnode_ifno_var(t_lst_str **var_node, char *var_name,
 				char *var_val, int append);
 static int	update_append_ifvar_exists(t_lst_str *var_node, char *var,
@@ -37,10 +36,6 @@ Note:	var_node = ft_lst_new(*split, (var + offset)) is used instead of
 		var_node = ft_lst_new(*split, *(split + 1)) ; for cases of arguments
 		with multiple '=' character which would also be splitted by ft_split().
 		eg.: abc=456=oiu54
-
-!!! test the case for 'export abc+='
-!!! test the case for 'export SHLVL' when SHLVL is already present
-!!! test the case for 'export sth' when it not in env but is in local_vars with/wo some value
 */
 void	store_as_variable(t_shell *shl, char *var, int append)
 {
@@ -83,29 +78,28 @@ static int	get_new_varnode_ifno_var(t_lst_str **var_node, char *var_name,
 		else
 			var_node[0] = ft_lst_new(var_name, NULL);
 	}
-	else if (append == 0 || (append == 1 && !var_node[1]))	// both cases of var_node[1] for append == 0 will be same
+	else if (append == 0 || (append == 1 && !var_node[1]))
 		var_node[0] = ft_lst_new(var_name, var_val);
 	else if (append == 1 && var_node[1])
 	{
 		new_val = concat_strings((const char *[]){var_node[1]->val,
-			var_val, NULL});
+				var_val, NULL});
 		if (!new_val)
 			return (-1);
 		var_node[0] = ft_lst_new(var_name, new_val);
-		free(new_val);			
+		free(new_val);
 	}
 	if (!var_node[0])
 		return (-1);
 	return (0);
 }
 
-
 // Helper static function for store_as_variable() fn
 static int	update_append_ifvar_exists(t_lst_str *var_node, char *var,
 				size_t offset, int append)
 {
 	char	*new_val;
-	
+
 	new_val = NULL;
 	if (append == -1)
 		return (0);
@@ -113,48 +107,10 @@ static int	update_append_ifvar_exists(t_lst_str *var_node, char *var,
 		new_val = ft_strdup((var + offset));
 	else if (append == 1)
 		new_val = concat_strings((const char *[]){var_node->val,
-					(var + offset), NULL});
+				(var + offset), NULL});
 	if (!new_val)
 		return (-1);
 	free(var_node->val);
 	var_node->val = new_val;
 	return (0);
 }
-
-// void	store_as_variable(t_shell *shl, char *var, int append)
-// {
-// 	t_lst_str	*var_node[2];
-// 	char		**split;
-// 	size_t		offset;
-
-// 	(void)append;
-// 	offset = var_offset(var, 1);
-// 	split = ft_split(var, '=');
-// 	if (!split)
-// 		exit_early(shl, NULL, ERRMSG_MALLOC);
-// 	var_node[0] = ft_find_node(shl->variables, *split, 0, 1);
-// 	var_node[1] = ft_find_node(shl->local_vars, *split, 0, 1);
-// 	if (var_node[0] == NULL)
-// 	{
-// 		if (var_node[1])
-// 			ft_remove_node(&shl->local_vars, &(var_node[1]));
-// 		var_node[0] = ft_lst_new(*split, (var + offset));
-// 		if (!var_node[0])
-// 			exit_early(shl, split, ERRMSG_MALLOC);
-// 		ft_lst_addback(&shl->variables, var_node[0]);
-// 	}
-// 	else if (var_node[0] && append == 0)
-// 		if (update_var_val(var_node[0], var, offset) < 0)
-// 			exit_early(shl, split, ERRMSG_MALLOC);
-// 	ft_free2d(split);
-// }
-
-// // Helper static function for store_as_variable() fn
-// static int	update_var_val(t_lst_str *var_node, char *var, size_t offset)
-// {
-// 	free(var_node->val);
-// 	var_node->val = ft_strdup((var + offset));
-// 	if (!var_node->val)
-// 		return (-1);
-// 	return (0);
-// }

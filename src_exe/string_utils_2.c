@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 14:48:40 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/25 15:51:10 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 16:04:52 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,20 +45,3 @@ char	*concat_strings(const char *str[])
 	concat[indices[2]] = '\0';
 	return (concat);
 }
-
-// int	main(void)
-// {
-// 	char	*vn = "MYVAR";
-// 	char	*vv = "VAR";
-// 	char	*ve = "something extra";
-// 	char	*var;
-	
-// 	var = concat_strings((const char *[]){vn, "=", vv, " ", ve, NULL});
-// 	if (!var)
-// 		return (-1);
-// 	printf("var_name:		%s\n", vn);	
-// 	printf("var_value:		%s\n", vv);	
-// 	printf("new_variable:	%s\n", var);	
-// 	free(var);
-// 	return (0);
-// }

@@ -3,35 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/21 16:15:01 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/22 05:27:03 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 16:04:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-
-int 		set_redirs(t_shell *shl, t_cmds *cmd);
+int			set_redirs(t_shell *shl, t_cmds *cmd);
 int			dup_std_fds(t_shell *shl, t_cmds *cmd);
 void		ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod);
 int			ft_close(int fd);
 
-static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
-	int *flag);
+static void	set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
+				int *flag);
 
-// data.pipe_fd[0]	-	read end of the pipe, i.e. to read from the pipe
-// data.pipe_fd[1]	-	write end of the pipe, i.e. to write to the pipe
-
-int set_redirs(t_shell *shl, t_cmds *cmd)
+int	set_redirs(t_shell *shl, t_cmds *cmd)
 {
-	int flag;
-	int *pt_fd;
-	t_lst_str *node;
+	int			flag;
+	int			*pt_fd;
+	t_lst_str	*node;
 
 	node = cmd->redirs;
-	while(node)
+	while (node)
 	{
 		set_fd_pointer_and_flag(cmd, node, &pt_fd, &flag);
 		if (ft_close(*pt_fd) < 0)
@@ -39,7 +35,7 @@ int set_redirs(t_shell *shl, t_cmds *cmd)
 		*pt_fd = open(node->val, flag, 0644);
 		if (*pt_fd < 0)
 		{
-			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val, 
+			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, node->val,
 				": ", strerror(errno), "\n", NULL});
 			cmd->exit_code = ERRCODE_GENERAL;
 			return (1);
@@ -49,7 +45,7 @@ int set_redirs(t_shell *shl, t_cmds *cmd)
 	return (0);
 }
 
-static void set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
+static void	set_fd_pointer_and_flag(t_cmds *cmd, t_lst_str *node, int **pt_fd,
 	int *flag)
 {
 	if (!node->key || compare_strings(node->key, RD_IN, 1))
@@ -130,13 +126,13 @@ void	ft_close_cmd_pipe(t_shell *shl, t_cmds *cmd, int mod)
 
 int	ft_close(int fd)
 {
-	if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO &&
-			fd >= 0)
+	if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO
+		&& fd >= 0)
 	{
 		if (close(fd) < 0)
 		{
 			ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, ERRMSG_CLOSE,
-				 NULL});
+				NULL});
 			return (-1);
 		}
 	}

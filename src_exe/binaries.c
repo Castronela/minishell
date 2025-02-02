@@ -6,7 +6,7 @@
 /*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 22:07:34 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/26 15:29:29 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 12:53:09 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,8 @@ void	set_env_paths(t_shell *shl)
 
 int	is_path(const t_cmds *cmd)
 {
-	char 	*cmd_name;
-	size_t 	index;
+	char	*cmd_name;
+	size_t	index;
 
 	if (!cmd->args)
 		return (0);

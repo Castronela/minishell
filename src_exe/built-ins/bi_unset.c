@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_unset.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:43 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/29 01:31:34 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 12:49:11 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int			mini_unset(t_shell *shl, t_cmds *cmd);
 
-static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg, 
-			int *checks);
+static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg,
+				int *checks);
 static int	is_valid_unset_name(char *arg);
 static void	remove_from_environ(t_shell *shl, char *var_name);
 static void	remove_variable(t_shell *shl, char *arg);
@@ -59,7 +59,7 @@ int	mini_unset(t_shell *shl, t_cmds *cmd)
 /*
 Static sub-function for export checks, and execution if checks pass
 */
-static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg, 
+static void	check_and_unset_arg(t_shell *shl, t_cmds *cmd, char *arg,
 	int *checks)
 {
 	checks[0] = is_valid_unset_name(arg);

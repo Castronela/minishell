@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_handlers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 15:39:20 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/28 23:27:43 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 14:11:10 by pamatya          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,13 @@ void	arg_error(char **av);
 void	exit_early(t_shell *shl, char **double_ptr, char *msg);
 void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg);
 
-// void	ft_free2dint(int **memory);
-
 /*
-Function to check if there are more than necessary args from user; if there is
-then print an error message and exit
+Function to print error message when there is more than one argument
 */
 void	arg_error(char **av)
 {
-	// ft_fprintf(2, "Minishell: %s: No such file or directory\n", av[1]);
-	ft_putstr_fd(ERSHL, 2);
-	ft_putstr_fd(av[1], 2);
-	ft_putstr_fd(": Syntax error; too many arguments\n", 2);
-	ft_putstr_fd("Usage: ./<path to minishell executable>\n", 2);
+	ft_fprintf_str(STDERR_FILENO, (const char *[]){ERSHL, av[1],
+		" : No such file or directory\n", NULL});
 	exit(127);
 }
 
@@ -75,20 +69,3 @@ void	exit_early2(t_shell *shl, char **double_ptr, char *s_ptr, char *msg)
 			NULL});
 	exit(errno);
 }
-
-// /*
-// Function to free a 2D int pointer
-// */
-// void	ft_free2dint(int **memory)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while ((memory != NULL) && (memory[i] != NULL))
-// 	{
-// 		free(memory[i]);
-// 		memory[i] = NULL;
-// 		i++;
-// 	}
-// 	free(memory);
-// }
