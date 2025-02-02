@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_1.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/13 13:38:18 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/02/01 13:04:50 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 21:55:56 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ int	parser(t_shell *shell)
 			if (!is_valid_control_1(shell))
 				return (1);
 		}
-		if (heredoc(shell) || (index_cmd >= ft_strlen2(shell->cmdline) 
-			&& open_ctr_op(shell, new_cmdnode, &index_cmd)))
+		if (heredoc(shell) || (index_cmd >= ft_strlen2(shell->cmdline)
+				&& open_ctr_op(shell, new_cmdnode, &index_cmd)))
 			return (1);
 	}
 	if (!is_valid_quotation(shell) || !is_valid_control_2(shell))

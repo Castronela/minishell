@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   utils_3.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 20:53:24 by dstinghe          #+#    #+#             */
-/*   Updated: 2025/01/29 00:03:54 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 21:56:29 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline);
+void		reset_cmd_vars(t_shell *shell, const int rm_tmp,
+				const int free_prev_cmdline);
 int			open_hd_tmp_file(t_shell *shell, t_lst_str *node);
 int			cursor_mv_back(const int fd);
 
@@ -25,7 +26,8 @@ Nullifies all command variables
 	- if 'free_before' > 0 then frees command variables
 	before nullifying them
 */
-void	reset_cmd_vars(t_shell *shell, const int rm_tmp, const int free_prev_cmdline)
+void	reset_cmd_vars(t_shell *shell, const int rm_tmp,
+		const int free_prev_cmdline)
 {
 	if (rm_tmp)
 		remove_tmp_files(shell);

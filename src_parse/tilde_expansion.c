@@ -3,27 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   tilde_expansion.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 01:00:14 by david             #+#    #+#             */
-/*   Updated: 2025/01/29 01:03:13 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 21:56:10 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
-void	expand_homedir_special_char(t_shell *shell, char **str);
+void		expand_homedir_special_char(t_shell *shell, char **str);
 
-static char *get_home_path(t_shell *shell, const char *str);
+static char	*get_home_path(t_shell *shell, const char *str);
 
 void	expand_homedir_special_char(t_shell *shell, char **str)
 {
-	char		*home_path;
-	char		*new_str;
-	size_t		index;
+	char	*home_path;
+	char	*new_str;
+	size_t	index;
 
 	new_str = NULL;
-	
 	home_path = get_home_path(shell, *str);
 	if (!home_path)
 		return ;
@@ -37,11 +36,11 @@ void	expand_homedir_special_char(t_shell *shell, char **str)
 	*str = new_str;
 }
 
-static char *get_home_path(t_shell *shell, const char *str)
+static char	*get_home_path(t_shell *shell, const char *str)
 {
 	t_lst_str	*lst_node;
 
-    lst_node = NULL;
+	lst_node = NULL;
 	if (compare_strings("~", str, 1) || compare_strings("~/", str, 0))
 	{
 		lst_node = ft_find_node(shell->variables, "HOME", 0, 1);
@@ -58,4 +57,3 @@ static char *get_home_path(t_shell *shell, const char *str)
 		return (lst_node->val);
 	return (NULL);
 }
-

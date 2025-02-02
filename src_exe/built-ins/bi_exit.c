@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bi_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 14:44:23 by pamatya           #+#    #+#             */
-/*   Updated: 2025/02/02 12:25:01 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 22:05:59 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	mini_exit(t_shell *shl, t_cmds *cmd)
 {
 	int	ret_code;
 
-	write(STDOUT_FILENO, "exit\n", 5);
+	// write(STDOUT_FILENO, "exit\n", 5);
 	ret_code = 0;
 	if (cmd->args && *(cmd->args + cmd->skip + 1))
 		ret_code = set_retcode(shl, cmd);
