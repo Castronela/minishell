@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pamatya <pamatya@student.42heilbronn.de    +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 16:06:04 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/24 00:58:50 by pamatya          ###   ########.fr       */
+/*   Updated: 2025/02/02 22:50:35 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/libft.h"
-
 
 /*
 Function that allocates (with malloc(3)) and returns a substring from the string

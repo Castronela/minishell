@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: david <david@student.42.fr>                +#+  +:+       +#+        */
+/*   By: dstinghe <dstinghe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 14:37:49 by pamatya           #+#    #+#             */
-/*   Updated: 2025/01/20 03:37:20 by david            ###   ########.fr       */
+/*   Updated: 2025/02/02 23:09:22 by dstinghe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,21 @@ char	*join_parts(char *s1, char *s2);
 char	*copy_n_shift(char *buffer);
 char	*extract_rest(char *next_line, char *buffer, int fd);
 
+/*
+	if (!buffer)
+		buffer = mmap(NULL, sizeof(char) * 4096 * (BUFFER_SIZE + 1), PROT_READ 
+		| PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	if (buffer == MAP_FAILED)
+		return (NULL);
+*/	
 char	*get_next_line(int fd)
 {
 	ssize_t		bytes_read;
-	static char	(*buffer)[BUFFER_SIZE + 1] = NULL;
+	static char	buffer[4096][BUFFER_SIZE + 1];
 	char		*next_line;
 	char		*joined_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	if (!buffer)
-		buffer = mmap(NULL, sizeof(char) * 4096 * (BUFFER_SIZE + 1), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	if (buffer == MAP_FAILED)
 		return (NULL);
 	if (!buffer[fd][0])
 	{
